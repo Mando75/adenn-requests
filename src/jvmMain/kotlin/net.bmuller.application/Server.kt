@@ -10,6 +10,7 @@ fun main() {
 		configureContentNegotiation()
 		configureLogging()
 		configureCompression()
+		configureResources()
 		configureRouting()
 	}.start(wait = true)
 

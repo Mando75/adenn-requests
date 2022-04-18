@@ -1,0 +1,5 @@
+##
+GET {{host}}/media-item/search?title="Star Wars"
+
+###
+GET {{host}}/media-item/1/providers

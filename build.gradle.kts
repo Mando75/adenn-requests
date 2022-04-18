@@ -12,9 +12,10 @@ version = "1.0-SNAPSHOT"
 val arrowKtVersion = "1.0.1"
 val ktorVersion = "2.0.0"
 val logbackVersion = "1.2.11"
+val kotlinVersion = "1.6.20"
+val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
 
 repositories {
-	jcenter()
 	mavenCentral()
 	maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
@@ -39,12 +40,14 @@ kotlin {
 	}
 	sourceSets {
 		val commonMain by getting
+
 		val commonTest by getting {
 			dependencies {
 				implementation(kotlin("test"))
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 			}
 		}
+
 		val jvmMain by getting {
 			dependencies {
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
@@ -55,19 +58,22 @@ kotlin {
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
+				implementation("io.ktor:ktor-server-resources:$ktorVersion")
 			}
 		}
+
 		val jvmTest by getting
+
 		val jsMain by getting {
 			dependencies {
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.290-kotlin-1.6.10")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.290-kotlin-1.6.10")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:17.0.2-pre.290-kotlin-1.6.10")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.2.1-pre.290-kotlin-1.6.10")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-redux:4.1.2-pre.290-kotlin-1.6.10")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-redux:7.2.6-pre.290-kotlin-1.6.10")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.330-kotlin-$kotlinVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.34.19-pre.330-kotlin-$kotlinVersion")
 			}
 		}
+
 		val jsTest by getting
 	}
 }
