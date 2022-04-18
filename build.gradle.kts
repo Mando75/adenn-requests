@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 plugins {
 	kotlin("multiplatform") version "1.6.20"
 	application
@@ -52,6 +54,7 @@ kotlin {
 				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+				implementation("io.ktor:ktor-server-compression:$ktorVersion")
 			}
 		}
 		val jvmTest by getting
@@ -73,6 +76,21 @@ application {
 	mainClass.set("net.bmuller.application.ServerKt")
 }
 
+tasks.getByName<Jar>("jvmJar") {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+	val taskName =
+		if (project.hasProperty("isProduction")
+			|| project.gradle.startParameter.taskNames.contains("installDist")
+		) {
+			"jsBrowserProductionWebpack"
+		} else {
+			"jsBrowserDevelopmentWebpack"
+		}
+	val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
+	dependsOn(webpackTask)
+	from(File(webpackTask.destinationDirectory, webpackTask.outputFileName))
+}
+
 tasks.named<Copy>("jvmProcessResources") {
 	val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
 	from(jsBrowserDistribution)
@@ -80,5 +98,5 @@ tasks.named<Copy>("jvmProcessResources") {
 
 tasks.named<JavaExec>("run") {
 	dependsOn(tasks.named<Jar>("jvmJar"))
-	classpath(tasks.named<Jar>("jvmJar"))
+	classpath(tasks.getByName<Jar>("jvmJar"))
 }

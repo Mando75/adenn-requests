@@ -14,6 +14,7 @@ external interface WelcomeProps : Props {
 
 val Welcome = FC<WelcomeProps> { props ->
 	var name by useState(props.name)
+	console.log("Render")
 	div {
 		css {
 			padding = 5.px

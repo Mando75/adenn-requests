@@ -12,12 +12,15 @@ data class TestData(val id: Int, val name: String)
 
 fun Application.configureRouting() {
 	routing {
+		get("/") {
+			call.respondText(this::class.java.classLoader.getResource("index.html")!!.readText(), ContentType.Text.Html)
+		}
 		get("/api/v1") {
 			call.respond(HttpStatusCode.OK, TestData(1, "Bryan"))
 		}
 
-		static("/static") {
-			resources()
+		static("/") {
+			resources("")
 		}
 	}
 }
