@@ -56,19 +56,20 @@ kotlin {
 
 		val jvmMain by getting {
 			dependencies {
-				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-server-netty:$ktorVersion")
-				implementation("io.ktor:ktor-server-cors:$ktorVersion")
-				implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
+				implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
+				implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+				implementation("io.ktor:ktor-server-cors:$ktorVersion")
+				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 			}
 		}
 
