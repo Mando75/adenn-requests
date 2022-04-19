@@ -160,3 +160,6 @@ gradle-app.setting
 .env.prod
 *.tar
 **/resources/firebase/
+
+.idea/**/*.iml
+.idea/modules.xml
