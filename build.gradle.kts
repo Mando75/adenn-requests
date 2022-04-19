@@ -14,6 +14,8 @@ val ktorVersion = "2.0.0"
 val logbackVersion = "1.2.11"
 val kotlinVersion = "1.6.20"
 val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
+val exposedVersion = "0.38.1"
+val serializationVersion = "1.3.2"
 
 repositories {
 	mavenCentral()
@@ -39,17 +41,22 @@ kotlin {
 		}
 	}
 	sourceSets {
-		val commonMain by getting
+		val commonMain by getting {
+			dependencies {
+				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+			}
+		}
 
 		val commonTest by getting {
 			dependencies {
 				implementation(kotlin("test"))
-				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 			}
 		}
 
 		val jvmMain by getting {
 			dependencies {
+				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-cors:$ktorVersion")
 				implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
@@ -59,13 +66,23 @@ kotlin {
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
+				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+				implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+				implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 			}
 		}
 
-		val jvmTest by getting
+		val jvmTest by getting {
+			dependencies {
+				implementation("io.ktor:ktor-server-test-host:$ktorVersion")
+			}
+		}
 
 		val jsMain by getting {
 			dependencies {
+				implementation("io.ktor:ktor-client-js:$ktorVersion")
+				implementation("io.ktor:ktor-client-json:$ktorVersion")
+				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
@@ -73,8 +90,6 @@ kotlin {
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.34.19-pre.330-kotlin-$kotlinVersion")
 			}
 		}
-
-		val jsTest by getting
 	}
 }
 
