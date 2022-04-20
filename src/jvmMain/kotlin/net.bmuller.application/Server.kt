@@ -3,6 +3,7 @@ package net.bmuller.application
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import net.bmuller.application.db.postgres.util.createDb
 import net.bmuller.application.plugins.*
 
 fun main() {
@@ -10,6 +11,7 @@ fun main() {
 }
 
 fun Application.mainModule() {
+	createDb()
 	configureCors()
 	configureContentNegotiation()
 	configureLogging()

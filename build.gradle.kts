@@ -16,6 +16,7 @@ val kotlinVersion = "1.6.20"
 val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
 val exposedVersion = "0.38.1"
 val serializationVersion = "1.3.2"
+val postgresVersion = "42.3.4"
 
 repositories {
 	mavenCentral()
@@ -58,6 +59,7 @@ kotlin {
 			dependencies {
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
 				implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+				// KTOR
 				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
@@ -66,10 +68,14 @@ kotlin {
 				implementation("io.ktor:ktor-server-cors:$ktorVersion")
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+				// Database
+				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+				implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+				implementation("org.postgresql:postgresql:$postgresVersion")
 			}
 		}
 
