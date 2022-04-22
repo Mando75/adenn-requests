@@ -1,6 +1,6 @@
 package net.bmuller.application.db.postgres.tables
 
-import net.bmuller.application.db.postgres.util.PGEnum
+import net.bmuller.application.db.postgres.util.postgresEnumeration
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.date
 
@@ -12,11 +12,7 @@ object MediaItemTable : IntIdTable("media_items") {
 
 	val ENUM_TYPES = mapOf("MediaItemTypeEnum" to MediaItemType.values().map { value -> value.toString() })
 
-	val mediaType = customEnumeration(
-		"media_type",
-		"MediaItemTypeEnum",
-		{ value -> MediaItemType.valueOf(value as String) },
-		{ PGEnum("MediaItemTypeEnum", it) })
+	val mediaType = postgresEnumeration<MediaItemType>("media_type", "Media_Type_Enum")
 	val overview = text("overview").default("")
 	val releaseDate = date("release_date").nullable()
 	val title = text("title")
