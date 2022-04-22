@@ -1,4 +1,4 @@
-package net.bmuller.application.config
+package config
 
 import arrow.core.Either
 import arrow.core.Either.Left

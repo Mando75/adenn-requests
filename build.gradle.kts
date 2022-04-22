@@ -17,6 +17,10 @@ val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
 val exposedVersion = "0.38.1"
 val serializationVersion = "1.3.2"
 val postgresVersion = "42.3.4"
+val flywayVersion = "8.5.9"
+val hikariVersion = "5.0.1"
+val dotenvVersion = "6.2.2"
+val koinVersion = "3.1.6"
 
 repositories {
 	mavenCentral()
@@ -58,7 +62,8 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
-				implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+				implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
+				implementation("io.insert-koin:koin-ktor:$koinVersion")
 				// KTOR
 				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
@@ -68,7 +73,6 @@ kotlin {
 				implementation("io.ktor:ktor-server-cors:$ktorVersion")
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 				// Database
 				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -76,8 +80,8 @@ kotlin {
 				implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 				implementation("org.postgresql:postgresql:$postgresVersion")
-				implementation("org.flywaydb:flyway-core:8.5.9")
-				implementation("com.zaxxer:HikariCP:5.0.1")
+				implementation("org.flywaydb:flyway-core:$flywayVersion")
+				implementation("com.zaxxer:HikariCP:$hikariVersion")
 
 			}
 		}
@@ -85,6 +89,7 @@ kotlin {
 		val jvmTest by getting {
 			dependencies {
 				implementation("io.ktor:ktor-server-test-host:$ktorVersion")
+				implementation("io.insert-koin:koin-test:$koinVersion")
 			}
 		}
 

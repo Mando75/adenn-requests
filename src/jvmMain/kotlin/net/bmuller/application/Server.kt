@@ -11,7 +11,6 @@ fun main() {
 }
 
 fun Application.mainModule(dbProvider: ExposedProvider = ExposedProvider()) {
-	log.info(dbProvider.db.url)
 	configureCors()
 	configureContentNegotiation()
 	configureLogging()

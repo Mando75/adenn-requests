@@ -1,6 +1,6 @@
 package db
 
-import net.bmuller.application.config.ConfigProvider
+import config.ConfigProvider
 import org.jetbrains.exposed.sql.Database
 
 object ExposedDatabase {
