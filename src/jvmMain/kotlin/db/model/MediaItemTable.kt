@@ -1,16 +1,16 @@
-package net.bmuller.application.db.postgres.tables
+package db.model
 
-import net.bmuller.application.db.postgres.util.postgresEnumeration
+import db.util.postgresEnumeration
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.date
 
+@Suppress("unused")
 object MediaItemTable : IntIdTable("media_items") {
 	enum class MediaItemType {
 		MOVIE,
 		TV
 	}
 
-	val ENUM_TYPES = mapOf("MediaItemTypeEnum" to MediaItemType.values().map { value -> value.toString() })
 
 	val mediaType = postgresEnumeration<MediaItemType>("media_type", "Media_Type_Enum")
 	val overview = text("overview").default("")

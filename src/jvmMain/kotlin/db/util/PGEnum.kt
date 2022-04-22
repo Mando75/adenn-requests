@@ -1,4 +1,4 @@
-package net.bmuller.application.db.postgres.util
+package db.util
 
 import org.jetbrains.exposed.sql.Table
 import org.postgresql.util.PGobject

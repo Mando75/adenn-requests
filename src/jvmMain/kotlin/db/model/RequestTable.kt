@@ -1,11 +1,12 @@
-package net.bmuller.application.db.postgres.tables
+package db.model
 
-import net.bmuller.application.db.postgres.util.postgresEnumeration
+import db.util.postgresEnumeration
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
+@Suppress("unused")
 object RequestTable : IntIdTable("requests") {
 	enum class RequestStatus {
 		REQUESTED,
@@ -17,7 +18,6 @@ object RequestTable : IntIdTable("requests") {
 		DOWNLOADING
 	}
 
-	val ENUM_TYPES = mapOf("RequestStatusEnum" to RequestStatus.values().map { value -> value.toString() })
 
 	val dateCancelled: Column<Instant?> = timestamp("date_cancelled").nullable()
 	val dateFulfilled: Column<Instant?> = timestamp("date_fulfilled").nullable()

@@ -1,9 +1,9 @@
-package net.bmuller.application.db.postgres
+package db
 
 import net.bmuller.application.config.ConfigProvider
 import org.jetbrains.exposed.sql.Database
 
-object DbSettings {
+object ExposedDatabase {
 	private const val hostKey = "POSTGRES_HOST"
 	private const val userKey = "POSTGRES_USER"
 	private const val passwordKey = "POSTGRES_PASSWORD"
@@ -19,12 +19,12 @@ object DbSettings {
 		val password = config.getOptionalValue(passwordKey) ?: ""
 
 		val url = "jdbc:postgresql://$host:$port/$database"
+		val cleanDB = false
 
 		Database.connect(
-			url,
-			driver = "org.postgresql.Driver",
-			user = user,
-			password = password
-		)
+			dataSource(url, user, password)
+		).apply {
+			migrate(cleanDB, url, user, password)
+		}
 	}
 }
