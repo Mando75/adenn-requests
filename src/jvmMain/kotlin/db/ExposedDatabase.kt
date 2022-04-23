@@ -1,6 +1,6 @@
 package db
 
-import config.ConfigProvider
+import net.bmuller.application.config.ConfigProvider
 import org.jetbrains.exposed.sql.Database
 import org.koin.java.KoinJavaComponent.inject
 

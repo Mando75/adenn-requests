@@ -1,4 +1,4 @@
-package config
+package net.bmuller.application.config
 
 import arrow.core.Either
 import arrow.core.Either.Left
@@ -8,7 +8,7 @@ import io.github.cdimascio.dotenv.dotenv
 val env = dotenv()
 
 sealed class MissingEnvException {
-	object NullKey : MissingEnvException()
+	data class NullKey(val missingKey: String) : MissingEnvException()
 }
 
 interface IConfigProvider {
@@ -18,7 +18,7 @@ interface IConfigProvider {
 
 class ConfigProvider : IConfigProvider {
 	override fun getValue(key: String): Either<MissingEnvException, String> =
-		env[key]?.let(::Right) ?: Left(MissingEnvException.NullKey)
+		env[key]?.let(::Right) ?: Left(MissingEnvException.NullKey(key))
 
 	override fun getOptionalValue(key: String): String? {
 		return env[key]

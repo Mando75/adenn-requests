@@ -1,0 +1,3 @@
+###
+GET {{host}}/tmdb/search/movies?searchTerm="Star"
+Content-Type: application/json
