@@ -27,4 +27,6 @@ object RequestTable : IntIdTable("requests") {
 	val status: Column<RequestStatus> = postgresEnumeration("status", "Request_Status_Enum")
 	val userId: Column<Int> = integer("user_id").references(UserTable.id).index("user_id_fk")
 	val mediaId: Column<Int> = integer("media_item_id").references(MediaItemTable.id).index("media_item_id_fk")
+	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
+	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
 }

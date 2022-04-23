@@ -11,6 +11,7 @@ fun main() {
 
 fun Application.mainModule() {
 	configureDI()
+	configureDatabase()
 	configureCors()
 	configureContentNegotiation()
 	configureLogging()

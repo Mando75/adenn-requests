@@ -89,7 +89,6 @@ kotlin {
 		val jvmTest by getting {
 			dependencies {
 				implementation("io.ktor:ktor-server-test-host:$ktorVersion")
-				implementation("io.insert-koin:koin-test:$koinVersion")
 			}
 		}
 
