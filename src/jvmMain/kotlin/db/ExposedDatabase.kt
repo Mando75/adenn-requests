@@ -3,12 +3,12 @@ package db
 import config.ConfigProvider
 import org.jetbrains.exposed.sql.Database
 
-object ExposedDatabase {
-	private const val hostKey = "POSTGRES_HOST"
-	private const val userKey = "POSTGRES_USER"
-	private const val passwordKey = "POSTGRES_PASSWORD"
-	private const val portKey = "POSTGRES_PORT"
-	private const val dbKey = "POSTGRES_DATABASE"
+class ExposedDatabase {
+	private val hostKey = "POSTGRES_HOST"
+	private val userKey = "POSTGRES_USER"
+	private val passwordKey = "POSTGRES_PASSWORD"
+	private val portKey = "POSTGRES_PORT"
+	private val dbKey = "POSTGRES_DATABASE"
 	private val config = ConfigProvider()
 
 	val db by lazy {
