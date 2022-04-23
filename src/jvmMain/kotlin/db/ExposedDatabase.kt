@@ -1,10 +1,11 @@
 package db
 
 import config.ConfigProvider
-import config.IConfigProvider
 import org.jetbrains.exposed.sql.Database
+import org.koin.java.KoinJavaComponent.inject
 
-class ExposedDatabase(private val config: IConfigProvider = ConfigProvider()) {
+class ExposedDatabase {
+	private val config: ConfigProvider by inject(ConfigProvider::class.java)
 	private val hostKey = "POSTGRES_HOST"
 	private val userKey = "POSTGRES_USER"
 	private val passwordKey = "POSTGRES_PASSWORD"

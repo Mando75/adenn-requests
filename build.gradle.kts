@@ -49,6 +49,7 @@ kotlin {
 		val commonMain by getting {
 			dependencies {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
+				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 			}
 		}
@@ -66,6 +67,8 @@ kotlin {
 				implementation("io.insert-koin:koin-ktor:$koinVersion")
 				// KTOR
 				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
+				implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
@@ -74,7 +77,6 @@ kotlin {
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
 				// Database
-				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
@@ -96,7 +98,6 @@ kotlin {
 			dependencies {
 				implementation("io.ktor:ktor-client-js:$ktorVersion")
 				implementation("io.ktor:ktor-client-json:$ktorVersion")
-				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
