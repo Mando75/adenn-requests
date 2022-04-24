@@ -17,7 +17,7 @@ data class TMDBClientConfig(
 
 sealed class TMDBClientError {
 	data class MissingConfig(val configKey: String) : TMDBClientError()
-	object Unknown : TMDBClientError()
+	data class RequestError(val message: String? = null) : TMDBClientError()
 }
 
 
@@ -43,5 +43,7 @@ class TMDBClient : BaseHttpClient() {
 			builder.parameter(API_KEY, config.apiKey)
 			builder.parameter(SESSION_ID, config.sessionToken)
 			makeRequest<T>(builder)
-		}.mapLeft { TMDBClientError.Unknown }.map { it }
+		}.mapLeft { error ->
+			TMDBClientError.RequestError(error.message)
+		}
 }

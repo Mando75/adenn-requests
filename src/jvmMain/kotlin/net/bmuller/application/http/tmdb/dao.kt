@@ -1,74 +1,78 @@
 package net.bmuller.application.http.tmdb
 
+import kotlinx.serialization.SerialName
+
 interface BaseSearchResult {
 	val page: Int
-	val total_results: Int
-	val total_pages: Int
+
+	val totalResults: Int
+
+	val totalPages: Int
 }
 
 @kotlinx.serialization.Serializable
 data class MovieResult(
-	val poster_path: String?,
+	@SerialName("backdrop_path") val backdropPath: String?,
+	@SerialName("genre_ids") val genreIds: List<Int>,
+	@SerialName("original_language") val originalLanguage: String,
+	@SerialName("original_title") val originalTitle: String,
+	@SerialName("poster_path") val posterPath: String?,
+	@SerialName("release_date") val releaseDate: String,
+	@SerialName("vote_average") val voteAverage: Float,
+	@SerialName("vote_count") val voteCount: Int,
 	val adult: Boolean,
-	val overview: String,
-	val release_date: String,
-	val genre_ids: List<Int>,
 	val id: Int,
-	val original_title: String,
-	val original_language: String,
-	val title: String,
-	val backdrop_path: String?,
+	val overview: String,
 	val popularity: Float,
-	val vote_count: Int,
-	val vote_average: Float
+	val title: String,
 )
 
 @kotlinx.serialization.Serializable
 data class MovieSearchResults(
+	@SerialName("total_pages") override val totalPages: Int,
+	@SerialName("total_results") override val totalResults: Int,
 	override val page: Int,
 	val results: List<MovieResult>,
-	override val total_results: Int,
-	override val total_pages: Int
 ) : BaseSearchResult
 
 @kotlinx.serialization.Serializable
 data class TVShowResult(
-	val poster_path: String?,
-	val popularity: Float,
+	@SerialName("backdrop_path") val backdropPath: String?,
+	@SerialName("first_air_date") val firstAirDate: String,
+	@SerialName("genre_ids") val genreIds: List<Int>,
+	@SerialName("origin_country") val originCountry: List<String>,
+	@SerialName("original_language") val originalLanguage: String,
+	@SerialName("original_name") val originalName: String,
+	@SerialName("poster_path") val poster_path: String?,
+	@SerialName("vote_average") val voteAverage: Float,
+	@SerialName("vote_count") val voteCount: Int,
 	val id: Int,
-	val backdrop_path: String?,
-	val vote_average: Float,
-	val overview: String,
-	val first_air_date: String,
-	val origin_country: List<String>,
-	val genre_ids: List<Int>,
-	val original_language: String,
-	val vote_count: Int,
 	val name: String,
-	val original_name: String
+	val overview: String,
+	val popularity: Float,
 )
 
 @kotlinx.serialization.Serializable
 data class TVShowSearchResults(
+	@SerialName("total_pages") override val totalPages: Int,
+	@SerialName("total_results") override val totalResults: Int,
 	override val page: Int,
-	override val total_results: Int,
-	override val total_pages: Int,
 	val results: List<TVShowResult>
 ) : BaseSearchResult
 
 @kotlinx.serialization.Serializable
 data class TMDBConfigurationResult(
 	val images: TMDBImageConfiguration,
-	val change_keys: List<String>
+	@SerialName("change_keys") val changeKeys: List<String>
 )
 
 @kotlinx.serialization.Serializable
 data class TMDBImageConfiguration(
-	val base_url: String,
-	val secure_base_url: String,
-	val backdrop_sizes: List<String>,
-	val logo_sizes: List<String>,
-	val poster_sizes: List<String>,
-	val profile_sizes: List<String>,
-	val still_sizes: List<String>
+	@SerialName("base_url") val baseUrl: String,
+	@SerialName("secure_base_url") val secureBaseUrl: String,
+	@SerialName("backdrop_sizes") val backdropSizes: List<String>,
+	@SerialName("logo_sizes") val logoSizes: List<String>,
+	@SerialName("poster_sizes") val posterSizes: List<String>,
+	@SerialName("profile_sizes") val profileSizes: List<String>,
+	@SerialName("still_sizes") val stillSizes: List<String>
 )

@@ -1,3 +1,7 @@
 ###
 GET {{host}}/tmdb/search/movies?searchTerm="Star"
 Content-Type: application/json
+
+###
+GET {{host}}/tmdb/search/tv?searchTerm="Community"
+Content-Type: application/json

@@ -9,6 +9,7 @@ import io.ktor.server.routing.*
 import net.bmuller.application.plugins.inject
 import net.bmuller.application.repository.TMDBRepository
 
+@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/tmdb")
 class TMDBResource {
@@ -36,5 +37,16 @@ fun Route.tmdb() {
 		}.map { results ->
 			call.respond(HttpStatusCode.OK, results)
 		}
+	}
+
+	get<TMDBResource.Search.TV> { search ->
+		val searchTerm = search.searchTerm ?: ""
+		tmdbRepository.searchTVShows(searchTerm)
+			.mapLeft { error ->
+				call.respond(HttpStatusCode.InternalServerError, error.toString())
+			}
+			.map { results ->
+				call.respond(HttpStatusCode.OK, results)
+			}
 	}
 }
