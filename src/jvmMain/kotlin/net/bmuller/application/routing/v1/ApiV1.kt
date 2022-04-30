@@ -4,6 +4,7 @@ import io.ktor.server.routing.*
 
 fun Routing.apiV1() {
 	route("/api/v1") {
+		auth()
 		mediaItems()
 		tmdb()
 	}

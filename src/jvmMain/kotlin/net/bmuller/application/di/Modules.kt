@@ -10,6 +10,7 @@ import net.bmuller.application.repository.PlexAuthPinRepository
 import net.bmuller.application.repository.PlexAuthPinRepositoryImpl
 import net.bmuller.application.repository.TMDBRepository
 import net.bmuller.application.repository.TMDBRepositoryImpl
+import net.bmuller.application.service.plexauthservice.PlexOAuthService
 import org.koin.dsl.module
 
 val envModule = module {
@@ -28,4 +29,8 @@ val httpModule = module {
 val repoModule = module {
 	single<TMDBRepository> { TMDBRepositoryImpl() }
 	single<PlexAuthPinRepository> { PlexAuthPinRepositoryImpl() }
+}
+
+val serviceModule = module {
+	single { PlexOAuthService() }
 }

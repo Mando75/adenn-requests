@@ -10,7 +10,7 @@ import net.bmuller.application.http.tmdb.TVShowSearchResults
 
 
 @kotlinx.serialization.Serializable
-@Resource("/")
+@Resource("/3")
 class TMDBResources() {
 	@kotlinx.serialization.Serializable
 	@Resource("search")
