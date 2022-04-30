@@ -10,7 +10,7 @@ import net.bmuller.application.http.tmdb.TVShowSearchResults
 
 
 @kotlinx.serialization.Serializable
-@Resource("/")
+@Resource("/3")
 class TMDBResources() {
 	@kotlinx.serialization.Serializable
 	@Resource("search")
@@ -18,11 +18,11 @@ class TMDBResources() {
 
 		@kotlinx.serialization.Serializable
 		@Resource("movie")
-		class Movie(val parent: Search = Search(), val searchTerm: String)
+		class Movie(val parent: Search = Search(), val query: String)
 
 		@kotlinx.serialization.Serializable
 		@Resource("tv")
-		class TV(val parent: Search = Search(), val searchTerm: String)
+		class TV(val parent: Search = Search(), val query: String)
 	}
 
 	@kotlinx.serialization.Serializable
@@ -39,12 +39,12 @@ interface TMDBRepository {
 class TMDBRepositoryImpl : BaseRepository(), TMDBRepository {
 
 	override suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBResources.Search.Movie(searchTerm = query))
+		val response = tmdb.client.get(resource = TMDBResources.Search.Movie(query = query))
 		return@catch response.body<MovieSearchResults>()
 	}
 
 	override suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBResources.Search.TV(searchTerm = query))
+		val response = tmdb.client.get(resource = TMDBResources.Search.TV(query = query))
 		return@catch response.body<TVShowSearchResults>()
 	}
 
