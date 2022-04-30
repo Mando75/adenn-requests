@@ -1,23 +1,18 @@
 package db
 
-import net.bmuller.application.config.ConfigProvider
+import net.bmuller.application.config.EnvironmentValues
 import org.jetbrains.exposed.sql.Database
 import org.koin.java.KoinJavaComponent.inject
 
 class ExposedDatabase {
-	private val config: ConfigProvider by inject(ConfigProvider::class.java)
-	private val hostKey = "POSTGRES_HOST"
-	private val userKey = "POSTGRES_USER"
-	private val passwordKey = "POSTGRES_PASSWORD"
-	private val portKey = "POSTGRES_PORT"
-	private val dbKey = "POSTGRES_DATABASE"
+	private val env by inject<EnvironmentValues>(EnvironmentValues::class.java)
 
 	fun createDatabase(): Database {
-		val host = config.getOptionalValue(hostKey)
-		val port = config.getOptionalValue(portKey)
-		val database = config.getOptionalValue(dbKey)
-		val user = config.getOptionalValue(userKey) ?: "postgres"
-		val password = config.getOptionalValue(passwordKey) ?: ""
+		val host = env.postgresHost
+		val port = env.postgresPort
+		val database = env.postgresDatabase
+		val user = env.postgresUser
+		val password = env.postgresPassword
 
 		val url = "jdbc:postgresql://$host:$port/$database"
 		val cleanDB = false

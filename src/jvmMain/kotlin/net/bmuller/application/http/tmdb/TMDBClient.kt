@@ -1,49 +1,49 @@
 package net.bmuller.application.http.tmdb
 
-import arrow.core.Either
-import arrow.core.computations.either
-import arrow.core.flatMap
-import arrow.core.left
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import net.bmuller.application.config.MissingEnvException
+import io.ktor.client.*
+import net.bmuller.application.config.EnvironmentValues
 import net.bmuller.application.http.BaseHttpClient
+import org.koin.java.KoinJavaComponent.inject
 
-data class TMDBClientConfig(
-	val apiKey: String,
-	val sessionToken: String,
-	val requestToken: String
-)
+const val TMDB_BASE_URL = "https://api.themoviedb.org/3"
 
-sealed class TMDBClientError {
-	data class MissingConfig(val configKey: String) : TMDBClientError()
-	data class RequestError(val message: String? = null) : TMDBClientError()
+interface TMDBClient {
+	val client: HttpClient
 }
 
+class TMDBClientImpl(customConfig: TMDBClientConfig? = null) : TMDBClient, BaseHttpClient() {
 
-class TMDBClient : BaseHttpClient() {
+	data class TMDBClientConfig(
+		val apiKey: String,
+		val baseUrl: String,
+		val sessionToken: String,
+		val requestToken: String
+	);
 
-	val API_KEY = "api_key"
-	val SESSION_ID = "session_id"
+	private val config: TMDBClientConfig
+	private val apiKeyParam = "api_key"
+	private val sessionIdParam = "session_id"
 
-	fun tmdbConfig(): Either<MissingEnvException, TMDBClientConfig> = either.eager {
-		val apiKey = configProvider.getValue("MOVIE_DB_API_KEY").bind()
-		val sessionToken = configProvider.getValue("MOVIE_DB_SESSION_TOKEN").bind()
-		val requestToken = configProvider.getValue("MOVIE_DB_REQUEST_TOKEN").bind()
-
-		return@eager TMDBClientConfig(apiKey, sessionToken, requestToken)
+	init {
+		config = customConfig ?: defaultConfig()
 	}
 
-	suspend inline fun <reified T> exec(builder: HttpRequestBuilder): Either<TMDBClientError, Pair<T, HttpResponse>> =
-		tmdbConfig().mapLeft { envException ->
-			return when (envException) {
-				is MissingEnvException.NullKey -> TMDBClientError.MissingConfig(envException.missingKey).left()
-			}
-		}.flatMap { config ->
-			builder.parameter(API_KEY, config.apiKey)
-			builder.parameter(SESSION_ID, config.sessionToken)
-			makeRequest<T>(builder)
-		}.mapLeft { error ->
-			TMDBClientError.RequestError(error.message)
+	private fun defaultConfig(): TMDBClientConfig {
+		val env: EnvironmentValues by inject(EnvironmentValues::class.java)
+		val apiKey = env.tmdbApiKey
+		val baseUrl = TMDB_BASE_URL
+		val sessionToken = env.tmdbSessionToken
+		val requestToken = env.tmdbRequestToken
+		return TMDBClientConfig(apiKey, baseUrl, sessionToken, requestToken)
+	}
+
+	override val client = createResourceClient {
+		url {
+			host = config.baseUrl
+			parameters.append(apiKeyParam, config.apiKey)
+			parameters.append(sessionIdParam, config.sessionToken)
 		}
+	}
+
 }
+

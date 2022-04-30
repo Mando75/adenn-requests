@@ -68,6 +68,7 @@ kotlin {
 				// KTOR
 				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
+				implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")

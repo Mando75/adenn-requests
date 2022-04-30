@@ -4,17 +4,19 @@ import arrow.core.Either
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import net.bmuller.application.config.ConfigProvider
+import net.bmuller.application.config.EnvironmentValues
 import org.koin.java.KoinJavaComponent.inject
 
 abstract class BaseHttpClient {
-	protected val configProvider: ConfigProvider by inject(ConfigProvider::class.java)
+	protected val env: EnvironmentValues by inject(EnvironmentValues::class.java)
 
 	private val defaultJsonBuilder = Json {
 		encodeDefaults = true
@@ -27,6 +29,20 @@ abstract class BaseHttpClient {
 			json(jsonBuilder)
 		}
 	}
+
+	fun createResourceClient(
+		jsonBuilder: Json = defaultJsonBuilder,
+		defaultRequestBlock: DefaultRequest.DefaultRequestBuilder.() -> Unit
+	) = HttpClient(CIO) {
+		install(Resources)
+		install(ContentNegotiation) {
+			json(jsonBuilder)
+		}
+		install(DefaultRequest) {
+			defaultRequestBlock()
+		}
+	}
+
 
 	suspend inline fun <reified TReturnType> makeRequest(
 		builder: HttpRequestBuilder,
