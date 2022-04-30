@@ -9,9 +9,10 @@ import net.bmuller.application.http.tmdb.TMDBConfigurationResult
 import net.bmuller.application.http.tmdb.TVShowSearchResults
 
 
+@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/3")
-class TMDBResources() {
+class TMDBResources {
 	@kotlinx.serialization.Serializable
 	@Resource("search")
 	class Search(val parent: TMDBResources = TMDBResources()) {

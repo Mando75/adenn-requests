@@ -6,6 +6,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/media-items")
 class MediaItemResource {

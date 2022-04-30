@@ -15,7 +15,6 @@ class EnvironmentValues {
 
 	// MOVIE DB
 	val tmdbApiKey: String = env["MOVIE_DB_API_KEY"]
-	val tmdbListId: String = env["MOVIE_DB_LIST_ID"]
 	val tmdbRequestToken: String = env["MOVIE_DB_REQUEST_TOKEN"]
 	val tmdbSessionToken: String = env["MOVIE_DB_SESSION_TOKEN"]
 

@@ -11,8 +11,6 @@ import net.bmuller.application.http.plex.PlexClientHeaders
 import net.bmuller.application.http.plex.PlexCodeResponse
 
 interface PlexAuthPinRepository {
-	private val DEFAULT_MAX_RETRIES: Int
-		get() = 60
 
 	suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse>
 	suspend fun pollForAuthToken(
@@ -20,8 +18,13 @@ interface PlexAuthPinRepository {
 		clientHeaders: PlexClientHeaders,
 		retries: Int = DEFAULT_MAX_RETRIES
 	): Either<Throwable, String?>
+
+	companion object {
+		private const val DEFAULT_MAX_RETRIES = 60
+	}
 }
 
+@Suppress("unused")
 @Resource("/api")
 @kotlinx.serialization.Serializable
 class AuthPinResources {
@@ -42,7 +45,9 @@ class AuthPinResources {
 
 class PlexAuthPinRepositoryImpl : BaseRepository(), PlexAuthPinRepository {
 
-	private val POLL_DELAY = 1500L
+	companion object {
+		private const val POLL_DELAY = 1500L
+	}
 
 	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse> = Either.catch {
 		val response = plex.pinClient.post(AuthPinResources.V2.Pins()) {
@@ -80,4 +85,5 @@ class PlexAuthPinRepositoryImpl : BaseRepository(), PlexAuthPinRepository {
 			append("X-Plex-version", clientHeaders.version)
 		}
 	}
+
 }

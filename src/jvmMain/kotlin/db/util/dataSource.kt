@@ -1,4 +1,4 @@
-package db
+package db.util
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

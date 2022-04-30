@@ -10,6 +10,7 @@ import net.bmuller.application.plugins.inject
 import net.bmuller.application.service.plexauthservice.PlexOAuthService
 
 
+@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/auth")
 class AuthResource {

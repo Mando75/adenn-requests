@@ -18,6 +18,7 @@ import org.koin.dsl.KoinAppDeclaration
  *
  * Checkout this thread https://github.com/InsertKoinIO/koin/issues/1295
  */
+@Suppress("unused")
 inline fun <reified T : Any> ApplicationCall.inject(
 	qualifier: Qualifier? = null, noinline parameters: ParametersDefinition? = null
 ) = lazy { get<T>(qualifier, parameters) }
@@ -30,12 +31,14 @@ fun <T : Any> ApplicationCall.getProperty(key: String) = getKoin().getProperty<T
 
 fun ApplicationCall.getProperty(key: String, defaultValue: String) = getKoin().getProperty(key) ?: defaultValue
 
+@Suppress("unused")
 fun ApplicationCall.getKoin() = GlobalContext.get()
 
 val KoinApplicationStarted = EventDefinition<KoinApplication>()
 val KoinApplicationStopPreparing = EventDefinition<KoinApplication>()
 val KoinApplicationStopped = EventDefinition<KoinApplication>()
 
+@Suppress("unused")
 fun Application.getKoin(): Koin = GlobalContext.get()
 
 inline fun <reified T : Any> Application.inject(
@@ -62,8 +65,10 @@ fun <T : Any> Route.getProperty(key: String) = getKoin().getProperty<T>(key)
 
 fun Route.getProperty(key: String, defaultValue: String) = getKoin().getProperty(key) ?: defaultValue
 
+@Suppress("unused")
 fun Route.getKoin() = GlobalContext.get()
 
+@Suppress("unused")
 inline fun <reified T : Any> Routing.inject(
 	qualifier: Qualifier? = null, noinline parameters: ParametersDefinition? = null
 ) = lazy { get<T>(qualifier, parameters) }
@@ -76,6 +81,7 @@ fun <T : Any> Routing.getProperty(key: String) = getKoin().getProperty<T>(key)
 
 inline fun <reified T> Routing.getProperty(key: String, defaultValue: T) = getKoin().getProperty(key) ?: defaultValue
 
+@Suppress("unused")
 fun Routing.getKoin() = GlobalContext.get()
 
 class KoinConfig {

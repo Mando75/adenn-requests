@@ -8,8 +8,10 @@ import net.bmuller.application.http.plex.PlexClientHeaders
 
 class PlexOAuthService : BaseService() {
 
-	private val PLEX_AUTH_HOST = "app.plex.tv"
-	private val PLEX_AUTH_PATH = "/auth"
+	companion object {
+		private const val PLEX_AUTH_HOST = "app.plex.tv"
+		private const val PLEX_AUTH_PATH = "/auth"
+	}
 
 	data class PlexClientDetails(
 		val headers: PlexClientHeaders = PlexClientHeaders(),
