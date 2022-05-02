@@ -4,14 +4,24 @@ import arrow.core.Either
 import arrow.core.computations.either
 import arrow.core.left
 import io.ktor.http.*
+import io.ktor.server.util.*
 import net.bmuller.application.entities.PlexClientHeaders
 import net.bmuller.application.repository.PollForAuthTokenError
 
+/**
+ * Class for implementing Plex OAuth Flow
+ * For reference: https://forums.plex.tv/t/authenticating-with-plex/609370
+ */
 class PlexOAuthService : BaseService() {
 
 	companion object {
 		private const val PLEX_AUTH_HOST = "app.plex.tv"
-		private const val PLEX_AUTH_PATH = "/auth"
+		private const val PLEX_AUTH_PATH = "auth"
+		private val plexApiUrl = url {
+			protocol = URLProtocol.HTTPS
+			host = PLEX_AUTH_HOST
+			path(PLEX_AUTH_PATH)
+		}
 	}
 
 	data class PlexClientDetails(
@@ -25,13 +35,25 @@ class PlexOAuthService : BaseService() {
 	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse> =
 		either {
 			val pin = plexAuthPinRepository.getPin(clientInfo.headers).bind()
-			val forwardUrl = Url(clientInfo.forwardUrl + "?pinId=${pin.id}").toString()
 
-			val loginUrl =
-				"https://$PLEX_AUTH_HOST/$PLEX_AUTH_PATH/#!?code=${pin.code}" +
-						"&context[device][product]=${clientInfo.headers.product}" +
-						"&context[device][device]=${clientInfo.headers.device}" +
-						"&clientID=${pin.clientIdentifier}" + "&forwardUrl=$forwardUrl"
+			val forwardUrlParams: Parameters = Parameters.build {
+				append("pinId", pin.id.toString())
+			}
+
+			val forwardUrl = Url("${clientInfo.forwardUrl}?${forwardUrlParams.formUrlEncode()}").toString()
+
+
+			val loginParameters: Parameters = Parameters.build {
+				append("code", pin.code)
+				append("context[device][product]", clientInfo.headers.product)
+				append("context[device][device]", clientInfo.headers.device)
+				append("clientID", pin.clientIdentifier)
+				append("forwardUrl", forwardUrl)
+			}
+			// Wanted to use the URL constructor for this, but I couldn't find a
+			// way to add the anchor tag without it being encoded.
+			// Plex uses the anchor tag to indicate it should parse the url params
+			val loginUrl = "$plexApiUrl#!?${loginParameters.formUrlEncode()}"
 
 
 			return@either LoginUrlResponse(loginUrl, pin.id)
