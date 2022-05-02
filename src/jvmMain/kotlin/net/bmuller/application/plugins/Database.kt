@@ -6,5 +6,5 @@ import org.jetbrains.exposed.sql.name
 
 fun Application.configureDatabase() {
 	val db: Database by inject()
-	log.info("Connected to database ${db.name}")
+	environment.log.info("Connected to database ${db.name}")
 }
