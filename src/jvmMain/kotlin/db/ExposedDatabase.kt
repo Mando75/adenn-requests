@@ -16,7 +16,7 @@ class ExposedDatabase {
 		val password = env.postgresPassword
 
 		val url = "jdbc:postgresql://$host:$port/$database"
-		val cleanDB = false
+		val cleanDB = true
 
 		return Database.connect(
 			dataSource(url, user, password)

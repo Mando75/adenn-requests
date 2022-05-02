@@ -1,10 +1,11 @@
-package net.bmuller.application.service.plexauthservice
+package net.bmuller.application.service
 
 import arrow.core.Either
 import arrow.core.computations.either
 import arrow.core.left
 import io.ktor.http.*
-import net.bmuller.application.http.plex.PlexClientHeaders
+import net.bmuller.application.entities.PlexClientHeaders
+import net.bmuller.application.repository.PollForAuthTokenError
 
 class PlexOAuthService : BaseService() {
 
@@ -37,18 +38,23 @@ class PlexOAuthService : BaseService() {
 		}
 
 	sealed class CheckForAuthTokenError {
+		object TimedOutWaitingForToken : CheckForAuthTokenError()
 		object MissingPinId : CheckForAuthTokenError()
 		data class Unknown(val message: String?) : CheckForAuthTokenError()
 	}
 
 	suspend fun checkForAuthToken(
 		pinId: Long?, clientInfo: PlexClientHeaders = PlexClientHeaders()
-	): Either<CheckForAuthTokenError, String?> {
+	): Either<CheckForAuthTokenError, String> {
 		if (pinId == null || pinId == 0L) {
 			return CheckForAuthTokenError.MissingPinId.left()
 		}
 		return plexAuthPinRepository.pollForAuthToken(pinId, clientInfo)
-			.mapLeft { error -> CheckForAuthTokenError.Unknown(error.message) }
+			.mapLeft { error ->
+				when (error) {
+					is PollForAuthTokenError.TimedOut -> CheckForAuthTokenError.TimedOutWaitingForToken
+					is PollForAuthTokenError.Unknown -> CheckForAuthTokenError.Unknown(error.message)
+				}
+			}
 	}
-
 }

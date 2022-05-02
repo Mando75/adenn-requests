@@ -14,18 +14,21 @@ object UserTable : IntIdTable("users") {
 		DEFAULT
 	}
 
+	// User metadata
 	val plexUsername: Column<String> = text("plex_username").uniqueIndex()
 	val plexId: Column<String> = text("plex_id").uniqueIndex()
 	val plexToken: Column<String> = text("plex_token").uniqueIndex()
 	val email: Column<String> = text("email").uniqueIndex()
 	val userType: Column<UserType> = postgresEnumeration("user_type", "User_Type_Enum")
 
+	// User request data
 	val requestCount: Column<Int> = integer("request_count").default(0)
 	val movieQuotaLimit: Column<Int> = integer("movie_quota_limit").default(5)
 	val movieQuotaDays: Column<Int> = integer("movie_quota_days").default(1)
 	val tvQuotaLimit: Column<Int> = integer("tv_quota_limit").default(5)
 	val tvQuotaDays: Column<Int> = integer("tv_quota_days").default(1)
 
+	// Table meta
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
 	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
 }

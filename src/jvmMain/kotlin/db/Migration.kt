@@ -7,6 +7,6 @@ fun migrate(cleanDB: Boolean, jdbcUrl: String, username: String, password: Strin
 
 	if (cleanDB) {
 		flyway.clean()
-		flyway.migrate()
 	}
+	flyway.migrate()
 }

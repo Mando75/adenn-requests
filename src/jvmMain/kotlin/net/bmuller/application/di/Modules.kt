@@ -2,15 +2,13 @@ package net.bmuller.application.di
 
 import db.ExposedDatabase
 import net.bmuller.application.config.EnvironmentValues
-import net.bmuller.application.http.plex.PlexClient
-import net.bmuller.application.http.plex.PlexClientImpl
-import net.bmuller.application.http.tmdb.TMDBClient
-import net.bmuller.application.http.tmdb.TMDBClientImpl
-import net.bmuller.application.repository.PlexAuthPinRepository
-import net.bmuller.application.repository.PlexAuthPinRepositoryImpl
-import net.bmuller.application.repository.TMDBRepository
-import net.bmuller.application.repository.TMDBRepositoryImpl
-import net.bmuller.application.service.plexauthservice.PlexOAuthService
+import net.bmuller.application.http.PlexClient
+import net.bmuller.application.http.PlexClientImpl
+import net.bmuller.application.http.TMDBClient
+import net.bmuller.application.http.TMDBClientImpl
+import net.bmuller.application.repository.*
+import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthService
 import org.koin.dsl.module
 
 val envModule = module {
@@ -29,8 +27,10 @@ val httpModule = module {
 val repoModule = module {
 	single<TMDBRepository> { TMDBRepositoryImpl() }
 	single<PlexAuthPinRepository> { PlexAuthPinRepositoryImpl() }
+	single<PlexTVRepository> { PlexTVRepositoryImpl() }
 }
 
 val serviceModule = module {
 	single { PlexOAuthService() }
+	single { UserAuthService() }
 }

@@ -1,5 +1,6 @@
 package net.bmuller.application.routing.v1
 
+import arrow.core.flatMap
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
@@ -7,7 +8,8 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import net.bmuller.application.plugins.inject
-import net.bmuller.application.service.plexauthservice.PlexOAuthService
+import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthService
 
 
 @Suppress("unused")
@@ -30,6 +32,7 @@ class AuthResource {
 
 fun Route.auth() {
 	val plexOAuthService: PlexOAuthService by inject()
+	val userAuthService: UserAuthService by inject()
 
 	get<AuthResource.Plex.LoginUrl> {
 		val clientDetails =
@@ -49,18 +52,16 @@ fun Route.auth() {
 				when (error) {
 					is PlexOAuthService.CheckForAuthTokenError.MissingPinId ->
 						call.respond(HttpStatusCode.BadRequest, "Missing or invalid pinId")
+					is PlexOAuthService.CheckForAuthTokenError.TimedOutWaitingForToken ->
+						call.respond(HttpStatusCode.RequestTimeout, mapOf("msg" to "Timed out waiting for token"))
 					is PlexOAuthService.CheckForAuthTokenError.Unknown -> {
 						call.application.environment.log.error(error.message)
 						call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
 					}
 				}
-			}.map { token ->
-				when (token) {
-					is String ->
-						call.respond(HttpStatusCode.OK, mapOf("token" to token))
-					else ->
-						call.respond(HttpStatusCode.RequestTimeout, mapOf("msg" to "Timed out waiting for token"))
-				}
 			}
+			.flatMap { token -> userAuthService.getPlexUser(token) }
+			.map { user -> call.respond(HttpStatusCode.OK, user) }
+			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
 	}
 }

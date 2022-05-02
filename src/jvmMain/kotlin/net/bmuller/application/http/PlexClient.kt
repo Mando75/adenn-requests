@@ -1,11 +1,12 @@
-package net.bmuller.application.http.plex
+package net.bmuller.application.http
 
 import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.http.*
-import net.bmuller.application.http.BaseHttpClient
+import kotlinx.serialization.json.Json
 
 interface PlexClient {
-	val pinClient: HttpClient
+	val client: HttpClient
 }
 
 const val PLEX_PIN_HOST = "plex.tv"
@@ -27,11 +28,19 @@ class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(),
 		host = PLEX_PIN_HOST,
 	)
 
-	override val pinClient = createClient {
+	private val jsonBuilder = Json {
+		encodeDefaults = true
+		ignoreUnknownKeys = true
+		prettyPrint = true
+		isLenient = true
+	}
+
+	override val client = createClient(jsonBuilder) {
 		url {
 			host = config.host
 			protocol = URLProtocol.HTTPS
 		}
 		contentType(ContentType.Application.Json)
+		accept(ContentType.Application.Json)
 	}
 }

@@ -1,7 +1,7 @@
 package net.bmuller.application.repository
 
-import net.bmuller.application.http.plex.PlexClient
-import net.bmuller.application.http.tmdb.TMDBClient
+import net.bmuller.application.http.PlexClient
+import net.bmuller.application.http.TMDBClient
 import org.jetbrains.exposed.sql.Database
 import org.koin.java.KoinJavaComponent.inject
 

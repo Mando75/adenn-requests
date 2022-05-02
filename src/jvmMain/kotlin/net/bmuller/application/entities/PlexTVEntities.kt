@@ -1,4 +1,4 @@
-package net.bmuller.application.http.plex
+package net.bmuller.application.entities
 
 import kotlinx.serialization.SerialName
 
@@ -34,4 +34,39 @@ data class PlexClientHeaders(
 	val device: String = "Web",
 	val version: String = "0.0.1",
 	val platform: String = "Web"
+)
+
+@kotlinx.serialization.Serializable
+data class PlexAccountResponse(
+	val user: PlexUser
+)
+
+@kotlinx.serialization.Serializable
+data class PlexUser(
+	val id: Long,
+	val uuid: String,
+	val email: String,
+	@SerialName("joined_at")
+	val joinedAt: String,
+	val username: String,
+	val title: String,
+	val thumb: String,
+	val hasPassword: String,
+	val authToken: String,
+	val subscription: PlexUserSubscription,
+	val roles: PlexUserRoles,
+	val entitlements: List<String>
+)
+
+@kotlinx.serialization.Serializable
+data class PlexUserRoles(
+	val roles: List<String>
+)
+
+@kotlinx.serialization.Serializable
+data class PlexUserSubscription(
+	val active: Boolean,
+	val status: String,
+	val plan: String,
+	val features: List<String>
 )

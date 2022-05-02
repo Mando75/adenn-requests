@@ -1,14 +1,21 @@
 package net.bmuller.application.repository
 
 import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.resources.*
 import kotlinx.coroutines.delay
-import net.bmuller.application.http.plex.PlexClientHeaders
-import net.bmuller.application.http.plex.PlexCodeResponse
+import net.bmuller.application.entities.PlexClientHeaders
+import net.bmuller.application.entities.PlexCodeResponse
+
+sealed class PollForAuthTokenError {
+	data class Unknown(val message: String?) : PollForAuthTokenError()
+	object TimedOut : PollForAuthTokenError()
+}
 
 interface PlexAuthPinRepository {
 
@@ -17,7 +24,7 @@ interface PlexAuthPinRepository {
 		pinId: Long,
 		clientHeaders: PlexClientHeaders,
 		retries: Int = DEFAULT_MAX_RETRIES
-	): Either<Throwable, String?>
+	): Either<PollForAuthTokenError, String>
 
 	companion object {
 		private const val DEFAULT_MAX_RETRIES = 60
@@ -50,7 +57,7 @@ class PlexAuthPinRepositoryImpl : BaseRepository(), PlexAuthPinRepository {
 	}
 
 	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse> = Either.catch {
-		val response = plex.pinClient.post(AuthPinResources.V2.Pins()) {
+		val response = plex.client.post(AuthPinResources.V2.Pins()) {
 			parameter("strong", true)
 			headers(buildHeaders(clientHeaders))
 		}
@@ -61,20 +68,23 @@ class PlexAuthPinRepositoryImpl : BaseRepository(), PlexAuthPinRepository {
 		pinId: Long,
 		clientHeaders: PlexClientHeaders,
 		retries: Int
-	): Either<Throwable, String?> =
-		Either.catch {
-			repeat(retries) {
-				val response = plex.pinClient.get(AuthPinResources.V2.Pins.ID(id = pinId)) {
+	): Either<PollForAuthTokenError, String> {
+		repeat(retries) {
+			try {
+				val response = plex.client.get(AuthPinResources.V2.Pins.ID(id = pinId)) {
 					headers(buildHeaders(clientHeaders))
 				}
 				val pin = response.body<PlexCodeResponse>()
 				if (pin.authToken !== null) {
-					return@catch pin.authToken
+					return pin.authToken.right()
 				}
 				delay(POLL_DELAY)
+			} catch (e: Throwable) {
+				return PollForAuthTokenError.Unknown(e.message).left()
 			}
-			return@catch null
 		}
+		return PollForAuthTokenError.TimedOut.left()
+	}
 
 	private fun buildHeaders(clientHeaders: PlexClientHeaders): HeadersBuilder.() -> Unit {
 		return {

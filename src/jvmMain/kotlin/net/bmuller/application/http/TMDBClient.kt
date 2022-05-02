@@ -1,9 +1,9 @@
-package net.bmuller.application.http.tmdb
+package net.bmuller.application.http
 
 import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.http.*
 import net.bmuller.application.config.EnvironmentValues
-import net.bmuller.application.http.BaseHttpClient
 import org.koin.java.KoinJavaComponent.inject
 
 const val TMDB_HOST = "api.themoviedb.org"
@@ -46,6 +46,7 @@ class TMDBClientImpl(customConfig: TMDBClientConfig? = null) : TMDBClient, BaseH
 			parameters.append(sessionIdParam, config.sessionToken)
 		}
 		contentType(ContentType.Application.Json)
+		accept(ContentType.Application.Json)
 	}
 
 }

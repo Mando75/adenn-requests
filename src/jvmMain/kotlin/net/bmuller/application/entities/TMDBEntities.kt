@@ -1,4 +1,4 @@
-package net.bmuller.application.http.tmdb
+package net.bmuller.application.entities
 
 import kotlinx.serialization.SerialName
 
