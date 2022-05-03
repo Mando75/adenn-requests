@@ -60,8 +60,8 @@ fun Route.auth() {
 					}
 				}
 			}
-			.flatMap { token -> userAuthService.getPlexUser(token) }
-			.map { user -> call.respond(HttpStatusCode.OK, user) }
+			.flatMap { token -> userAuthService.registerNewUser(token) }
+			.map { user -> call.respond(HttpStatusCode.OK, user.value) }
 			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
 	}
 }
