@@ -1,22 +1,19 @@
 package db.tables
 
 import db.util.postgresEnumeration
+import entities.UserEntity
+import entities.UserType
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
 @Suppress("unused")
 object UserTable : IntIdTable("users") {
-
-	enum class UserType {
-		ADMIN,
-		DEFAULT
-	}
-
 	// User metadata
 	val plexUsername: Column<String> = text("plex_username").uniqueIndex()
-	val plexId: Column<String> = text("plex_id").uniqueIndex()
+	val plexId: Column<Int> = integer("plex_id").uniqueIndex()
 	val plexToken: Column<String> = text("plex_token").uniqueIndex()
 	val email: Column<String> = text("email").uniqueIndex()
 	val userType: Column<UserType> = postgresEnumeration("user_type", "User_Type_Enum")
@@ -31,4 +28,21 @@ object UserTable : IntIdTable("users") {
 	// Table meta
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
 	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
+}
+
+fun ResultRow.toUserEntity(): UserEntity {
+	return UserEntity(
+		id = get(UserTable.id).value,
+		plexUsername = get(UserTable.plexUsername),
+		plexToken = get(UserTable.plexToken),
+		email = get(UserTable.email),
+		userType = get(UserTable.userType),
+		requestCount = get(UserTable.requestCount),
+		movieQuotaLimit = get(UserTable.movieQuotaLimit),
+		movieQuotaDays = get(UserTable.movieQuotaDays),
+		tvQuotaLimit = get(UserTable.tvQuotaLimit),
+		tvQuotaDays = get(UserTable.tvQuotaDays),
+		createdAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.createdAt).epochSecond),
+		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond)
+	)
 }
