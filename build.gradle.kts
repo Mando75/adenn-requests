@@ -21,6 +21,7 @@ val flywayVersion = "8.5.9"
 val hikariVersion = "5.0.1"
 val dotenvVersion = "6.2.2"
 val koinVersion = "3.1.6"
+val kotlinxDateTimeVersion = "0.3.2"
 
 repositories {
 	mavenCentral()
@@ -51,6 +52,7 @@ kotlin {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
 			}
 		}
 

@@ -43,7 +43,7 @@ data class PlexAccountResponse(
 
 @kotlinx.serialization.Serializable
 data class PlexUser(
-	val id: Long,
+	val id: Int,
 	val uuid: String,
 	val email: String,
 	@SerialName("joined_at")
