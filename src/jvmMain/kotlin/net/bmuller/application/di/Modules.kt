@@ -28,6 +28,7 @@ val repoModule = module {
 	single<TMDBRepository> { TMDBRepositoryImpl() }
 	single<PlexAuthPinRepository> { PlexAuthPinRepositoryImpl() }
 	single<PlexTVRepository> { PlexTVRepositoryImpl() }
+	single<UserRepository> { UserRepositoryImpl() }
 }
 
 val serviceModule = module {
