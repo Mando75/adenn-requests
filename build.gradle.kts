@@ -79,6 +79,8 @@ kotlin {
 				implementation("io.ktor:ktor-server-cors:$ktorVersion")
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
+				implementation("io.ktor:ktor-server-auth:$ktorVersion")
+				implementation("io.ktor:ktor-server-sessions:$ktorVersion")
 				// Database
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 				implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

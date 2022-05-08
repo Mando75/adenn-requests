@@ -1,12 +1,13 @@
 package net.bmuller.application.routing.v1
 
-import arrow.core.flatMap
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import net.bmuller.application.entities.UserSession
 import net.bmuller.application.plugins.inject
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthService
@@ -60,8 +61,11 @@ fun Route.auth() {
 					}
 				}
 			}
-			.flatMap { token -> userAuthService.registerNewUser(token) }
-			.map { user -> call.respond(HttpStatusCode.OK, user.value) }
-			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
+			.map { authToken ->
+				val user = userAuthService.authFlow(authToken)
+				call.sessions.set(UserSession(user.id, user.plexUsername))
+				call.respondRedirect("/?login=success")
+			}
+
 	}
 }
