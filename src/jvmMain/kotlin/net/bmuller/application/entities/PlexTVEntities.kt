@@ -70,3 +70,49 @@ data class PlexUserSubscription(
 	val plan: String,
 	val features: List<String>
 )
+
+@kotlinx.serialization.Serializable
+data class PlexFriendsResponse(
+	@SerialName("MediaContainer")
+	val mediaContainer: PlexMediaContainer
+)
+
+@kotlinx.serialization.Serializable
+data class PlexMediaContainer(
+	@SerialName("User")
+	val user: List<PlexMediaContainerUserWrapper>
+)
+
+@kotlinx.serialization.Serializable
+data class PlexMediaContainerUserWrapper(
+	@SerialName("$")
+	val userWrapper: PlexMediaContainerUser,
+	@SerialName("Server")
+	val server: ServerResponseWrapper?
+)
+
+@kotlinx.serialization.Serializable
+data class PlexMediaContainerUser(
+	val id: String,
+	val title: String,
+	val username: String,
+	val email: String,
+	val thumb: String
+)
+
+@kotlinx.serialization.Serializable
+data class ServerResponseWrapper(
+	@SerialName("$")
+	val serverWrapper: ServerResponse
+)
+
+@kotlinx.serialization.Serializable
+data class ServerResponse(
+	val id: String,
+	val serverId: String,
+	val machineIdentifier: String,
+	val name: String,
+	val lastSeenAt: String,
+	val numLibraries: String,
+	val owned: String
+)
