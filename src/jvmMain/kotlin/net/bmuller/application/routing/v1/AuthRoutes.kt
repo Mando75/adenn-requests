@@ -29,6 +29,10 @@ class AuthResource {
 		@Resource("callback")
 		class Callback(val parent: Plex = Plex(), val pinId: String)
 	}
+
+	@kotlinx.serialization.Serializable
+	@Resource("logout")
+	class Logout(val parent: AuthResource = AuthResource())
 }
 
 fun Route.auth() {
@@ -63,9 +67,13 @@ fun Route.auth() {
 			}
 			.map { authToken ->
 				val user = userAuthService.authFlow(authToken)
-				call.sessions.set(UserSession(user.id, user.plexUsername))
+				call.sessions.set(UserSession(user.id, user.plexUsername, authToken))
 				call.respondRedirect("/?login=success")
 			}
+	}
 
+	get<AuthResource.Logout> {
+		call.sessions.clear<UserSession>()
+		call.respondRedirect("/")
 	}
 }

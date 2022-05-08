@@ -6,6 +6,8 @@ import io.github.cdimascio.dotenv.dotenv
 class EnvironmentValues {
 	private val env = dotenv()
 
+	val prod: Boolean = env["PROD"].toBoolean()
+
 	// Database
 	val postgresUser: String = env["POSTGRES_USER"]
 	val postgresPassword: String = env["POSTGRES_PASSWORD"]
@@ -18,4 +20,7 @@ class EnvironmentValues {
 	val tmdbRequestToken: String = env["MOVIE_DB_REQUEST_TOKEN"]
 	val tmdbSessionToken: String = env["MOVIE_DB_SESSION_TOKEN"]
 
+	// SESSION
+	val sessionSecretEncryptKey: String = env["SESSION_SECRET_ENCRYPT_KEY"]
+	val sessionSignKey: String = env["SESSION_SIGN_KEY"]
 }
