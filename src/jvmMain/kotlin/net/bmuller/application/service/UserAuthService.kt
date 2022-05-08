@@ -6,14 +6,13 @@ import net.bmuller.application.repository.NewUser
 
 class UserAuthService : BaseService() {
 
-	suspend fun authFlow(authToken: String) {
+	suspend fun authFlow(authToken: String): UserEntity {
 		val plexUser = plexTVRepository.getUser(authToken)
 		val existingUser = userRepository.getUserByPlexId(plexUserId = plexUser.id)
-		val sessionUser: UserEntity = existingUser ?: registerNewUser(plexUser)
-		createUserSession(sessionUser)
+		return existingUser ?: registerNewUser(plexUser)
 	}
 
-	suspend fun registerNewUser(plexUser: PlexUser): UserEntity {
+	private suspend fun registerNewUser(plexUser: PlexUser): UserEntity {
 		val newUser = NewUser(
 			plexUsername = plexUser.username,
 			plexId = plexUser.id,
@@ -21,9 +20,5 @@ class UserAuthService : BaseService() {
 			email = plexUser.email,
 		)
 		return userRepository.createAndReturnUser(newUser)
-	}
-
-	fun createUserSession(user: UserEntity) {
-		TODO("Not Implemented")
 	}
 }

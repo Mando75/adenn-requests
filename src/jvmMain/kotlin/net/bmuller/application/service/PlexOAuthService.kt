@@ -79,4 +79,17 @@ class PlexOAuthService : BaseService() {
 				}
 			}
 	}
+
+	suspend fun validateAuthToken(userId: Int, username: String): Boolean {
+		return userRepository
+			.getUserPlexToken(userId)
+			?.let { token ->
+				try {
+					val plexUser = plexTVRepository.getUser(token)
+					plexUser.username == username
+				} catch (e: Throwable) {
+					false
+				}
+			} ?: false
+	}
 }

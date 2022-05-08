@@ -18,10 +18,13 @@ data class NewUser(
 )
 
 interface UserRepository {
+	suspend fun createAndReturnUser(newUser: NewUser): UserEntity
 	suspend fun getUserById(userId: Int): UserEntity?
 	suspend fun getUserByPlexId(plexUserId: Int): UserEntity?
-	suspend fun createAndReturnUser(newUser: NewUser): UserEntity
+
+	suspend fun getUserPlexToken(userId: Int): String?
 	suspend fun updatePlexToken(userId: Int, plexToken: String): Int
+
 }
 
 class UserRepositoryImpl : BaseRepository(), UserRepository {
@@ -36,7 +39,7 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 		UserTable.movieQuotaLimit,
 		UserTable.movieQuotaDays,
 		UserTable.tvQuotaDays,
-		UserTable.tvQuotaDays,
+		UserTable.tvQuotaLimit,
 		UserTable.createdAt,
 		UserTable.modifiedAt
 	)
@@ -53,6 +56,13 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 			UserTable.slice(defaultUserSlice).select { UserTable.plexId eq plexUserId }.singleOrNull()
 		}
 		return user?.toUserEntity()
+	}
+
+	override suspend fun getUserPlexToken(userId: Int): String? {
+		val result = newSuspendedTransaction(Dispatchers.IO, db) {
+			UserTable.slice(UserTable.plexToken).select { UserTable.id eq userId }.singleOrNull()
+		}
+		return result?.get(UserTable.plexToken)
 	}
 
 	override suspend fun createAndReturnUser(newUser: NewUser): UserEntity {
