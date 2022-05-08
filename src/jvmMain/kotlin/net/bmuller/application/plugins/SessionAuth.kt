@@ -23,7 +23,7 @@ fun Application.configureSessionAuth() {
 		}
 	}
 	install(Sessions) {
-		cookie<UserSession>("user_session") {
+		cookie<UserSession>("ar.sid") {
 			cookie.path = "/"
 			cookie.httpOnly = true
 			cookie.maxAgeInSeconds = 60 * 60 * 24 * 7

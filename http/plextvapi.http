@@ -1,0 +1,5 @@
+##
+GET https://plex.tv/pms/friends/all
+X-Plex-Token: SqXD5hqi4n2Ks2-xaH-C
+Content-Type: application/json
+Allow: application/json

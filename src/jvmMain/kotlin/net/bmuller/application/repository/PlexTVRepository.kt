@@ -3,10 +3,10 @@ package net.bmuller.application.repository
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.resources.*
 import net.bmuller.application.entities.PlexAccountResponse
 import net.bmuller.application.entities.PlexFriendsResponse
-import net.bmuller.application.entities.PlexMediaContainer
 import net.bmuller.application.entities.PlexUser
 
 @Resource("/")
@@ -35,7 +35,7 @@ class PlexTVResources {
 
 interface PlexTVRepository {
 	suspend fun getUser(authToken: String): PlexUser
-	suspend fun getFriends(authToken: String): PlexMediaContainer
+	suspend fun getFriends(authToken: String): PlexFriendsResponse
 }
 
 class PlexTVRepositoryImpl : BaseRepository(), PlexTVRepository {
@@ -48,11 +48,11 @@ class PlexTVRepositoryImpl : BaseRepository(), PlexTVRepository {
 		return account.user
 	}
 
-	override suspend fun getFriends(authToken: String): PlexMediaContainer {
+	override suspend fun getFriends(authToken: String): PlexFriendsResponse {
 		val response = plex.client.get(PlexTVResources.PMS.Friends.All()) {
 			header("X-Plex-Token", authToken)
+			accept(ContentType.Text.Xml)
 		}
-		val friends: PlexFriendsResponse = response.body()
-		return friends.mediaContainer
+		return response.body()
 	}
 }
