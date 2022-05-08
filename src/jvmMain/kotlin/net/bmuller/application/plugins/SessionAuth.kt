@@ -19,7 +19,7 @@ fun Application.configureSessionAuth() {
 		session<UserSession> {
 			validate { session ->
 				val validAuthToken =
-					plexAuthService.validateAuthToken(session.id, session.plexUsername, session.plexToken)
+					plexAuthService.validateAuthToken(session.id)
 				return@validate if (validAuthToken) session else null
 			}
 			challenge {
