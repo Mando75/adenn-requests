@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import net.bmuller.application.entities.AdminUser
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -44,12 +45,14 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 
 	override suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): UserEntity {
 		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val userType: UserType =
+				if (UserTable.selectAll().limit(1).count() <= 0) UserType.ADMIN else UserType.DEFAULT
 			val id = UserTable.insertAndGetId { user ->
 				user[this.plexUsername] = newUser.plexUsername
 				user[this.plexId] = newUser.plexId
 				user[this.plexToken] = plexToken
 				user[this.email] = newUser.email
-				user[this.userType] = UserType.DEFAULT
+				user[this.userType] = userType
 			}
 			UserTable
 				.slice(defaultUserSlice)
