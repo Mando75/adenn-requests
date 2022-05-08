@@ -11,10 +11,10 @@ import org.jetbrains.exposed.sql.Database
 
 fun Application.configureRouting() {
 	val db: Database by inject()
+
 	routing {
-		get("/") {
-			call.respondText(this::class.java.classLoader.getResource("index.html")!!.readText(), ContentType.Text.Html)
-		}
+		// Configure api routes
+		apiV1()
 
 		get("/health") {
 			if (db.url.isNotEmpty()) {
@@ -23,8 +23,10 @@ fun Application.configureRouting() {
 			return@get call.respond(HttpStatusCode.InternalServerError)
 		}
 
-		// Configure api routes
-		apiV1()
+
+		get("/") {
+			call.respondText(this::class.java.classLoader.getResource("index.html")!!.readText(), ContentType.Text.Html)
+		}
 
 		static("/") {
 			resources("")

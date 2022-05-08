@@ -1,27 +1,72 @@
 package net.bmuller.application.service
 
 import arrow.core.Either
+import arrow.core.computations.either
 import arrow.core.flatMap
-import net.bmuller.application.repository.NewUser
-import org.jetbrains.exposed.dao.id.EntityID
+import arrow.core.left
+import arrow.core.right
+import entities.UserEntity
+import net.bmuller.application.entities.AdminUser
+import net.bmuller.application.entities.PlexUser
+import org.koin.java.KoinJavaComponent.inject
 
-sealed class UserAuthServiceErrors {
-	data class Unknown(val message: String?) : UserAuthServiceErrors()
+sealed class UserAuthErrors {
+	data class CouldNotFetchPlexUser(val error: Throwable) : UserAuthErrors()
+	data class ErrorFetchingUser(val error: Throwable) : UserAuthErrors()
+	data class UserDoesNotHaveServerAccess(val user: PlexUser) : UserAuthErrors()
+	data class CouldNotCreateUser(val error: Throwable) : UserAuthErrors()
 }
 
 class UserAuthService : BaseService() {
 
-	suspend fun registerNewUser(authToken: String): Either<UserAuthServiceErrors.Unknown, EntityID<Int>> =
-		plexTVRepository.getUser(authToken)
-			.mapLeft { error -> UserAuthServiceErrors.Unknown(error.message) }
-			.flatMap { plexUser ->
-				val newUser = NewUser(
-					plexUsername = plexUser.username,
-					plexId = plexUser.id,
-					plexToken = plexUser.authToken,
-					email = plexUser.email,
-				)
-				userRepository.createUser(newUser)
-					.mapLeft { error -> UserAuthServiceErrors.Unknown(error.message) }
-			}
+	private val adminUser: AdminUser by inject(AdminUser::class.java)
+
+	suspend fun validateAuthToken(userId: Int): Boolean {
+		val token = userRepository.getUserPlexToken(userId)
+		return token?.let { true } ?: false
+	}
+
+	suspend fun signInFlow(authToken: String) = either<UserAuthErrors, UserEntity> {
+		val plexUser = getPlexUser(authToken).flatMap { user -> validateUserAccess(user) }.bind()
+
+		return@either getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
+	}
+
+	/**
+	 * Fetch user from plex api
+	 */
+	private suspend fun getPlexUser(authToken: String): Either<UserAuthErrors, PlexUser> =
+		Either.catch { plexTVRepository.getUser(authToken) }
+			.mapLeft { error -> UserAuthErrors.CouldNotFetchPlexUser(error) }
+
+	/**
+	 * Use PlexId to check for an existing user account
+	 */
+	private suspend fun getExistingUser(plexUserId: Int): Either<UserAuthErrors, UserEntity?> =
+		Either.catch { userRepository.getUserByPlexId(plexUserId) }
+			.mapLeft { error -> UserAuthErrors.ErrorFetchingUser(error) }
+
+	/**
+	 * Creates a new user record from an external plex user
+	 */
+	private suspend fun registerNewUser(plexUser: PlexUser): Either<UserAuthErrors, UserEntity> = Either.catch {
+		val newUser = UserEntity(
+			id = 0, plexUsername = plexUser.username, email = plexUser.email, plexId = plexUser.id
+		)
+		return@catch userRepository.createAndReturnUser(plexUser.authToken, newUser)
+	}.mapLeft { error -> UserAuthErrors.CouldNotCreateUser(error) }
+
+	/**
+	 * Validates that a plex user has access to the server
+	 */
+	private suspend fun validateUserAccess(plexUser: PlexUser): Either<UserAuthErrors, PlexUser> {
+		// They are the server owner, they have access
+		if (plexUser.id == adminUser.plexId) return plexUser.right()
+		// Check friends access
+		val friends = plexTVRepository.getFriends(adminUser.plexToken)
+		return friends.users.find { friend -> friend.id == plexUser.id }?.let { friend ->
+			if (friend.server.machineIdentifier === env.plexMachineId) plexUser.right()
+			else UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
+		} ?: UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
+	}
 }

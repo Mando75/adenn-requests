@@ -10,9 +10,12 @@ import net.bmuller.application.repository.*
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthService
 import org.koin.dsl.module
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 val envModule = module {
 	single { EnvironmentValues() }
+	single<Logger> { LoggerFactory.getLogger("Primary") }
 }
 
 val databaseModule = module {
@@ -34,4 +37,8 @@ val repoModule = module {
 val serviceModule = module {
 	single { PlexOAuthService() }
 	single { UserAuthService() }
+}
+
+val adminModule = module {
+	single { UserRepositoryImpl().getAdminUser() }
 }

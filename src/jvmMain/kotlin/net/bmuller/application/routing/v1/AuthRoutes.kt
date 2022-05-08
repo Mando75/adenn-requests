@@ -1,14 +1,17 @@
 package net.bmuller.application.routing.v1
 
-import arrow.core.flatMap
+import arrow.core.computations.either
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import net.bmuller.application.entities.UserSession
 import net.bmuller.application.plugins.inject
 import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthErrors
 import net.bmuller.application.service.UserAuthService
 
 
@@ -28,6 +31,10 @@ class AuthResource {
 		@Resource("callback")
 		class Callback(val parent: Plex = Plex(), val pinId: String)
 	}
+
+	@kotlinx.serialization.Serializable
+	@Resource("logout")
+	class Logout(val parent: AuthResource = AuthResource())
 }
 
 fun Route.auth() {
@@ -46,22 +53,51 @@ fun Route.auth() {
 	}
 
 	get<AuthResource.Plex.Callback> { resource ->
-		val pinId = resource.pinId
-		plexOAuthService.checkForAuthToken(pinId.toLongOrNull())
-			.mapLeft { error ->
-				when (error) {
-					is PlexOAuthService.CheckForAuthTokenError.MissingPinId ->
-						call.respond(HttpStatusCode.BadRequest, "Missing or invalid pinId")
-					is PlexOAuthService.CheckForAuthTokenError.TimedOutWaitingForToken ->
-						call.respond(HttpStatusCode.RequestTimeout, mapOf("msg" to "Timed out waiting for token"))
-					is PlexOAuthService.CheckForAuthTokenError.Unknown -> {
-						call.application.environment.log.error(error.message)
-						call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
+		either<Any, Any> {
+			val pinId = resource.pinId
+			val authToken = plexOAuthService.checkForAuthToken(pinId.toLongOrNull())
+				.mapLeft { error ->
+					val (statusCode, message) = when (error) {
+						is PlexOAuthService.CheckForAuthTokenError.MissingPinId ->
+							Pair(HttpStatusCode.BadRequest, "Missing or invalid pinId")
+						is PlexOAuthService.CheckForAuthTokenError.TimedOutWaitingForToken ->
+							Pair(HttpStatusCode.RequestTimeout, mapOf("msg" to "Timed out waiting for token"))
+						is PlexOAuthService.CheckForAuthTokenError.Unknown -> {
+							call.application.environment.log.error(error.message)
+							Pair(HttpStatusCode.InternalServerError, "An unknown error occurred")
+						}
 					}
-				}
-			}
-			.flatMap { token -> userAuthService.registerNewUser(token) }
-			.map { user -> call.respond(HttpStatusCode.OK, user.value) }
-			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
+					call.respond(statusCode, message)
+				}.bind()
+			val user = userAuthService.signInFlow(authToken)
+				.mapLeft { error ->
+					val (statusCode, message) = when (error) {
+						is UserAuthErrors.CouldNotFetchPlexUser -> Pair(
+							HttpStatusCode.InternalServerError,
+							"Error fetching Plex user data"
+						)
+						is UserAuthErrors.ErrorFetchingUser -> Pair(
+							HttpStatusCode.InternalServerError,
+							"Could not find user data"
+						)
+						is UserAuthErrors.CouldNotCreateUser -> Pair(
+							HttpStatusCode.InternalServerError,
+							"Could not register new user"
+						)
+						is UserAuthErrors.UserDoesNotHaveServerAccess -> Pair(
+							HttpStatusCode.Forbidden,
+							"User does not have access to the Plex server"
+						)
+					}
+					call.respond(statusCode, message)
+				}.bind()
+			call.sessions.set(UserSession(user.id, user.plexUsername))
+			call.respondRedirect("/?login=success")
+		}
+	}
+
+	get<AuthResource.Logout> {
+		call.sessions.clear<UserSession>()
+		call.respondRedirect("/")
 	}
 }

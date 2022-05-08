@@ -6,6 +6,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.xml.*
 import kotlinx.serialization.json.Json
 
 abstract class BaseHttpClient {
@@ -19,9 +20,11 @@ abstract class BaseHttpClient {
 		jsonBuilder: Json = defaultJsonBuilder,
 		defaultRequestBlock: DefaultRequest.DefaultRequestBuilder.() -> Unit
 	) = HttpClient(CIO) {
+		expectSuccess = true
 		install(Resources)
 		install(ContentNegotiation) {
 			json(jsonBuilder)
+			xml()
 		}
 		install(DefaultRequest) {
 			defaultRequestBlock()
