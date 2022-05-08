@@ -1,17 +1,14 @@
 package net.bmuller.application.repository
 
-import arrow.core.Either
-import arrow.core.left
-import arrow.core.right
 import db.tables.UserTable
 import db.tables.toUserEntity
 import entities.UserEntity
 import entities.UserType
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.update
 
 data class NewUser(
 	val plexUsername: String,
@@ -20,42 +17,67 @@ data class NewUser(
 	val email: String,
 )
 
-sealed class UserRepositoryErrors {
-	object RecordNotFound : UserRepositoryErrors()
-	data class Unknown(val message: String?) : UserRepositoryErrors()
-}
-
 interface UserRepository {
-	suspend fun getUserById(userId: Int): Either<UserRepositoryErrors, UserEntity>
-	suspend fun createUser(newUser: NewUser): Either<UserRepositoryErrors.Unknown, EntityID<Int>>
+	suspend fun getUserById(userId: Int): UserEntity?
+	suspend fun getUserByPlexId(plexUserId: Int): UserEntity?
+	suspend fun createAndReturnUser(newUser: NewUser): UserEntity
+	suspend fun updatePlexToken(userId: Int, plexToken: String): Int
 }
 
 class UserRepositoryImpl : BaseRepository(), UserRepository {
-	override suspend fun getUserById(userId: Int): Either<UserRepositoryErrors, UserEntity> {
-		return try {
-			val user = newSuspendedTransaction(Dispatchers.IO, db) {
-				UserTable.select { UserTable.id eq userId }.singleOrNull()
+
+	private val defaultUserSlice = listOf(
+		UserTable.id,
+		UserTable.plexUsername,
+		UserTable.plexId,
+		UserTable.email,
+		UserTable.userType,
+		UserTable.requestCount,
+		UserTable.movieQuotaLimit,
+		UserTable.movieQuotaDays,
+		UserTable.tvQuotaDays,
+		UserTable.tvQuotaDays,
+		UserTable.createdAt,
+		UserTable.modifiedAt
+	)
+
+	override suspend fun getUserById(userId: Int): UserEntity? {
+		val user = newSuspendedTransaction(Dispatchers.IO, db) {
+			UserTable.slice(defaultUserSlice).select { UserTable.id eq userId }.singleOrNull()
+		}
+		return user?.toUserEntity()
+	}
+
+	override suspend fun getUserByPlexId(plexUserId: Int): UserEntity? {
+		val user = newSuspendedTransaction(Dispatchers.IO, db) {
+			UserTable.slice(defaultUserSlice).select { UserTable.plexId eq plexUserId }.singleOrNull()
+		}
+		return user?.toUserEntity()
+	}
+
+	override suspend fun createAndReturnUser(newUser: NewUser): UserEntity {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val id = UserTable.insertAndGetId { user ->
+				user[plexUsername] = newUser.plexUsername
+				user[plexId] = newUser.plexId
+				user[plexToken] = newUser.plexToken
+				user[email] = newUser.email
+				user[userType] = UserType.DEFAULT
 			}
-
-			user?.toUserEntity()?.right() ?: UserRepositoryErrors.RecordNotFound.left()
-		} catch (e: Throwable) {
-			UserRepositoryErrors.Unknown(e.message).left()
+			UserTable
+				.slice(defaultUserSlice)
+				.select { UserTable.id eq id }
+				.single()
+				.toUserEntity()
 		}
 	}
 
-	override suspend fun createUser(newUser: NewUser): Either<UserRepositoryErrors.Unknown, EntityID<Int>> {
-		return try {
-			newSuspendedTransaction(Dispatchers.IO, db) {
-				UserTable.insertAndGetId { user ->
-					user[plexUsername] = newUser.plexUsername
-					user[plexId] = newUser.plexId
-					user[plexToken] = newUser.plexToken
-					user[email] = newUser.email
-					user[userType] = UserType.DEFAULT
-				}
-			}.right()
-		} catch (e: Throwable) {
-			UserRepositoryErrors.Unknown(e.message).left()
+	override suspend fun updatePlexToken(userId: Int, plexToken: String): Int {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			UserTable.update({ UserTable.id eq userId }) { row ->
+				row[UserTable.plexToken] = plexToken
+			}
 		}
 	}
+
 }

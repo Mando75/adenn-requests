@@ -34,7 +34,6 @@ fun ResultRow.toUserEntity(): UserEntity {
 	return UserEntity(
 		id = get(UserTable.id).value,
 		plexUsername = get(UserTable.plexUsername),
-		plexToken = get(UserTable.plexToken),
 		email = get(UserTable.email),
 		userType = get(UserTable.userType),
 		requestCount = get(UserTable.requestCount),

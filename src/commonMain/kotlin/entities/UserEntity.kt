@@ -6,7 +6,6 @@ import kotlinx.datetime.Instant
 data class UserEntity(
 	val id: Int,
 	val plexUsername: String,
-	val plexToken: String,
 	val email: String,
 	val userType: UserType,
 	val requestCount: Int,

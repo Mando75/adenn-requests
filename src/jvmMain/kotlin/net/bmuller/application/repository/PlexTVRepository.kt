@@ -1,6 +1,5 @@
 package net.bmuller.application.repository
 
-import arrow.core.Either
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
@@ -21,17 +20,16 @@ class PlexTVResources {
 }
 
 interface PlexTVRepository {
-	suspend fun getUser(authToken: String): Either<Throwable, PlexUser>
+	suspend fun getUser(authToken: String): PlexUser
 }
 
 class PlexTVRepositoryImpl : BaseRepository(), PlexTVRepository {
 
-	override suspend fun getUser(authToken: String): Either<Throwable, PlexUser> = Either.catch {
+	override suspend fun getUser(authToken: String): PlexUser {
 		val response = plex.client.get(PlexTVResources.Users.Account()) {
 			header("X-Plex-Token", authToken)
 		}
 		val account: PlexAccountResponse = response.body()
-		return@catch account.user
+		return account.user
 	}
-
 }
