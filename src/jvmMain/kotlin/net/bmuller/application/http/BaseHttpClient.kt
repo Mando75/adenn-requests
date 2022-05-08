@@ -20,6 +20,7 @@ abstract class BaseHttpClient {
 		jsonBuilder: Json = defaultJsonBuilder,
 		defaultRequestBlock: DefaultRequest.DefaultRequestBuilder.() -> Unit
 	) = HttpClient(CIO) {
+		expectSuccess = true
 		install(Resources)
 		install(ContentNegotiation) {
 			json(jsonBuilder)
