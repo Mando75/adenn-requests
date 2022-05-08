@@ -79,9 +79,4 @@ class PlexOAuthService : BaseService() {
 				}
 			}
 	}
-
-	suspend fun validateAuthToken(userId: Int): Boolean {
-		val user = userRepository.getUserById(userId)
-		return user?.let { true } ?: false
-	}
 }

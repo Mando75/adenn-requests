@@ -66,7 +66,7 @@ fun Route.auth() {
 				}
 			}
 			.map { authToken ->
-				val user = userAuthService.authFlow(authToken)
+				val user = userAuthService.signInFlow(authToken)
 				call.sessions.set(UserSession(user.id, user.plexUsername))
 				call.respondRedirect("/?login=success")
 			}

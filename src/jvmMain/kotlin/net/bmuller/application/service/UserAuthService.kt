@@ -6,7 +6,12 @@ import net.bmuller.application.repository.NewUser
 
 class UserAuthService : BaseService() {
 
-	suspend fun authFlow(authToken: String): UserEntity {
+	suspend fun validateAuthToken(userId: Int): Boolean {
+		val token = userRepository.getUserPlexToken(userId)
+		return token?.let { true } ?: false
+	}
+
+	suspend fun signInFlow(authToken: String): UserEntity {
 		val plexUser = plexTVRepository.getUser(authToken)
 		val existingUser = userRepository.getUserByPlexId(plexUserId = plexUser.id)
 		return existingUser ?: registerNewUser(plexUser)

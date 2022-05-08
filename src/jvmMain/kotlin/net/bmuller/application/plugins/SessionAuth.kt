@@ -8,18 +8,18 @@ import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.bmuller.application.config.EnvironmentValues
 import net.bmuller.application.entities.UserSession
-import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthService
 
 
 fun Application.configureSessionAuth() {
 	val env: EnvironmentValues by inject()
-	val plexAuthService: PlexOAuthService by inject()
+	val userAuthentication: UserAuthService by inject()
 
 	install(Authentication) {
 		session<UserSession> {
 			validate { session ->
 				val validAuthToken =
-					plexAuthService.validateAuthToken(session.id)
+					userAuthentication.validateAuthToken(session.id)
 				return@validate if (validAuthToken) session else null
 			}
 			challenge {
