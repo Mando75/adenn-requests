@@ -1,24 +1,22 @@
 package net.bmuller.application.repository
 
 import db.tables.UserTable
+import db.tables.toAdminUser
 import db.tables.toUserEntity
 import entities.UserEntity
 import entities.UserType
 import kotlinx.coroutines.Dispatchers
+import net.bmuller.application.entities.AdminUser
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-data class NewUser(
-	val plexUsername: String,
-	val plexId: Int,
-	val plexToken: String,
-	val email: String,
-)
 
 interface UserRepository {
-	suspend fun createAndReturnUser(newUser: NewUser): UserEntity
+	suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): UserEntity
+	fun getAdminUser(): AdminUser
 	suspend fun getUserById(userId: Int): UserEntity?
 	suspend fun getUserByPlexId(plexUserId: Int): UserEntity?
 
@@ -44,6 +42,30 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 		UserTable.modifiedAt
 	)
 
+	override suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): UserEntity {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val id = UserTable.insertAndGetId { user ->
+				user[this.plexUsername] = newUser.plexUsername
+				user[this.plexId] = newUser.plexId
+				user[this.plexToken] = plexToken
+				user[this.email] = newUser.email
+				user[this.userType] = UserType.DEFAULT
+			}
+			UserTable
+				.slice(defaultUserSlice)
+				.select { UserTable.id eq id }
+				.single()
+				.toUserEntity()
+		}
+	}
+
+	override fun getAdminUser(): AdminUser = transaction {
+		UserTable
+			.select { UserTable.userType eq UserType.ADMIN }
+			.single()
+			.toAdminUser()
+	}
+
 	override suspend fun getUserById(userId: Int): UserEntity? {
 		val user = newSuspendedTransaction(Dispatchers.IO, db) {
 			UserTable.slice(defaultUserSlice).select { UserTable.id eq userId }.singleOrNull()
@@ -65,22 +87,6 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 		return result?.get(UserTable.plexToken)
 	}
 
-	override suspend fun createAndReturnUser(newUser: NewUser): UserEntity {
-		return newSuspendedTransaction(Dispatchers.IO, db) {
-			val id = UserTable.insertAndGetId { user ->
-				user[plexUsername] = newUser.plexUsername
-				user[plexId] = newUser.plexId
-				user[plexToken] = newUser.plexToken
-				user[email] = newUser.email
-				user[userType] = UserType.DEFAULT
-			}
-			UserTable
-				.slice(defaultUserSlice)
-				.select { UserTable.id eq id }
-				.single()
-				.toUserEntity()
-		}
-	}
 
 	override suspend fun updatePlexToken(userId: Int, plexToken: String): Int {
 		return newSuspendedTransaction(Dispatchers.IO, db) {

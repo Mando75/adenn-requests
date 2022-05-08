@@ -3,6 +3,7 @@ package db.tables
 import db.util.postgresEnumeration
 import entities.UserEntity
 import entities.UserType
+import net.bmuller.application.entities.AdminUser
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -34,6 +35,25 @@ fun ResultRow.toUserEntity(): UserEntity {
 	return UserEntity(
 		id = get(UserTable.id).value,
 		plexUsername = get(UserTable.plexUsername),
+		plexId = get(UserTable.plexId),
+		email = get(UserTable.email),
+		userType = get(UserTable.userType),
+		requestCount = get(UserTable.requestCount),
+		movieQuotaLimit = get(UserTable.movieQuotaLimit),
+		movieQuotaDays = get(UserTable.movieQuotaDays),
+		tvQuotaLimit = get(UserTable.tvQuotaLimit),
+		tvQuotaDays = get(UserTable.tvQuotaDays),
+		createdAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.createdAt).epochSecond),
+		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond)
+	)
+}
+
+fun ResultRow.toAdminUser(): AdminUser {
+	return AdminUser(
+		id = get(UserTable.id).value,
+		plexUsername = get(UserTable.plexUsername),
+		plexId = get(UserTable.plexId),
+		plexToken = get(UserTable.plexToken),
 		email = get(UserTable.email),
 		userType = get(UserTable.userType),
 		requestCount = get(UserTable.requestCount),

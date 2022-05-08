@@ -1,13 +1,15 @@
-package entities
+package net.bmuller.application.entities
 
+import entities.UserType
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-@kotlinx.serialization.Serializable
-data class UserEntity(
+
+data class AdminUser(
 	val id: Int,
 	val plexUsername: String,
 	val plexId: Int,
+	val plexToken: String,
 	val email: String,
 	val userType: UserType = UserType.DEFAULT,
 	val requestCount: Int = 0,
@@ -18,8 +20,3 @@ data class UserEntity(
 	val createdAt: Instant = Clock.System.now(),
 	val modifiedAt: Instant = Clock.System.now()
 )
-
-enum class UserType {
-	ADMIN,
-	DEFAULT,
-}

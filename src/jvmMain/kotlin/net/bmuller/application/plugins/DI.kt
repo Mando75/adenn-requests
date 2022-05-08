@@ -5,6 +5,6 @@ import net.bmuller.application.di.*
 
 fun Application.configureDI() {
 	install(Koin) {
-		modules = arrayListOf(envModule, databaseModule, httpModule, repoModule, serviceModule)
+		modules = arrayListOf(envModule, databaseModule, httpModule, repoModule, serviceModule, adminModule)
 	}
 }

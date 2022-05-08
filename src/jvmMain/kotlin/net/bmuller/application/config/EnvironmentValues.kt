@@ -7,6 +7,7 @@ class EnvironmentValues {
 	private val env = dotenv()
 
 	val prod: Boolean = env["PROD"].toBoolean()
+	val plexMachineId: String = env["PLEX_MACHINE_ID"]
 
 	// Database
 	val postgresUser: String = env["POSTGRES_USER"]
