@@ -110,6 +110,12 @@ kotlin {
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.330-kotlin-$kotlinVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.34.19-pre.330-kotlin-$kotlinVersion")
+
+				// tailwind
+				implementation(npm("postcss", "8.4.13"))
+				implementation(npm("postcss-loader", "4.2.0"))
+				implementation(npm("autoprefixer", "10.4.7"))
+				implementation(npm("tailwindcss", "3.0.24"))
 			}
 		}
 	}
@@ -130,6 +136,8 @@ tasks.getByName<Jar>("jvmJar") {
 			"jsBrowserDevelopmentWebpack"
 		}
 	val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
+	val copyResourcesTask = tasks.getByName("processResources")
+	dependsOn(copyResourcesTask)
 	dependsOn(webpackTask)
 	from(File(webpackTask.destinationDirectory, webpackTask.outputFileName))
 }
@@ -142,4 +150,23 @@ tasks.named<Copy>("jvmProcessResources") {
 tasks.named<JavaExec>("run") {
 	dependsOn(tasks.named<Jar>("jvmJar"))
 	classpath(tasks.getByName<Jar>("jvmJar"))
+}
+
+val copyTailwindConfig = tasks.register<Copy>("copyTailwindConfig") {
+	from("./tailwind.config.js")
+	into("./build/js/packages/adenn-requests")
+
+	dependsOn(":kotlinNpmInstall")
+}
+
+val copyPostCssConfig = tasks.register<Copy>("copyPostcssConfig") {
+	from("./postcss.config.js")
+	into("./build/js/packages/adenn-requests")
+
+	dependsOn(":kotlinNpmInstall")
+}
+
+tasks.named("processResources") {
+	dependsOn(copyTailwindConfig)
+	dependsOn(copyPostCssConfig)
 }
