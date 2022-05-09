@@ -50,9 +50,7 @@ class UserAuthService : BaseService() {
 	 * Creates a new user record from an external plex user
 	 */
 	private suspend fun registerNewUser(plexUser: PlexUser): Either<UserAuthErrors, UserEntity> = Either.catch {
-		val newUser = UserEntity(
-			id = 0, plexUsername = plexUser.username, email = plexUser.email, plexId = plexUser.id
-		)
+		val newUser = UserEntity.createNew(plexUser.username, plexUser.id, plexUser.email)
 		return@catch userRepository.createAndReturnUser(plexUser.authToken, newUser)
 	}.mapLeft { error -> UserAuthErrors.CouldNotCreateUser(error) }
 

@@ -9,6 +9,7 @@ import net.bmuller.application.http.TMDBClientImpl
 import net.bmuller.application.repository.*
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthService
+import net.bmuller.application.service.UserService
 import org.koin.dsl.module
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,6 +38,7 @@ val repoModule = module {
 val serviceModule = module {
 	single { PlexOAuthService() }
 	single { UserAuthService() }
+	single { UserService() }
 }
 
 val adminModule = module {

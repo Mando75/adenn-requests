@@ -9,6 +9,7 @@ fun Routing.apiV1() {
 		authenticate {
 			mediaItems()
 			tmdb()
+			users()
 		}
 	}
 }
