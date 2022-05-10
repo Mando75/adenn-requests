@@ -22,7 +22,7 @@ fun Application.configureAuthentication() {
 		session<UserSession>("user_session") {
 			validate { session ->
 				val validAuthToken =
-					userAuthentication.validateAuthToken(session.id)
+					userAuthentication.validateAuthToken(session.id, session.version)
 				return@validate if (validAuthToken) session else null
 			}
 			challenge {
@@ -40,7 +40,8 @@ fun Application.configureAuthentication() {
 			validate { credential ->
 				credential.payload.getClaim("plexUsername")?.let {
 					val userId = credential.payload.getClaim("userId").asInt()
-					val validToken = userAuthentication.validateAuthToken(userId)
+					val version = credential.payload.getClaim("version").asInt()
+					val validToken = userAuthentication.validateAuthToken(userId, version)
 					return@validate if (validToken) JWTPrincipal(credential.payload) else null
 				}
 			}
@@ -67,6 +68,7 @@ fun ApplicationCall.parseUserAuth(): UserSession? {
 	return principal() ?: principal<JWTPrincipal>()?.let { jwt ->
 		val id = jwt.getClaim("userId", Int::class)!!
 		val plexUsername = jwt.getClaim("plexUsername", String::class)!!
-		return@let UserSession(id, plexUsername)
+		val version = jwt.getClaim("version", Int::class)!!
+		return@let UserSession(id, plexUsername, version)
 	}
 }

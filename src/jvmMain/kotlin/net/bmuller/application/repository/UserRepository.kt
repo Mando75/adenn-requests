@@ -22,6 +22,8 @@ interface UserRepository {
 	suspend fun getUserByPlexId(plexUserId: Int): UserEntity?
 
 	suspend fun getUserPlexToken(userId: Int): String?
+
+	suspend fun getUserAuthVersion(userId: Int): Int?
 	suspend fun updatePlexToken(userId: Int, plexToken: String): Int
 
 }
@@ -40,7 +42,8 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 		UserTable.tvQuotaDays,
 		UserTable.tvQuotaLimit,
 		UserTable.createdAt,
-		UserTable.modifiedAt
+		UserTable.modifiedAt,
+		UserTable.authVersion
 	)
 
 	override suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): UserEntity {
@@ -88,6 +91,13 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 			UserTable.slice(UserTable.plexToken).select { UserTable.id eq userId }.singleOrNull()
 		}
 		return result?.get(UserTable.plexToken)
+	}
+
+	override suspend fun getUserAuthVersion(userId: Int): Int? {
+		val result = newSuspendedTransaction(Dispatchers.IO, db) {
+			UserTable.slice(UserTable.authVersion).select { UserTable.id eq userId }.singleOrNull()
+		}
+		return result?.get(UserTable.authVersion)
 	}
 
 

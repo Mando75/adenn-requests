@@ -21,9 +21,9 @@ class UserAuthService : BaseService() {
 
 	private val adminUser: AdminUser by inject(AdminUser::class.java)
 
-	suspend fun validateAuthToken(userId: Int): Boolean {
-		val token = userRepository.getUserPlexToken(userId)
-		return token?.let { true } ?: false
+	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Boolean {
+		return userRepository.getUserAuthVersion(userId)
+			?.let { authVersion -> authVersion == tokenVersion } ?: false
 	}
 
 	suspend fun signInFlow(authToken: String) = either<UserAuthErrors, UserEntity> {

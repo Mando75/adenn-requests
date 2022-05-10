@@ -16,7 +16,8 @@ data class UserEntity(
 	val tvQuotaLimit: Int,
 	val tvQuotaDays: Int,
 	val createdAt: Instant,
-	val modifiedAt: Instant
+	val modifiedAt: Instant,
+	val authVersion: Int = 0
 ) {
 	companion object {
 		fun createNew(username: String, id: Int, userEmail: String, type: UserType = UserType.DEFAULT): UserEntity {

@@ -102,7 +102,7 @@ fun Route.auth() {
 					}
 					call.respond(statusCode, message)
 				}.bind()
-			call.sessions.set(UserSession(user.id, user.plexUsername))
+			call.sessions.set(UserSession(user.id, user.plexUsername, user.authVersion))
 			call.respondRedirect("/?login=success")
 		}
 	}
@@ -120,6 +120,7 @@ fun Route.auth() {
 				.withIssuer(env.jwtIssuer)
 				.withClaim("userId", user?.id)
 				.withClaim("plexUsername", user?.plexUsername)
+				.withClaim("version", user?.version)
 				.withExpiresAt(Date(System.currentTimeMillis() + 1000 * 60 * 60))
 				.sign(Algorithm.HMAC256(env.jwtTokenSecret))
 			call.respond(HttpStatusCode.OK, mapOf("token" to token))
