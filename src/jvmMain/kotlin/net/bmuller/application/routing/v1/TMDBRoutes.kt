@@ -32,21 +32,15 @@ fun Route.tmdb() {
 
 	get<TMDBResource.Search.Movies> { search ->
 		val searchTerm = search.searchTerm ?: ""
-		tmdbRepository.searchMovies(searchTerm).mapLeft { error ->
-			call.respond(HttpStatusCode.InternalServerError, error.toString())
-		}.map { results ->
-			call.respond(HttpStatusCode.OK, results)
-		}
+		tmdbRepository.searchMovies(searchTerm)
+			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
+			.map { results -> call.respond(HttpStatusCode.OK, results) }
 	}
 
 	get<TMDBResource.Search.TV> { search ->
 		val searchTerm = search.searchTerm ?: ""
 		tmdbRepository.searchTVShows(searchTerm)
-			.mapLeft { error ->
-				call.respond(HttpStatusCode.InternalServerError, error.toString())
-			}
-			.map { results ->
-				call.respond(HttpStatusCode.OK, results)
-			}
+			.mapLeft { error -> call.respond(HttpStatusCode.InternalServerError, error.toString()) }
+			.map { results -> call.respond(HttpStatusCode.OK, results) }
 	}
 }
