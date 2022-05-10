@@ -29,6 +29,7 @@ object UserTable : IntIdTable("users") {
 	// Table meta
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
 	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
+	val authVersion: Column<Int> = integer("auth_version").default(0)
 }
 
 fun ResultRow.toUserEntity(): UserEntity {
@@ -44,7 +45,8 @@ fun ResultRow.toUserEntity(): UserEntity {
 		tvQuotaLimit = get(UserTable.tvQuotaLimit),
 		tvQuotaDays = get(UserTable.tvQuotaDays),
 		createdAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.createdAt).epochSecond),
-		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond)
+		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond),
+		authVersion = get(UserTable.authVersion)
 	)
 }
 
