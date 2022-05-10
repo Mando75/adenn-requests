@@ -21,7 +21,11 @@ class EnvironmentValues {
 	val tmdbRequestToken: String = env["MOVIE_DB_REQUEST_TOKEN"]
 	val tmdbSessionToken: String = env["MOVIE_DB_SESSION_TOKEN"]
 
-	// SESSION
+	// AUTHENTICATION
 	val sessionSecretEncryptKey: String = env["SESSION_SECRET_ENCRYPT_KEY"]
 	val sessionSignKey: String = env["SESSION_SIGN_KEY"]
+	val jwtTokenSecret: String = env["JWT_TOKEN_SECRET"]
+	val jwtRealm: String = env["JWT_REALM"]
+	val jwtIssuer: String = env["JWT_ISSUER"]
+	val jwtAudience: String = env["JWT_AUDIENCE"]
 }

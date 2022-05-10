@@ -1,8 +1,11 @@
 package net.bmuller.application.plugins
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
@@ -11,12 +14,12 @@ import net.bmuller.application.entities.UserSession
 import net.bmuller.application.service.UserAuthService
 
 
-fun Application.configureSessionAuth() {
+fun Application.configureAuthentication() {
 	val env: EnvironmentValues by inject()
 	val userAuthentication: UserAuthService by inject()
 
 	install(Authentication) {
-		session<UserSession> {
+		session<UserSession>("user_session") {
 			validate { session ->
 				val validAuthToken =
 					userAuthentication.validateAuthToken(session.id)
@@ -24,6 +27,25 @@ fun Application.configureSessionAuth() {
 			}
 			challenge {
 				call.respond(HttpStatusCode.Unauthorized, "Not Authorized")
+			}
+		}
+		jwt("bearer_token") {
+			realm = env.jwtRealm
+			verifier(
+				JWT.require(Algorithm.HMAC256(env.jwtTokenSecret))
+					.withAudience(env.jwtAudience)
+					.withIssuer(env.jwtIssuer)
+					.build()
+			)
+			validate { credential ->
+				credential.payload.getClaim("plexUsername")?.let {
+					val userId = credential.payload.getClaim("userId").asInt()
+					val validToken = userAuthentication.validateAuthToken(userId)
+					return@validate if (validToken) JWTPrincipal(credential.payload) else null
+				}
+			}
+			challenge { _, realm ->
+				call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired for $realm")
 			}
 		}
 	}
@@ -38,5 +60,13 @@ fun Application.configureSessionAuth() {
 			cookie.extensions["SameSite"] = "Strict"
 			transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretSignKey))
 		}
+	}
+}
+
+fun ApplicationCall.parseUserAuth(): UserSession? {
+	return principal() ?: principal<JWTPrincipal>()?.let { jwt ->
+		val id = jwt.getClaim("userId", Int::class)!!
+		val plexUsername = jwt.getClaim("plexUsername", String::class)!!
+		return@let UserSession(id, plexUsername)
 	}
 }

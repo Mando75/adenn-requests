@@ -10,7 +10,7 @@ group = "net.bmuller"
 version = "1.0-SNAPSHOT"
 
 val arrowKtVersion = "1.0.1"
-val ktorVersion = "2.0.0"
+val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.11"
 val kotlinVersion = "1.6.20"
 val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
@@ -81,6 +81,7 @@ kotlin {
 				implementation("io.ktor:ktor-server-netty:$ktorVersion")
 				implementation("io.ktor:ktor-server-resources:$ktorVersion")
 				implementation("io.ktor:ktor-server-auth:$ktorVersion")
+				implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 				implementation("io.ktor:ktor-server-sessions:$ktorVersion")
 
 				// Database

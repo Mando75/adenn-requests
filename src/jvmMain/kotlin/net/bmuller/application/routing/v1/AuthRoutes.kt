@@ -1,18 +1,24 @@
 package net.bmuller.application.routing.v1
 
 import arrow.core.computations.either
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import net.bmuller.application.config.EnvironmentValues
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.plugins.inject
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthErrors
 import net.bmuller.application.service.UserAuthService
+import java.util.*
 
 
 @Suppress("unused")
@@ -35,9 +41,14 @@ class AuthResource {
 	@kotlinx.serialization.Serializable
 	@Resource("logout")
 	class Logout(val parent: AuthResource = AuthResource())
+
+	@kotlinx.serialization.Serializable
+	@Resource("token")
+	class Token(val parent: AuthResource = AuthResource())
 }
 
 fun Route.auth() {
+	val env: EnvironmentValues by inject()
 	val plexOAuthService: PlexOAuthService by inject()
 	val userAuthService: UserAuthService by inject()
 
@@ -100,4 +111,19 @@ fun Route.auth() {
 		call.sessions.clear<UserSession>()
 		call.respondRedirect("/")
 	}
+
+	authenticate("user_session") {
+		post<AuthResource.Token> {
+			val user = call.principal<UserSession>()
+			val token = JWT.create()
+				.withAudience(env.jwtAudience)
+				.withIssuer(env.jwtIssuer)
+				.withClaim("userId", user?.id)
+				.withClaim("plexUsername", user?.plexUsername)
+				.withExpiresAt(Date(System.currentTimeMillis() + 1000 * 60 * 60))
+				.sign(Algorithm.HMAC256(env.jwtTokenSecret))
+			call.respond(HttpStatusCode.OK, mapOf("token" to token))
+		}
+	}
+
 }
