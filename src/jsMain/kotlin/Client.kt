@@ -1,6 +1,6 @@
 import kotlinx.browser.document
 import react.create
-import react.dom.render
+import react.dom.client.createRoot
 
 
 fun main() {
@@ -11,5 +11,6 @@ fun main() {
 	val welcome = Welcome.create {
 		name = "Kotlin/JS"
 	}
-	render(welcome, container)
+	val root = createRoot(container)
+	root.render(welcome)
 }

@@ -51,6 +51,7 @@ kotlin {
 			dependencies {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
 				implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -73,7 +74,6 @@ kotlin {
 				// KTOR
 				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
 				implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")

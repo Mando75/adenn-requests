@@ -164,4 +164,4 @@ gradle-app.setting
 .idea/**/*.iml
 .idea/modules.xml
 
-http/http-client.env.json
+http/*.private.*
