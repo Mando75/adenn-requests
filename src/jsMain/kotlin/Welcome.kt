@@ -8,17 +8,15 @@ import react.dom.html.InputType
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.p
+import react.router.dom.Link
 import react.useEffectOnce
 import react.useState
 import support.getMe
 
-external interface WelcomeProps : Props {
-	var name: String
-}
 
 private val scope = MainScope()
 
-val Welcome = FC<WelcomeProps> { props ->
+val Welcome = FC<Props> {
 
 	var user by useState<UserEntity?>(null)
 
@@ -40,5 +38,9 @@ val Welcome = FC<WelcomeProps> { props ->
 		onChange = { event ->
 			name = event.target.value
 		}
+	}
+	Link {
+		to = "/users/login"
+		+"Login"
 	}
 }

@@ -1,6 +1,8 @@
+import components.ClientRoutes
 import kotlinx.browser.document
 import react.create
 import react.dom.client.createRoot
+import react.router.dom.BrowserRouter
 
 
 fun main() {
@@ -8,9 +10,10 @@ fun main() {
 	val container = document.createElement("div")
 	document.body!!.appendChild(container)
 
-	val welcome = Welcome.create {
-		name = "Kotlin/JS"
+	val router = BrowserRouter.create {
+		ClientRoutes()
 	}
+
 	val root = createRoot(container)
-	root.render(welcome)
+	root.render(router)
 }
