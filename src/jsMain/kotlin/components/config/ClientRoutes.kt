@@ -1,6 +1,7 @@
 package components.config
 
 import Welcome
+import components.common.RequireAuth
 import pages.user.Login
 import pages.user.Logout
 import react.FC
@@ -14,7 +15,7 @@ val ClientRoutes = FC<Props> {
 	Routes {
 		Route {
 			path = "/"
-			element = Welcome.create()
+			element = RequireAuth.create() { Welcome() }
 		}
 		Route {
 			path = "users"

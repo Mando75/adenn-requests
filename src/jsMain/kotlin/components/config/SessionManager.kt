@@ -22,7 +22,7 @@ val SessionManager = FC<PropsWithChildren> { props ->
 	val (sessionState, setSessionState) = useState(SessionState(null, query.refetch))
 	query.refetch
 
-	useEffect(query.isLoading, query.isError, query.data) {
+	useEffect(query.isLoading, query.isError) {
 		if (!query.isError) {
 			setSessionState(SessionState(query.data, query.refetch))
 		} else {
@@ -31,6 +31,10 @@ val SessionManager = FC<PropsWithChildren> { props ->
 		}
 	}
 	SessionContext.Provider(sessionState) {
-		+props.children
+		if (query.isLoading || query.isFetching) {
+			+"Loading..."
+		} else {
+			+props.children
+		}
 	}
 }

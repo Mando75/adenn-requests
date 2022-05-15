@@ -26,9 +26,9 @@ fun Route.auth() {
 	val plexOAuthService: PlexOAuthService by inject()
 	val userAuthService: UserAuthService by inject()
 
-	get<AuthResource.Plex.LoginUrl> {
+	get<AuthResource.Plex.LoginUrl> { context ->
 		val clientDetails =
-			PlexOAuthService.PlexClientDetails(forwardUrl = "http://localhost:8080/api/v1/auth/plex/callback")
+			PlexOAuthService.PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
 		plexOAuthService.requestHostedLoginURL(clientDetails)
 			.mapLeft { error ->
 				call.application.environment.log.error(error.message)

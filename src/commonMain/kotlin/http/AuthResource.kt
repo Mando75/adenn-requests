@@ -12,7 +12,7 @@ class AuthResource {
 
 		@kotlinx.serialization.Serializable
 		@Resource("login-url")
-		class LoginUrl(val parent: Plex = Plex())
+		class LoginUrl(val parent: Plex = Plex(), val forwardHost: String)
 
 		@kotlinx.serialization.Serializable
 		@Resource("callback")
