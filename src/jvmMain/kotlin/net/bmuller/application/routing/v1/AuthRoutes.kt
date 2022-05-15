@@ -3,8 +3,8 @@ package net.bmuller.application.routing.v1
 import arrow.core.computations.either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import http.AuthResource
 import io.ktor.http.*
-import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.*
@@ -21,32 +21,6 @@ import net.bmuller.application.service.UserAuthService
 import java.util.*
 
 
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-@Resource("/auth")
-class AuthResource {
-	@kotlinx.serialization.Serializable
-	@Resource("plex")
-	class Plex(val parent: AuthResource = AuthResource()) {
-
-		@kotlinx.serialization.Serializable
-		@Resource("login-url")
-		class LoginUrl(val parent: Plex = Plex())
-
-		@kotlinx.serialization.Serializable
-		@Resource("callback")
-		class Callback(val parent: Plex = Plex(), val pinId: String)
-	}
-
-	@kotlinx.serialization.Serializable
-	@Resource("logout")
-	class Logout(val parent: AuthResource = AuthResource())
-
-	@kotlinx.serialization.Serializable
-	@Resource("token")
-	class Token(val parent: AuthResource = AuthResource())
-}
-
 fun Route.auth() {
 	val env: EnvironmentValues by inject()
 	val plexOAuthService: PlexOAuthService by inject()
@@ -55,12 +29,14 @@ fun Route.auth() {
 	get<AuthResource.Plex.LoginUrl> {
 		val clientDetails =
 			PlexOAuthService.PlexClientDetails(forwardUrl = "http://localhost:8080/api/v1/auth/plex/callback")
-		plexOAuthService.requestHostedLoginURL(clientDetails).mapLeft { error ->
-			call.application.environment.log.error(error.message)
-			call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
-		}.map { result ->
-			call.respond(HttpStatusCode.OK, result)
-		}
+		plexOAuthService.requestHostedLoginURL(clientDetails)
+			.mapLeft { error ->
+				call.application.environment.log.error(error.message)
+				call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
+			}
+			.map { result ->
+				call.respond(HttpStatusCode.OK, result)
+			}
 	}
 
 	get<AuthResource.Plex.Callback> { resource ->

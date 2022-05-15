@@ -1,5 +1,6 @@
 package net.bmuller.application.routing.v1;
 
+import http.TMDBResource
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.http.*

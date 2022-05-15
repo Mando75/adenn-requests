@@ -1,14 +1,11 @@
 package support
 
-import entities.UserEntity
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
-import io.ktor.client.plugins.resources.Resources
-import io.ktor.resources.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 
 val apiClient = HttpClient {
@@ -22,16 +19,8 @@ val apiClient = HttpClient {
 		})
 	}
 	install(DefaultRequest) {
-		url("/api/v1")
+		url {
+			host = "${window.location.host}/api/v1"
+		}
 	}
 }
-
-@Resource("/v1/users")
-@kotlinx.serialization.Serializable
-class UserResource {
-	@Resource("me")
-	@kotlinx.serialization.Serializable
-	class Me(@Suppress("unused") val parent: UserResource = UserResource())
-}
-
-suspend fun getMe(): UserEntity = apiClient.get(resource = UserResource.Me()).body()

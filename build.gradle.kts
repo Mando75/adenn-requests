@@ -14,6 +14,7 @@ val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.11"
 val kotlinVersion = "1.6.20"
 val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
+val muiVersion = "5.7.0-pre.336"
 val exposedVersion = "0.38.1"
 val serializationVersion = "1.3.2"
 val postgresVersion = "42.3.4"
@@ -107,8 +108,9 @@ kotlin {
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.330-kotlin-$kotlinVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.34.19-pre.330-kotlin-$kotlinVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.336")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.0-pre.336")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-mui:$muiVersion")
 
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))
