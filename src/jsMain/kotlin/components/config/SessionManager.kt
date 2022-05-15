@@ -9,6 +9,7 @@ import react.query.RefetchOptions
 import react.router.useNavigate
 import kotlin.js.Promise
 
+
 typealias RefetchFunction<TQueryData, TError> = (options: RefetchOptions?) -> Promise<QueryObserverResult<TQueryData, TError>>
 
 data class SessionState(val user: UserEntity?, val refetch: RefetchFunction<UserEntity, Error>)
@@ -16,8 +17,8 @@ data class SessionState(val user: UserEntity?, val refetch: RefetchFunction<User
 val SessionContext = createContext<SessionState>()
 
 val SessionManager = FC<PropsWithChildren> { props ->
-	val query = useMeQuery()
 	val navigate = useNavigate()
+	val query = useMeQuery()
 	val (sessionState, setSessionState) = useState(SessionState(null, query.refetch))
 	query.refetch
 
