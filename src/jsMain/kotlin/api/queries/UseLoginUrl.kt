@@ -18,8 +18,10 @@ fun usePlexLoginUrl(host: String): UseQueryResult<LoginUrlResponse, Error> {
 	val queryKey: QueryKey = "login-url-query".unsafeCast<QueryKey>()
 
 	return useQuery(queryKey, {
-		scope.promise { apiClient.get(AuthResource.Plex.LoginUrl(forwardHost = host)).body<LoginUrlResponse>() }
-	}, jso {
-		enabled = false
-	})
+		scope.promise { plexLoginUrlQuery(host) }
+	}, jso { enabled = false })
 }
+
+suspend fun plexLoginUrlQuery(host: String) = apiClient
+	.get(AuthResource.Plex.LoginUrl(forwardHost = host))
+	.body<LoginUrlResponse>()
