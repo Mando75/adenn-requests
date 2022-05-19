@@ -4,33 +4,29 @@ import api.queries.useMeQuery
 import entities.UserEntity
 import kotlinx.js.jso
 import react.*
-import react.query.QueryObserverResult
-import react.query.RefetchOptions
 import react.router.useNavigate
-import kotlin.js.Promise
 
 
-typealias RefetchFunction<TQueryData, TError> = (options: RefetchOptions?) -> Promise<QueryObserverResult<TQueryData, TError>>
+data class SessionState(val user: UserEntity?)
 
-data class SessionState(val user: UserEntity?, val refetch: RefetchFunction<UserEntity, Error>)
-
-val SessionContext = createContext<SessionState>()
+val SessionContext = createContext<StateInstance<SessionState>>()
 
 val SessionManager = FC<PropsWithChildren>("SessionManager") { props ->
 	val navigate = useNavigate()
 	val query = useMeQuery()
-	val (sessionState, setSessionState) = useState(SessionState(null, query.refetch))
+	val sessionStateInstance = useState(SessionState(null))
+	val (_, setSessionState) = sessionStateInstance
 	query.refetch
 
 	useEffect(query.isLoading, query.isError) {
 		if (!query.isError) {
-			setSessionState(SessionState(query.data, query.refetch))
+			setSessionState(SessionState(query.data))
 		} else {
-			setSessionState(SessionState(null, query.refetch))
-			navigate("users/login", jso { replace = true })
+			setSessionState(SessionState(null))
+			navigate("/login", jso { replace = true })
 		}
 	}
-	SessionContext.Provider(sessionState) {
+	SessionContext.Provider(sessionStateInstance) {
 		if (query.isLoading || query.isFetching) {
 			+"Loading..."
 		} else {

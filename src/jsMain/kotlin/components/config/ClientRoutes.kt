@@ -3,8 +3,8 @@ package components.config
 import Welcome
 import layouts.DefaultLayout
 import middleware.RequireAuth
-import pages.user.Login
-import pages.user.Logout
+import pages.Login
+import pages.Logout
 import react.FC
 import react.Props
 import react.create

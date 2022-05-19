@@ -7,11 +7,11 @@ import react.router.Navigate
 
 
 val RequireAuth = FC<PropsWithChildren>("RequireAuth") { props ->
-	val auth = useAuth()
+	val (auth) = useAuth()
 
 	if (auth.user == null) {
 		Navigate {
-			to = "/user/login"
+			to = "/login"
 			replace = true
 		}
 	} else {

@@ -19,7 +19,7 @@ private val navigationItems = listOf(
 )
 
 val Sidebar = FC<Props>("Sidebar") {
-	val auth = useAuth()
+	val (auth) = useAuth()
 	val authPath = auth.user?.let { "/logout" } ?: "/login"
 	val authText = auth.user?.let { "Logout" } ?: "Login"
 
