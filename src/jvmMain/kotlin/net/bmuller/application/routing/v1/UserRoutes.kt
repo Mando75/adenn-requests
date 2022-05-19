@@ -1,7 +1,7 @@
 package net.bmuller.application.routing.v1
 
+import http.UserResource
 import io.ktor.http.*
-import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -9,15 +9,6 @@ import io.ktor.server.routing.*
 import net.bmuller.application.plugins.inject
 import net.bmuller.application.plugins.parseUserAuth
 import net.bmuller.application.service.UserService
-
-@kotlinx.serialization.Serializable
-@Resource("/users")
-class UserResource {
-
-	@kotlinx.serialization.Serializable
-	@Resource("me")
-	class Me(@Suppress("unused") val parent: UserResource = UserResource())
-}
 
 fun Route.users() {
 	val userService: UserService by inject()

@@ -3,6 +3,7 @@ package net.bmuller.application.service
 import arrow.core.Either
 import arrow.core.computations.either
 import arrow.core.left
+import entities.LoginUrlResponse
 import io.ktor.http.*
 import io.ktor.server.util.*
 import net.bmuller.application.entities.PlexClientHeaders
@@ -29,8 +30,6 @@ class PlexOAuthService : BaseService() {
 		val forwardUrl: String,
 	)
 
-	@kotlinx.serialization.Serializable
-	data class LoginUrlResponse(val loginUrl: String, val pinId: Long)
 
 	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse> =
 		either {

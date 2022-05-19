@@ -51,8 +51,12 @@ kotlin {
 			dependencies {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+				implementation("io.ktor:ktor-client-core:$ktorVersion")
+				implementation("io.ktor:ktor-client-resources:$ktorVersion")
+				implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 			}
 		}
 
@@ -68,12 +72,8 @@ kotlin {
 				implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
 				implementation("io.insert-koin:koin-ktor:$koinVersion")
 				// KTOR
-				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 				implementation("io.ktor:ktor-server-compression:$ktorVersion")
 				implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
@@ -104,13 +104,11 @@ kotlin {
 
 		val jsMain by getting {
 			dependencies {
-				implementation("io.ktor:ktor-client-js:$ktorVersion")
-				implementation("io.ktor:ktor-client-json:$ktorVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.330-kotlin-$kotlinVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.34.19-pre.330-kotlin-$kotlinVersion")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.336")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.0-pre.336")
 
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))
