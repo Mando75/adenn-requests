@@ -1,4 +1,4 @@
-package components.common
+package middleware
 
 import hooks.useAuth
 import react.FC
@@ -6,12 +6,12 @@ import react.PropsWithChildren
 import react.router.Navigate
 
 
-val RequireAuth = FC<PropsWithChildren> { props ->
+val RequireAuth = FC<PropsWithChildren>("RequireAuth") { props ->
 	val auth = useAuth()
 
 	if (auth.user == null) {
 		Navigate {
-			to = "/users/login"
+			to = "/user/login"
 			replace = true
 		}
 	} else {

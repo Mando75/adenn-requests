@@ -16,7 +16,7 @@ data class SessionState(val user: UserEntity?, val refetch: RefetchFunction<User
 
 val SessionContext = createContext<SessionState>()
 
-val SessionManager = FC<PropsWithChildren> { props ->
+val SessionManager = FC<PropsWithChildren>("SessionManager") { props ->
 	val navigate = useNavigate()
 	val query = useMeQuery()
 	val (sessionState, setSessionState) = useState(SessionState(null, query.refetch))

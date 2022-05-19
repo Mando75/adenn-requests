@@ -10,7 +10,7 @@ import react.router.dom.Link
 import react.useContext
 
 
-val Welcome = FC<Props> {
+val Welcome = FC<Props>("Welcome") {
 
 	val context = useContext(SessionContext)
 
@@ -29,7 +29,7 @@ val Welcome = FC<Props> {
 		}
 	}
 	Link {
-		to = "/users/login"
+		to = "/user/login"
 		+"Login"
 	}
 }

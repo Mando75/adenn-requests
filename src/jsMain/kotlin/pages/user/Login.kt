@@ -5,11 +5,10 @@ import components.config.SessionContext
 import csstype.ClassName
 import kotlinx.browser.window
 import kotlinx.js.jso
-import mui.material.Button
-import mui.material.ButtonVariant
 import org.w3c.dom.HTMLButtonElement
 import react.*
 import react.dom.events.MouseEventHandler
+import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h1
 import react.dom.html.ReactHTML.main
@@ -24,7 +23,7 @@ fun useCheckForSession() {
 }
 
 
-val Login = FC<Props> {
+val Login = FC<Props>("Login") {
 	useCheckForSession()
 	val query = usePlexLoginUrl(window.location.host)
 	val onLoginClick: MouseEventHandler<HTMLButtonElement> = useCallback(query.isLoading, query.isError, query.data) {
@@ -43,8 +42,7 @@ val Login = FC<Props> {
 			+"Login"
 		}
 		div {
-			Button {
-				variant = ButtonVariant.contained
+			button {
 				onClick = onLoginClick
 				+"Login with Plex"
 			}

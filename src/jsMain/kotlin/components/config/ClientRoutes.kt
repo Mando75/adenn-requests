@@ -1,7 +1,8 @@
 package components.config
 
 import Welcome
-import components.common.RequireAuth
+import layouts.DefaultLayout
+import middleware.RequireAuth
 import pages.user.Login
 import pages.user.Logout
 import react.FC
@@ -10,24 +11,32 @@ import react.create
 import react.router.Route
 import react.router.Routes
 
-val ClientRoutes = FC<Props> {
-	console.log("Mounted")
+val ClientRoutes = FC<Props>("ClientRoutes") {
 	Routes {
 		Route {
 			path = "/"
-			element = RequireAuth.create() { Welcome() }
+			element = RequireAuth.create() { DefaultLayout { Welcome() } }
 		}
 		Route {
-			path = "users"
+			path = "search"
+			element = DefaultLayout.create() { +"Search" }
+		}
+		Route {
+			path = "requests"
+			element = DefaultLayout.create() { +"Requests" }
+		}
+		Route {
+			path = "user"
+			element = DefaultLayout.create() { +"User" }
 
 			Route {
 				path = "login"
-				element = Login.create()
+				element = DefaultLayout.create() { Login() }
 			}
 
 			Route {
 				path = "logout"
-				element = Logout.create()
+				element = DefaultLayout.create() { Logout() }
 			}
 		}
 	}
