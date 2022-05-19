@@ -29,7 +29,7 @@ val Welcome = FC<Props>("Welcome") {
 		}
 	}
 	Link {
-		to = "/user/login"
+		to = "/login"
 		+"Login"
 	}
 }
