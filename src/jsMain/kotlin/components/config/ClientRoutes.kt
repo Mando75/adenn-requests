@@ -19,15 +19,15 @@ val ClientRoutes = FC<Props>("ClientRoutes") {
 		}
 		Route {
 			path = "search"
-			element = DefaultLayout.create() { +"Search" }
+			element = RequireAuth.create() { DefaultLayout { +"Search" } }
 		}
 		Route {
 			path = "requests"
-			element = DefaultLayout.create() { +"Requests" }
+			element = RequireAuth.create() { DefaultLayout { +"Requests" } }
 		}
 		Route {
 			path = "user"
-			element = DefaultLayout.create() { +"User" }
+			element = RequireAuth.create() { DefaultLayout { +"User" } }
 
 			Route {
 				path = "login"
