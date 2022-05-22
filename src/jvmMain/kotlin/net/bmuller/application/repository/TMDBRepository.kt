@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*
 import net.bmuller.application.entities.MovieSearchResults
+import net.bmuller.application.entities.MultiSearchResults
 import net.bmuller.application.entities.TMDBConfigurationResult
 import net.bmuller.application.entities.TVShowSearchResults
 
@@ -12,46 +13,57 @@ import net.bmuller.application.entities.TVShowSearchResults
 @Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/3")
-class TMDBResources {
+private class TMDBAPIResource {
 	@kotlinx.serialization.Serializable
 	@Resource("search")
-	class Search(val parent: TMDBResources = TMDBResources()) {
+	class Search(val parent: TMDBAPIResource = TMDBAPIResource()) {
 
 		@kotlinx.serialization.Serializable
 		@Resource("movie")
-		class Movie(val parent: Search = Search(), val query: String)
+		class Movie(val parent: Search = Search(), val query: String, val adult: Boolean = false)
 
 		@kotlinx.serialization.Serializable
 		@Resource("tv")
-		class TV(val parent: Search = Search(), val query: String)
+		class TV(val parent: Search = Search(), val query: String, val adult: Boolean = false)
+
+		@kotlinx.serialization.Serializable
+		@Resource("multi")
+		class Multi(val parent: Search = Search(), val query: String, val adult: Boolean = false)
 	}
 
 	@kotlinx.serialization.Serializable
 	@Resource("configuration")
-	class Configuration(val parent: TMDBResources = TMDBResources())
+	class Configuration(val parent: TMDBAPIResource = TMDBAPIResource())
 }
 
 interface TMDBRepository {
 	suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults>
 	suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults>
+
+	suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults>
 	suspend fun getConfiguration(): Either<Throwable, TMDBConfigurationResult>
 }
 
 class TMDBRepositoryImpl : BaseRepository(), TMDBRepository {
 
 	override suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBResources.Search.Movie(query = query))
-		return@catch response.body<MovieSearchResults>()
+		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Movie(query = query))
+		return@catch response.body()
 	}
 
 	override suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBResources.Search.TV(query = query))
-		return@catch response.body<TVShowSearchResults>()
+		val response = tmdb.client.get(resource = TMDBAPIResource.Search.TV(query = query))
+		return@catch response.body()
+	}
+
+	override suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults> = Either.catch {
+		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Multi(query = query))
+		return@catch response.body()
 	}
 
 	override suspend fun getConfiguration(): Either<Throwable, TMDBConfigurationResult> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBResources.Configuration())
-		return@catch response.body<TMDBConfigurationResult>()
+		val response = tmdb.client.get(resource = TMDBAPIResource.Configuration())
+		return@catch response.body()
 	}
 
 }

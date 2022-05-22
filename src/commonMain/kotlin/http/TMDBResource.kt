@@ -17,5 +17,9 @@ class TMDBResource {
 		@kotlinx.serialization.Serializable
 		@Resource("tv")
 		class TV(val parent: Search = Search(), val searchTerm: String? = "")
+
+		@kotlinx.serialization.Serializable
+		@Resource("multi")
+		class Multi(val parent: Search = Search(), val searchTerm: String? = "")
 	}
 }

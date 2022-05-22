@@ -1,7 +1,14 @@
 ###
 GET {{host}}/tmdb/search/movies?searchTerm=Star
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ###
 GET {{host}}/tmdb/search/tv?searchTerm="Community"
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+###
+GET {{host}}/tmdb/search/multi?searchTerm="Star Wars"
+Authorization: Bearer {{token}}
 Content-Type: application/json

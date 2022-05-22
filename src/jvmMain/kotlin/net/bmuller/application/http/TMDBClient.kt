@@ -48,6 +48,5 @@ class TMDBClientImpl(customConfig: TMDBClientConfig? = null) : TMDBClient, BaseH
 		contentType(ContentType.Application.Json)
 		accept(ContentType.Application.Json)
 	}
-
 }
 
