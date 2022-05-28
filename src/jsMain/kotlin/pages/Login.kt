@@ -26,7 +26,7 @@ fun useCheckForSession() {
 }
 
 
-val Login = FC<Props>("Login") {
+val LoginPage = FC<Props>("LoginPage") {
 	useCheckForSession()
 	val query = usePlexLoginUrl(window.location.origin)
 	val onLoginClick: MouseEventHandler<HTMLButtonElement> = useCallback(query.isLoading, query.isError, query.data) {

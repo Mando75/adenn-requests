@@ -23,9 +23,9 @@ fun Application.configureRouting() {
 			return@get call.respond(HttpStatusCode.InternalServerError)
 		}
 
-
-		get("/") {
-			call.respondText(this::class.java.classLoader.getResource("index.html")!!.readText(), ContentType.Text.Html)
+		singlePageApplication {
+			useResources = true
+			defaultPage = "index.html"
 		}
 
 		static("/") {
