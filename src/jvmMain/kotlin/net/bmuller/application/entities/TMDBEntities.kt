@@ -99,6 +99,9 @@ sealed class MultiSearchEntity {
 	}
 
 	abstract val mediaType: MediaType
+	abstract val title: String
+	abstract val popularity: Float
+	abstract val id: Int
 
 	@kotlinx.serialization.Serializable
 	data class MovieResult(
@@ -108,12 +111,12 @@ sealed class MultiSearchEntity {
 		@SerialName("release_date") val releaseDate: String,
 		@SerialName("original_title") val originalTitle: String,
 		@SerialName("genre_ids") val genreIds: List<Int>,
-		val id: Int,
+		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType,
 		@SerialName("original_language") val originalLanguage: String,
 		@SerialName("backdrop_path") val backdropPath: String?,
-		val title: String,
-		val popularity: Float,
+		override val title: String,
+		override val popularity: Float,
 		@SerialName("vote_count") val voteCount: Int,
 		val video: Boolean,
 		@SerialName("vote_average") val voteAverage: Float,
@@ -122,8 +125,8 @@ sealed class MultiSearchEntity {
 	@kotlinx.serialization.Serializable
 	data class TVResult(
 		@SerialName("poster_path") val poster_path: String?,
-		val popularity: Float,
-		val id: Int,
+		override val popularity: Float,
+		override val id: Int,
 		val overview: String,
 		@SerialName("backdrop_path") val backdropPath: String?,
 		@SerialName("vote_average") val voteAverage: Float,
@@ -133,7 +136,7 @@ sealed class MultiSearchEntity {
 		@SerialName("genre_ids") val genreIds: List<Int>,
 		@SerialName("original_language") val originalLanguage: String,
 		@SerialName("vote_count") val voteCount: Int,
-		val name: String,
+		@SerialName("name") override val title: String,
 		@SerialName("original_name") val originalName: String,
 	) : MultiSearchEntity()
 
@@ -141,11 +144,11 @@ sealed class MultiSearchEntity {
 	data class PersonResult(
 		@SerialName("profile_path") val profilePath: String?,
 		val adult: Boolean,
-		val id: Int,
+		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType,
 		@SerialName("known_for") val knownFor: MultiSearchEntity,
-		val name: String,
-		val popularity: Float,
+		@SerialName("name") override val title: String,
+		override val popularity: Float,
 	) : MultiSearchEntity()
 
 	object MultiSearchEntitySerializer : JsonContentPolymorphicSerializer<MultiSearchEntity>(MultiSearchEntity::class) {
