@@ -13,6 +13,11 @@ fun Application.configureRouting() {
 	val db: Database by inject()
 
 	routing {
+		singlePageApplication {
+			useResources = true
+			defaultPage = "index.html"
+		}
+
 		// Configure api routes
 		apiV1()
 
@@ -21,11 +26,6 @@ fun Application.configureRouting() {
 				return@get call.respond(HttpStatusCode.OK, mapOf("status" to "ok"))
 			}
 			return@get call.respond(HttpStatusCode.InternalServerError)
-		}
-
-		singlePageApplication {
-			useResources = true
-			defaultPage = "index.html"
 		}
 
 		static("/") {

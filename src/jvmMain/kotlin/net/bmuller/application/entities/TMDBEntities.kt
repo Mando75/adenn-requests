@@ -21,7 +21,7 @@ interface BaseMovieResult {
 	val originalLanguage: String
 	val originalTitle: String
 	val posterPath: String?
-	val releaseDate: String
+	val releaseDate: String?
 	val voteAverage: Float
 	val voteCount: Int
 	val adult: Boolean
@@ -38,7 +38,7 @@ data class MovieResult(
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
-	@SerialName("release_date") override val releaseDate: String,
+	@SerialName("release_date") override val releaseDate: String?,
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
 	override val adult: Boolean,
@@ -59,7 +59,7 @@ data class MovieSearchResults(
 
 interface BaseTVShowResult {
 	val backdropPath: String?
-	val firstAirDate: String
+	val firstAirDate: String?
 	val genreIds: List<Int>
 	val originCountry: List<String>
 	val originalLanguage: String
@@ -75,8 +75,8 @@ interface BaseTVShowResult {
 
 @kotlinx.serialization.Serializable
 data class TVShowResult(
-	@SerialName("backdrop_path") override val backdropPath: String?,
-	@SerialName("first_air_date") override val firstAirDate: String,
+	@SerialName("backdrop_path") override val backdropPath: String? = null,
+	@SerialName("first_air_date") override val firstAirDate: String? = null,
 	@SerialName("genre_ids") override val genreIds: List<Int>,
 	@SerialName("origin_country") override val originCountry: List<String>,
 	@SerialName("original_language") override val originalLanguage: String,
@@ -138,10 +138,10 @@ sealed class MultiSearchEntity {
 
 	@kotlinx.serialization.Serializable
 	data class MovieResult(
-		@SerialName("poster_path") override val posterPath: String?,
+		@SerialName("poster_path") override val posterPath: String? = null,
 		override val adult: Boolean,
 		override val overview: String,
-		@SerialName("release_date") override val releaseDate: String,
+		@SerialName("release_date") override val releaseDate: String? = null,
 		@SerialName("original_title") override val originalTitle: String,
 		@SerialName("genre_ids") override val genreIds: List<Int>,
 		override val id: Int,
@@ -164,7 +164,7 @@ sealed class MultiSearchEntity {
 		@SerialName("backdrop_path") override val backdropPath: String?,
 		@SerialName("vote_average") override val voteAverage: Float,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.tv,
-		@SerialName("first_air_date") override val firstAirDate: String,
+		@SerialName("first_air_date") override val firstAirDate: String? = null,
 		@SerialName("origin_country") override val originCountry: List<String>,
 		@SerialName("genre_ids") override val genreIds: List<Int>,
 		@SerialName("original_language") override val originalLanguage: String,

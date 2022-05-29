@@ -58,6 +58,7 @@ class TMDBRepositoryImpl : BaseRepository(), TMDBRepository {
 
 	override suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults> = Either.catch {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Multi(query = query))
+		println(response.body<String>())
 		return@catch response.body()
 	}
 
