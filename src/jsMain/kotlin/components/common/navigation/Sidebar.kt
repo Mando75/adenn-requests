@@ -41,7 +41,13 @@ val Sidebar = FC<Props>("Sidebar") {
 						react.router.dom.Link {
 							to = navItem.target
 							className =
-								ClassName("flex items-center space-x-3 text-gray-700 p-4 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline")
+								ClassName(
+									"""
+									| flex items-center space-x-3 p-4 rounded-md 
+									| text-gray-700 font-medium 
+									| hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline
+									|""".trimMargin()
+								)
 
 							+navItem.displayText
 						}
@@ -52,7 +58,11 @@ val Sidebar = FC<Props>("Sidebar") {
 		react.router.dom.Link {
 			to = authPath
 			className =
-				ClassName("flex items-center space-x-3 text-gray-700 p-4 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline")
+				ClassName(
+					"""flex items-center space-x-3 p-4 rounded-md 
+					| text-gray-700 font-medium 
+					| hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline""".trimMargin()
+				)
 
 			+authText
 		}

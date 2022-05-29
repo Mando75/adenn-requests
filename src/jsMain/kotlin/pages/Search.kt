@@ -1,6 +1,8 @@
 package pages
 
+import components.search.SearchInput
 import csstype.ClassName
+import middleware.RequireAuth
 import react.FC
 import react.Props
 import react.create
@@ -15,9 +17,11 @@ private val Search = FC<Props>("SearchPage") {
 			className = ClassName("text-4xl")
 			+"Search for Content"
 		}
-		+"Search Page"
+		SearchInput()
 	}
 }
 
 
-val SearchPage = Search.create()
+val SearchPage = RequireAuth.create() {
+	Search()
+}
