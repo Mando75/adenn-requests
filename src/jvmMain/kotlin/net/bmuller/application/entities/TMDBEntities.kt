@@ -15,22 +15,38 @@ interface BaseSearchResult {
 	val totalPages: Int
 }
 
+interface BaseMovieResult {
+	val backdropPath: String?
+	val genreIds: List<Int>
+	val originalLanguage: String
+	val originalTitle: String
+	val posterPath: String?
+	val releaseDate: String
+	val voteAverage: Float
+	val voteCount: Int
+	val adult: Boolean
+	val id: Int
+	val overview: String
+	val popularity: Float
+	val title: String
+}
+
 @kotlinx.serialization.Serializable
 data class MovieResult(
-	@SerialName("backdrop_path") val backdropPath: String?,
-	@SerialName("genre_ids") val genreIds: List<Int>,
-	@SerialName("original_language") val originalLanguage: String,
-	@SerialName("original_title") val originalTitle: String,
-	@SerialName("poster_path") val posterPath: String?,
-	@SerialName("release_date") val releaseDate: String,
-	@SerialName("vote_average") val voteAverage: Float,
-	@SerialName("vote_count") val voteCount: Int,
-	val adult: Boolean,
-	val id: Int,
-	val overview: String,
-	val popularity: Float,
-	val title: String,
-)
+	@SerialName("backdrop_path") override val backdropPath: String?,
+	@SerialName("genre_ids") override val genreIds: List<Int>,
+	@SerialName("original_language") override val originalLanguage: String,
+	@SerialName("original_title") override val originalTitle: String,
+	@SerialName("poster_path") override val posterPath: String?,
+	@SerialName("release_date") override val releaseDate: String,
+	@SerialName("vote_average") override val voteAverage: Float,
+	@SerialName("vote_count") override val voteCount: Int,
+	override val adult: Boolean,
+	override val id: Int,
+	override val overview: String,
+	override val popularity: Float,
+	override val title: String,
+) : BaseMovieResult
 
 @kotlinx.serialization.Serializable
 data class MovieSearchResults(
@@ -40,22 +56,39 @@ data class MovieSearchResults(
 	val results: List<MovieResult>,
 ) : BaseSearchResult
 
+
+interface BaseTVShowResult {
+	val backdropPath: String?
+	val firstAirDate: String
+	val genreIds: List<Int>
+	val originCountry: List<String>
+	val originalLanguage: String
+	val originalName: String
+	val posterPath: String?
+	val voteAverage: Float
+	val voteCount: Int
+	val id: Int
+	val title: String
+	val overview: String
+	val popularity: Float
+}
+
 @kotlinx.serialization.Serializable
 data class TVShowResult(
-	@SerialName("backdrop_path") val backdropPath: String?,
-	@SerialName("first_air_date") val firstAirDate: String,
-	@SerialName("genre_ids") val genreIds: List<Int>,
-	@SerialName("origin_country") val originCountry: List<String>,
-	@SerialName("original_language") val originalLanguage: String,
-	@SerialName("original_name") val originalName: String,
-	@SerialName("poster_path") val poster_path: String?,
-	@SerialName("vote_average") val voteAverage: Float,
-	@SerialName("vote_count") val voteCount: Int,
-	val id: Int,
-	val name: String,
-	val overview: String,
-	val popularity: Float,
-)
+	@SerialName("backdrop_path") override val backdropPath: String?,
+	@SerialName("first_air_date") override val firstAirDate: String,
+	@SerialName("genre_ids") override val genreIds: List<Int>,
+	@SerialName("origin_country") override val originCountry: List<String>,
+	@SerialName("original_language") override val originalLanguage: String,
+	@SerialName("original_name") override val originalName: String,
+	@SerialName("poster_path") override val posterPath: String?,
+	@SerialName("vote_average") override val voteAverage: Float,
+	@SerialName("vote_count") override val voteCount: Int,
+	override val id: Int,
+	@SerialName("name") override val title: String,
+	override val overview: String,
+	override val popularity: Float,
+) : BaseTVShowResult
 
 @kotlinx.serialization.Serializable
 data class TVShowSearchResults(
@@ -105,47 +138,47 @@ sealed class MultiSearchEntity {
 
 	@kotlinx.serialization.Serializable
 	data class MovieResult(
-		@SerialName("poster_path") val posterPath: String?,
-		val adult: Boolean,
-		val overview: String,
-		@SerialName("release_date") val releaseDate: String,
-		@SerialName("original_title") val originalTitle: String,
-		@SerialName("genre_ids") val genreIds: List<Int>,
+		@SerialName("poster_path") override val posterPath: String?,
+		override val adult: Boolean,
+		override val overview: String,
+		@SerialName("release_date") override val releaseDate: String,
+		@SerialName("original_title") override val originalTitle: String,
+		@SerialName("genre_ids") override val genreIds: List<Int>,
 		override val id: Int,
-		@SerialName("media_type") override val mediaType: MediaType,
-		@SerialName("original_language") val originalLanguage: String,
-		@SerialName("backdrop_path") val backdropPath: String?,
+		@SerialName("media_type") override val mediaType: MediaType = MediaType.movie,
+		@SerialName("original_language") override val originalLanguage: String,
+		@SerialName("backdrop_path") override val backdropPath: String?,
 		override val title: String,
 		override val popularity: Float,
-		@SerialName("vote_count") val voteCount: Int,
+		@SerialName("vote_count") override val voteCount: Int,
 		val video: Boolean,
-		@SerialName("vote_average") val voteAverage: Float,
-	) : MultiSearchEntity()
+		@SerialName("vote_average") override val voteAverage: Float,
+	) : BaseMovieResult, MultiSearchEntity()
 
 	@kotlinx.serialization.Serializable
 	data class TVResult(
-		@SerialName("poster_path") val poster_path: String?,
+		@SerialName("poster_path") override val posterPath: String?,
 		override val popularity: Float,
 		override val id: Int,
-		val overview: String,
-		@SerialName("backdrop_path") val backdropPath: String?,
-		@SerialName("vote_average") val voteAverage: Float,
-		@SerialName("media_type") override val mediaType: MediaType,
-		@SerialName("first_air_date") val firstAirDate: String,
-		@SerialName("origin_country") val originCountry: List<String>,
-		@SerialName("genre_ids") val genreIds: List<Int>,
-		@SerialName("original_language") val originalLanguage: String,
-		@SerialName("vote_count") val voteCount: Int,
+		override val overview: String,
+		@SerialName("backdrop_path") override val backdropPath: String?,
+		@SerialName("vote_average") override val voteAverage: Float,
+		@SerialName("media_type") override val mediaType: MediaType = MediaType.tv,
+		@SerialName("first_air_date") override val firstAirDate: String,
+		@SerialName("origin_country") override val originCountry: List<String>,
+		@SerialName("genre_ids") override val genreIds: List<Int>,
+		@SerialName("original_language") override val originalLanguage: String,
+		@SerialName("vote_count") override val voteCount: Int,
 		@SerialName("name") override val title: String,
-		@SerialName("original_name") val originalName: String,
-	) : MultiSearchEntity()
+		@SerialName("original_name") override val originalName: String,
+	) : BaseTVShowResult, MultiSearchEntity()
 
 	@kotlinx.serialization.Serializable
 	data class PersonResult(
 		@SerialName("profile_path") val profilePath: String?,
 		val adult: Boolean,
 		override val id: Int,
-		@SerialName("media_type") override val mediaType: MediaType,
+		@SerialName("media_type") override val mediaType: MediaType = MediaType.person,
 		@SerialName("known_for") val knownFor: MultiSearchEntity,
 		@SerialName("name") override val title: String,
 		override val popularity: Float,

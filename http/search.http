@@ -1,0 +1,3 @@
+GET {{host}}/search/multi?searchTerm="Your Name"
+Accept: application/json
+Authorization: Bearer {{token}}
