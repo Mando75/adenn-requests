@@ -1,10 +1,13 @@
 package components.search
 
 import csstype.ClassName
+import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.PropsWithChildren
 import react.dom.aria.ariaDescribedBy
 import react.dom.aria.ariaLabel
+import react.dom.events.ChangeEventHandler
+import react.dom.events.MouseEventHandler
 import react.dom.html.ButtonType
 import react.dom.html.InputType
 import react.dom.html.ReactHTML.button
@@ -12,16 +15,21 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.input
 
 external interface SearchInputProps : PropsWithChildren {
+	var value: String
+	var onChange: ChangeEventHandler<HTMLInputElement>?
+	var onClick: MouseEventHandler<*>?
 }
 
 val SearchInput = FC<SearchInputProps> { props ->
 	div {
-		className = ClassName("flex")
+		className = ClassName("flex justify-center")
 		div {
-			className = ClassName("mb-3 xs:w-96")
+			className = ClassName("mb-3 w-4/5")
 			div {
 				className = ClassName("input-group relative flex items-stretch w-full mb-4")
 				input {
+					value = props.value
+					onChange = props.onChange
 					type = InputType.search
 					placeholder = "Search for Content"
 					ariaLabel = "Search"
@@ -39,6 +47,7 @@ val SearchInput = FC<SearchInputProps> { props ->
 
 				}
 				button {
+					onClick = props.onClick
 					type = ButtonType.button
 					id = "button-trigger-search"
 					className = ClassName(
