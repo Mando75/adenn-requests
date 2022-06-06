@@ -9,6 +9,7 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.main
 import react.dom.html.ReactHTML.nav
 import react.router.Outlet
+import wrappers.ReactQueryDevtools
 
 
 val DefaultLayout = FC<PropsWithChildren> {
@@ -25,6 +26,10 @@ val DefaultLayout = FC<PropsWithChildren> {
 			main {
 				className = ClassName("col-span-10")
 				Outlet()
+				ReactQueryDevtools {
+					initialIsOpen = false
+					position = "bottom-right"
+				}
 			}
 		}
 

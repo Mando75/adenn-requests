@@ -1,22 +1,12 @@
+@file:JsModule("react-query/devtools")
+@file:JsNonModule
+
 package wrappers
 
-import react.FC
-import react.Props
-import react.ReactElement
-
-class ReactQueryDevToolsOption(val initialIsOpen: Boolean = true) // ???
-
-interface QueryError {
-	val message: String
+external interface QueryDevToolsProps : react.Props {
+	var initialIsOpen: Boolean
+	var position: String?
 }
 
-@JsModule("react-query/devtools")
-@JsNonModule
-external val ReactQueryDevtools: dynamic
 
-val reactQueryDevtools: (options: dynamic) -> ReactElement<Props> = ReactQueryDevtools.ReactQueryDevtools
-
-fun cReactQueryDevtools(options: ReactQueryDevToolsOption = ReactQueryDevToolsOption()) =
-	FC("ReactQueryDevtools") { _: Props ->
-		child(reactQueryDevtools(options))
-	}
+external val ReactQueryDevtools: react.FC<QueryDevToolsProps>

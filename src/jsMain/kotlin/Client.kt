@@ -1,27 +1,13 @@
 import components.config.ClientRoutes
 import components.config.SessionManager
 import kotlinx.browser.document
-import kotlinx.js.jso
 import react.FC
 import react.Props
 import react.create
 import react.dom.client.createRoot
-import react.query.DefaultOptions
-import react.query.QueryClient
 import react.query.QueryClientProvider
-import react.query.QueryObserverOptions
 import react.router.dom.BrowserRouter
-import wrappers.cReactQueryDevtools
-
-val queryClientQueryOptions: QueryObserverOptions<*, Error, *, *, *> = jso {
-	refetchOnWindowFocus = false
-}
-
-val defaultQueryOptions: DefaultOptions<Error> = jso {
-	queries = queryClientQueryOptions
-}
-
-private val queryClient = QueryClient(jso { defaultOptions = defaultQueryOptions })
+import support.queryClient
 
 private val App = FC<Props> {
 	BrowserRouter {
@@ -29,7 +15,6 @@ private val App = FC<Props> {
 			client = queryClient
 			SessionManager {
 				ClientRoutes()
-				cReactQueryDevtools()
 			}
 		}
 	}
