@@ -1,4 +1,4 @@
-GET {{host}}/search/multi?searchTerm="Your Name"
+GET {{host}}/search/multi?searchTerm="S"
 Accept: application/json
 Authorization: Bearer {{token}}
 

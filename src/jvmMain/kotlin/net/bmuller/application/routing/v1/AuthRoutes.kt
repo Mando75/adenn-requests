@@ -97,7 +97,7 @@ fun Route.auth() {
 				.withClaim("userId", user?.id)
 				.withClaim("plexUsername", user?.plexUsername)
 				.withClaim("version", user?.version)
-				.withExpiresAt(Date(System.currentTimeMillis() + env.jwtLifetime))
+				.withExpiresAt(Date(System.currentTimeMillis() + (env.jwtLifetimeSeconds * 1000)))
 				.sign(Algorithm.HMAC256(env.jwtTokenSecret))
 			call.respond(HttpStatusCode.OK, mapOf("token" to token))
 		}

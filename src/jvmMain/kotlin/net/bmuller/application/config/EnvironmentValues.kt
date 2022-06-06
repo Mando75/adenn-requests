@@ -28,5 +28,5 @@ class EnvironmentValues {
 	val jwtRealm: String = env["JWT_REALM"]
 	val jwtIssuer: String = env["JWT_ISSUER"]
 	val jwtAudience: String = env["JWT_AUDIENCE"]
-	val jwtLifetime: Int = env["JWT_TOKEN_LIFETIME"].toIntOrNull() ?: (1000 * 60 * 60)
+	val jwtLifetimeSeconds: Int = env["JWT_TOKEN_LIFETIME_SECONDS"].toIntOrNull() ?: (1000 * 60 * 60)
 }
