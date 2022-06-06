@@ -21,7 +21,6 @@ fun Application.configureAuthentication() {
 	install(Authentication) {
 		session<UserSession>("user_session") {
 			validate { session ->
-				application.environment.log.info(session.toString())
 				val validAuthToken =
 					userAuthentication.validateAuthToken(session.id, session.version)
 				return@validate if (validAuthToken) session else null

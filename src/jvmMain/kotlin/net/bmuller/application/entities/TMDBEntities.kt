@@ -179,7 +179,6 @@ sealed class MultiSearchEntity {
 		val adult: Boolean,
 		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.person,
-		@SerialName("known_for") val knownFor: MultiSearchEntity,
 		@SerialName("name") override val title: String,
 		override val popularity: Float,
 	) : MultiSearchEntity()

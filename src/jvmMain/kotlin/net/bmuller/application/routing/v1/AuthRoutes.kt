@@ -91,13 +91,14 @@ fun Route.auth() {
 	authenticate("user_session") {
 		post<AuthResource.Token> {
 			val user = call.principal<UserSession>()
+
 			val token = JWT.create()
 				.withAudience(env.jwtAudience)
 				.withIssuer(env.jwtIssuer)
 				.withClaim("userId", user?.id)
 				.withClaim("plexUsername", user?.plexUsername)
 				.withClaim("version", user?.version)
-				.withExpiresAt(Date(System.currentTimeMillis() + (env.jwtLifetimeSeconds * 1000)))
+				.withExpiresAt(Date(System.currentTimeMillis() + env.jwtLifetime))
 				.sign(Algorithm.HMAC256(env.jwtTokenSecret))
 			call.respond(HttpStatusCode.OK, mapOf("token" to token))
 		}

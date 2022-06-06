@@ -4,10 +4,8 @@ import api.queries.useMultiSearchQuery
 import components.search.SearchInput
 import csstype.ClassName
 import hooks.useInput
-import middleware.RequireAuth
 import react.FC
 import react.Props
-import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
@@ -15,7 +13,7 @@ import react.dom.html.ReactHTML.section
 import react.dom.html.ReactHTML.ul
 
 
-private val Search = FC<Props>("SearchPage") {
+val SearchPage = FC<Props>("SearchPage") {
 
 	val (searchTerm, onSearchChange) = useInput()
 	val searchResultsQuery = useMultiSearchQuery(searchTerm)
@@ -47,9 +45,4 @@ private val Search = FC<Props>("SearchPage") {
 			}
 		}
 	}
-}
-
-
-val SearchPage = RequireAuth.create {
-	Search()
 }

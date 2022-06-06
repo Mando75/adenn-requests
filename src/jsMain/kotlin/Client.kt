@@ -11,6 +11,7 @@ import react.query.QueryClient
 import react.query.QueryClientProvider
 import react.query.QueryObserverOptions
 import react.router.dom.BrowserRouter
+import wrappers.cReactQueryDevtools
 
 val queryClientQueryOptions: QueryObserverOptions<*, Error, *, *, *> = jso {
 	refetchOnWindowFocus = false
@@ -28,6 +29,7 @@ private val App = FC<Props> {
 			client = queryClient
 			SessionManager {
 				ClientRoutes()
+				cReactQueryDevtools()
 			}
 		}
 	}

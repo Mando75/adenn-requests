@@ -5,6 +5,7 @@ import middleware.RequireAuth
 import pages.LoginPage
 import pages.LogoutPage
 import pages.SearchPage
+import pages.user.TokenPage
 import react.FC
 import react.Props
 import react.create
@@ -15,11 +16,11 @@ val ClientRoutes = FC<Props>("ClientRoutes") {
 	Routes {
 		Route {
 			path = "/"
-			element = DefaultLayout.create()
+			element = RequireAuth.create { DefaultLayout() }
 
 			Route {
 				path = "search"
-				element = SearchPage
+				element = SearchPage.create()
 			}
 
 			Route {
@@ -29,12 +30,12 @@ val ClientRoutes = FC<Props>("ClientRoutes") {
 
 			Route {
 				path = "user"
-				element = RequireAuth.create { +"User" }
-			}
+				element = TokenPage.create()
 
-			Route {
-				path = "login"
-				element = LoginPage.create()
+				Route {
+					path = "token"
+					element = TokenPage.create()
+				}
 			}
 
 			Route {
@@ -43,5 +44,9 @@ val ClientRoutes = FC<Props>("ClientRoutes") {
 			}
 		}
 
+		Route {
+			path = "/login"
+			element = LoginPage.create()
+		}
 	}
 }
