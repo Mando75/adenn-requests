@@ -9,29 +9,32 @@ import io.ktor.http.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
-import react.query.QueryKey
-import react.query.UseQueryOptions
-import react.query.UseQueryResult
-import react.query.useQuery
+import react.query.*
+import support.CreateQueryKey
 import support.apiClient
 
 private val scope = MainScope()
+
+private typealias MeQueryKey = QueryKey
+
+private val meQuery: QueryFunction<UserEntity?, MeQueryKey> = {
+	scope.promise {
+		val result = apiClient.get(UserResource.Me()) { expectSuccess = false }
+		return@promise when (result.status) {
+			HttpStatusCode.OK -> result.body<UserEntity>()
+			HttpStatusCode.Forbidden -> null
+			HttpStatusCode.Unauthorized -> null
+			else -> throw Error(result.body<String>())
+		}
+	}
+}
+
 fun useMeQuery(): UseQueryResult<UserEntity?, Error> {
-	val queryKey: QueryKey = "me-query".unsafeCast<QueryKey>()
-	val options: UseQueryOptions<UserEntity?, Error, UserEntity?, QueryKey> = jso {
+	val queryKey = CreateQueryKey<MeQueryKey>("me-query")
+	val options: UseQueryOptions<UserEntity?, Error, UserEntity?, MeQueryKey> = jso {
 		retry = { _, _ -> false }
 	}
 
-	return useQuery(queryKey, { scope.promise { meQuery() } }, options)
-}
-
-suspend fun meQuery(): UserEntity? {
-	val result = apiClient.get(UserResource.Me()) { expectSuccess = false }
-	return when (result.status) {
-		HttpStatusCode.OK -> result.body<UserEntity>()
-		HttpStatusCode.Forbidden -> null
-		HttpStatusCode.Unauthorized -> null
-		else -> throw Error(result.body<String>())
-	}
+	return useQuery(queryKey, meQuery, options)
 }
 

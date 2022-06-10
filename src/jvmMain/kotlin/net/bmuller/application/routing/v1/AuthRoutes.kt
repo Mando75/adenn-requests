@@ -91,6 +91,7 @@ fun Route.auth() {
 	authenticate("user_session") {
 		post<AuthResource.Token> {
 			val user = call.principal<UserSession>()
+
 			val token = JWT.create()
 				.withAudience(env.jwtAudience)
 				.withIssuer(env.jwtIssuer)

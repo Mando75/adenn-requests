@@ -1,0 +1,14 @@
+GET {{host}}/search/multi?searchTerm="S"
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/search/tv?searchTerm="The Office"
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/search/movie?searchTerm="Morbius"
+Accept: application/json
+Authorization: Bearer {{token}}

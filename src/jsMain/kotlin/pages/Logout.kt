@@ -12,7 +12,7 @@ import react.router.useNavigate
 import react.useEffectOnce
 import support.apiClient
 
-val Logout = FC<Props>("Logout") {
+val LogoutPage = FC<Props>("LogoutPage") {
 	val navigate = useNavigate()
 	val (_, setAuth) = useAuth()
 	useEffectOnce {

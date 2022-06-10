@@ -8,9 +8,11 @@ import react.PropsWithChildren
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.main
 import react.dom.html.ReactHTML.nav
+import react.router.Outlet
+import wrappers.ReactQueryDevtools
 
 
-val DefaultLayout = FC<PropsWithChildren> { props ->
+val DefaultLayout = FC<PropsWithChildren> {
 	div {
 		className = ClassName("grid grid-cols-12 gap-4 min-h-screen")
 
@@ -23,7 +25,11 @@ val DefaultLayout = FC<PropsWithChildren> { props ->
 
 			main {
 				className = ClassName("col-span-10")
-				+props.children
+				Outlet()
+				ReactQueryDevtools {
+					initialIsOpen = false
+					position = "bottom-right"
+				}
 			}
 		}
 

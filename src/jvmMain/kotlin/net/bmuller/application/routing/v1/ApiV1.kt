@@ -10,6 +10,7 @@ fun Routing.apiV1() {
 			mediaItems()
 			tmdb()
 			users()
+			search()
 		}
 	}
 }
