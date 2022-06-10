@@ -10,7 +10,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
 import react.query.*
-import support.CreateQueryKey
+import support.createQueryKey
 import support.apiClient
 
 private val scope = MainScope()
@@ -30,7 +30,7 @@ private val meQuery: QueryFunction<UserEntity?, MeQueryKey> = {
 }
 
 fun useMeQuery(): UseQueryResult<UserEntity?, Error> {
-	val queryKey = CreateQueryKey<MeQueryKey>("me-query")
+	val queryKey = createQueryKey<MeQueryKey>("me-query")
 	val options: UseQueryOptions<UserEntity?, Error, UserEntity?, MeQueryKey> = jso {
 		retry = { _, _ -> false }
 	}

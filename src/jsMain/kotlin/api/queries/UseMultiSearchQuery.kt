@@ -8,8 +8,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
 import react.query.*
-import support.CreateQueryKey
-import support.ParseQueryKey
+import support.createQueryKey
+import support.parseQueryKey
 import support.apiClient
 
 private val scope = MainScope()
@@ -19,7 +19,7 @@ private typealias MultiSearchQueryResult = List<SearchResult>
 
 private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQueryKey> = { context ->
 	scope.promise {
-		val queryKey = ParseQueryKey<String>(context.queryKey)
+		val queryKey = parseQueryKey<String>(context.queryKey)
 		val searchTerm = queryKey.last()
 
 		val result = apiClient.get(SearchResource.Multi(searchTerm = searchTerm))
@@ -29,7 +29,7 @@ private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQ
 }
 
 fun useMultiSearchQuery(searchTerm: String): UseQueryResult<MultiSearchQueryResult, Error> {
-	val queryKey = CreateQueryKey<MultiSearchQueryKey>("multi-search", searchTerm.trim())
+	val queryKey = createQueryKey<MultiSearchQueryKey>("multi-search", searchTerm.trim())
 
 	val options: UseQueryOptions<MultiSearchQueryResult, Error, MultiSearchQueryResult, MultiSearchQueryKey> = jso {
 		enabled = searchTerm.isNotBlank()

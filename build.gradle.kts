@@ -1,27 +1,27 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-	kotlin("multiplatform") version "1.6.20"
+	kotlin("multiplatform") version "1.7.0"
 	application
-	kotlin("plugin.serialization") version "1.6.20"
+	kotlin("plugin.serialization") version "1.7.0"
 }
 
 group = "net.bmuller"
 version = "1.0-SNAPSHOT"
 
-val arrowKtVersion = "1.0.1"
-val ktorVersion = "2.0.1"
+val arrowKtVersion = "1.1.2"
+val ktorVersion = "2.0.2"
 val logbackVersion = "1.2.11"
-val kotlinVersion = "1.6.20"
-val reactVersion = "18.0.0-pre.330-kotlin-$kotlinVersion"
+val kotlinVersion = "1.7.0"
+val reactVersion = "18.1.0-pre.343"
 val exposedVersion = "0.38.1"
-val serializationVersion = "1.3.2"
+val serializationVersion = "1.3.3"
 val postgresVersion = "42.3.4"
 val flywayVersion = "8.5.9"
 val hikariVersion = "5.0.1"
 val dotenvVersion = "6.2.2"
-val koinVersion = "3.1.6"
-val kotlinxDateTimeVersion = "0.3.2"
+val koinVersion = "3.2.0"
+val kotlinxDateTimeVersion = "0.3.3"
 
 repositories {
 	mavenCentral()
@@ -104,11 +104,12 @@ kotlin {
 
 		val jsMain by getting {
 			dependencies {
+
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:$reactVersion")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.336")
-				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.0-pre.336")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.343")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.1-pre.343")
+				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:18.0.0-pre.331-kotlin-1.6.20")
 
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))

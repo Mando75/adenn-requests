@@ -1,7 +1,7 @@
 package net.bmuller.application.service
 
 import arrow.core.Either
-import arrow.core.computations.either
+import arrow.core.continuations.effect
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
@@ -26,11 +26,11 @@ class UserAuthService : BaseService() {
 			?.let { authVersion -> authVersion == tokenVersion } ?: false
 	}
 
-	suspend fun signInFlow(authToken: String) = either<UserAuthErrors, UserEntity> {
+	suspend fun signInFlow(authToken: String): Either<UserAuthErrors, UserEntity> = effect<UserAuthErrors, UserEntity> {
 		val plexUser = getPlexUser(authToken).flatMap { user -> validateUserAccess(user) }.bind()
 
-		return@either getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
-	}
+		return@effect getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
+	}.toEither()
 
 	/**
 	 * Fetch user from plex api

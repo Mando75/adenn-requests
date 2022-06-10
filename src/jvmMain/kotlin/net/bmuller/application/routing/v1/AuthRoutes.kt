@@ -1,6 +1,6 @@
 package net.bmuller.application.routing.v1
 
-import arrow.core.computations.either
+import arrow.core.continuations.effect
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import http.AuthResource
@@ -40,7 +40,7 @@ fun Route.auth() {
 	}
 
 	get<AuthResource.Plex.Callback> { resource ->
-		either<Any, Any> {
+		effect<Any, Any> {
 			val pinId = resource.pinId
 			val authToken = plexOAuthService.checkForAuthToken(pinId.toLongOrNull())
 				.mapLeft { error ->

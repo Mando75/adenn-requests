@@ -1,7 +1,7 @@
 package net.bmuller.application.service
 
 import arrow.core.Either
-import arrow.core.computations.either
+import arrow.core.continuations.effect
 import arrow.core.left
 import entities.LoginUrlResponse
 import io.ktor.http.*
@@ -32,7 +32,7 @@ class PlexOAuthService : BaseService() {
 
 
 	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse> =
-		either {
+		effect<Throwable, LoginUrlResponse> {
 			val pin = plexAuthPinRepository.getPin(clientInfo.headers).bind()
 
 			val forwardUrlParams: Parameters = Parameters.build {
@@ -55,8 +55,8 @@ class PlexOAuthService : BaseService() {
 			val loginUrl = "$plexApiUrl#!?${loginParameters.formUrlEncode()}"
 
 
-			return@either LoginUrlResponse(loginUrl, pin.id)
-		}
+			return@effect LoginUrlResponse(loginUrl, pin.id)
+		}.toEither()
 
 	sealed class CheckForAuthTokenError {
 		object TimedOutWaitingForToken : CheckForAuthTokenError()
