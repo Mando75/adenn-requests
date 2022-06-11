@@ -14,7 +14,7 @@ val InteractionProvider = FC<PropsWithChildren> { props ->
 	val isTouch = useInteraction()
 
 	InteractionContext.Provider(value = InteractionContextValue(isTouch)) {
-		props.children
+		+props.children
 	}
 }
 

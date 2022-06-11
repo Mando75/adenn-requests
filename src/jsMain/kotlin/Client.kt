@@ -14,6 +14,7 @@ private val App = FC<Props> {
 	BrowserRouter {
 		QueryClientProvider {
 			client = queryClient
+
 			SessionProvider {
 				InteractionProvider {
 					ClientRoutes()
