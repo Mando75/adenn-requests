@@ -13,8 +13,7 @@ fun Application.mainModule() {
 	configureDI()
 	configureDatabase()
 	configureAuthentication()
-	// TODO: Figure out CORS
-	//	configureCors()
+	configureCors()
 	configureContentNegotiation()
 	configureLogging()
 	configureCompression()
