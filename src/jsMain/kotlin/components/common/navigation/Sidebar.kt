@@ -1,7 +1,7 @@
 package components.common.navigation
 
 import csstype.ClassName
-import hooks.useAuth
+import context.useSession
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -19,7 +19,7 @@ private val navigationItems = listOf(
 )
 
 val Sidebar = FC<Props>("Sidebar") {
-	val (auth) = useAuth()
+	val (auth) = useSession()
 	val authPath = auth.user?.let { "/logout" } ?: "/login"
 	val authText = auth.user?.let { "Logout" } ?: "Login"
 

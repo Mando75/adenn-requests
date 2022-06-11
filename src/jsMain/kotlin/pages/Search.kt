@@ -2,12 +2,12 @@ package pages
 
 import api.queries.useMultiSearchQuery
 import components.search.SearchInput
+import components.search.SearchResult
 import csstype.ClassName
 import hooks.useDebouncedInput
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.section
 import react.dom.html.ReactHTML.ul
 
@@ -32,11 +32,8 @@ val SearchPage = FC<Props>("SearchPage") {
 			div {
 				+"Results: "
 				ul {
-					searchResultsQuery.data?.map { result ->
-						li {
-							+result.title
-						}
-					}
+					className = ClassName("list-unstyled grid grid-cols-4")
+					searchResultsQuery.data?.map { result -> SearchResult { searchResult = result } }
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-package components.config
+package context
 
 import api.queries.useMeQuery
 import entities.UserEntity
@@ -9,9 +9,9 @@ import react.router.useNavigate
 
 data class SessionState(val user: UserEntity?)
 
-val SessionContext = createContext<StateInstance<SessionState>>()
+private val SessionContext = createContext<StateInstance<SessionState>>()
 
-val SessionManager = FC<PropsWithChildren>("SessionManager") { props ->
+val SessionProvider = FC<PropsWithChildren>("SessionManager") { props ->
 	val navigate = useNavigate()
 	val query = useMeQuery()
 	val sessionStateInstance = useState(SessionState(null))
@@ -33,4 +33,8 @@ val SessionManager = FC<PropsWithChildren>("SessionManager") { props ->
 			+props.children
 		}
 	}
+}
+
+fun useSession(): StateInstance<SessionState> {
+	return useContext(SessionContext)
 }

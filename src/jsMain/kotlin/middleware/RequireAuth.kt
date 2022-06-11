@@ -1,13 +1,13 @@
 package middleware
 
-import hooks.useAuth
+import context.useSession
 import react.FC
 import react.PropsWithChildren
 import react.router.Navigate
 
 
 val RequireAuth = FC<PropsWithChildren>("RequireAuth") { props ->
-	val (auth) = useAuth()
+	val (auth) = useSession()
 
 	auth.user?.let { +props.children } ?: Navigate {
 		to = "/login"

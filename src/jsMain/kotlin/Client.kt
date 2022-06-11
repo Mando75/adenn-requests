@@ -1,5 +1,6 @@
 import components.config.ClientRoutes
-import components.config.SessionManager
+import context.InteractionProvider
+import context.SessionProvider
 import kotlinx.browser.document
 import react.FC
 import react.Props
@@ -13,8 +14,10 @@ private val App = FC<Props> {
 	BrowserRouter {
 		QueryClientProvider {
 			client = queryClient
-			SessionManager {
-				ClientRoutes()
+			SessionProvider {
+				InteractionProvider {
+					ClientRoutes()
+				}
 			}
 		}
 	}
