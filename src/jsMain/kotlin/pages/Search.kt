@@ -10,11 +10,11 @@ import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.section
 
-
 val SearchPage = FC<Props>("SearchPage") {
 	// STATE
 	val (searchTerm, debouncedSearchTerm, changeEventHandler) = useDebouncedInput()
 	val searchResultsQuery = useMultiSearchQuery(debouncedSearchTerm)
+
 
 	// RENDER
 	section {
@@ -28,7 +28,6 @@ val SearchPage = FC<Props>("SearchPage") {
 		else {
 			ListView {
 				isLoading = searchResultsQuery.isLoading
-				isEmpty = searchResultsQuery.data.isNullOrEmpty()
 				items = searchResultsQuery.data ?: emptyList()
 			}
 		}

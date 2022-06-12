@@ -111,6 +111,9 @@ kotlin {
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.1-pre.343")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:18.0.0-pre.331-kotlin-1.6.20")
 
+				// NPM
+				implementation(npm("react-transition-state", "1.1.4"))
+
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))
 				implementation(npm("postcss-loader", "4.2.0"))
