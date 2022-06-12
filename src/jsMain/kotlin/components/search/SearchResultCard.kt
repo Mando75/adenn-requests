@@ -59,8 +59,14 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 					alt = "${props.searchResult.title}  Poster"
 				}
 				if (showDetails) {
-					SearchResultCardDetail {
-						searchResult = props.searchResult
+					div {
+						className =
+							ClassName("absolute inset-0 left-0 right-0 flex flex-col justify-between p-2 bg-slate-600 bg-opacity-80")
+
+						SearchResultCardDetail {
+							searchResult = props.searchResult
+						}
+						RequestButton {}
 					}
 				}
 			}

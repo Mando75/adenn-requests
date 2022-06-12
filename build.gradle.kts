@@ -119,6 +119,7 @@ kotlin {
 				implementation(npm("postcss-loader", "4.2.0"))
 				implementation(npm("autoprefixer", "10.4.7"))
 				implementation(npm("tailwindcss", "3.0.24"))
+				implementation(npm("@heroicons/react", "1.0.6"))
 			}
 		}
 	}

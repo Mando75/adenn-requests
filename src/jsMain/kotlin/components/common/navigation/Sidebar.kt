@@ -1,7 +1,7 @@
 package components.common.navigation
 
-import csstype.ClassName
 import context.useSession
+import csstype.ClassName
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -29,7 +29,7 @@ val Sidebar = FC<Props>("Sidebar") {
 			div {
 				className = ClassName("flex items-center space-x-4 p-2 mb-5")
 
-				+"Avatar Zone"
+				+"Plex Requests"
 			}
 			ul {
 				className = ClassName("space-y-2 text-sm")
