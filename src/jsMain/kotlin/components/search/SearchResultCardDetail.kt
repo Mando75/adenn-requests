@@ -34,7 +34,7 @@ val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDe
 			+props.searchResult.title
 		}
 		p {
-			className = ClassName("text-white")
+			className = ClassName("text-white line-clamp-3")
 
 			+props.searchResult.overview
 		}
