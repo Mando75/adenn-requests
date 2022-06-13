@@ -4,6 +4,7 @@ plugins {
 	kotlin("multiplatform") version "1.7.0"
 	application
 	kotlin("plugin.serialization") version "1.7.0"
+	id("io.github.turansky.seskar") version "0.7.0"
 }
 
 group = "net.bmuller"
@@ -105,6 +106,7 @@ kotlin {
 		val jsMain by getting {
 			dependencies {
 
+				implementation("io.github.turansky.seskar:seskar-core:0.7.0")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.343")

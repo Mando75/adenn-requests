@@ -5,6 +5,8 @@
 package wrappers
 
 import support.extensions.JsTriple
+import support.extensions.TransitionState
+
 
 external interface Timeout {
 	var enter: Number?
@@ -12,7 +14,7 @@ external interface Timeout {
 }
 
 external interface TransitionEvent {
-	var state: String
+	var state: TransitionState
 }
 
 external interface TransitionOptions {
@@ -28,4 +30,4 @@ external interface TransitionOptions {
 }
 
 @JsName("default")
-external fun useTransition(options: TransitionOptions? = definedExternally): JsTriple<String, (toEnter: Boolean?) -> Unit, () -> Unit> // State, toggle, endTransition
+external fun useTransition(options: TransitionOptions? = definedExternally): JsTriple<TransitionState, (toEnter: Boolean?) -> Unit, () -> Unit> // State, toggle, endTransition

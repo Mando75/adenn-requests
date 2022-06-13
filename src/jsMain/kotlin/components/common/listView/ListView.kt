@@ -28,7 +28,7 @@ val ListView = FC<ListViewProps>("ListView") { props ->
 	} else {
 		ul {
 			className = ClassName("grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8")
-			props.items.map { result -> SearchResultCard { searchResult = result} }
+			props.items.map { result -> SearchResultCard { searchResult = result } }
 		}
 	}
 }

@@ -22,4 +22,5 @@
     historyApiFallback: true,
     open: false,
   }
+  config.devtool = undefined
 })();

@@ -10,6 +10,7 @@ import react.dom.aria.AriaRole
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
+import support.extensions.TransitionState
 import wrappers.useTransition
 
 external interface SearchResultCardProps : Props {
@@ -25,7 +26,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	})
 
 	// STATE
-	val showDetails = transition == "entered" || transition == "entering"
+	val showDetails = transition == TransitionState.ENTERED || transition == TransitionState.ENTERING
 
 	// EFFECTS
 
