@@ -34,16 +34,15 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	li {
 		className = ClassName("w-full")
 		div {
-			className =
-				ClassName(
-					"""overflow-hidden rounded 
+			className = ClassName(
+				"""overflow-hidden rounded 
 					| transform-gpu cursor-default bg-gray-800 bg-cover 
 					| outline-none ring-1 transition duration-300 
 					| ${
-						if (showDetails) "scale-105 shadow-lg ring-gray-500"
-						else "scale-100 shadow ring-gray-700"
-					}""".trimMargin()
-				)
+					if (showDetails) "scale-105 shadow-lg ring-gray-500"
+					else "scale-100 shadow ring-gray-700"
+				}""".trimMargin()
+			)
 			onMouseEnter = { if (!isTouch) toggleDetails(true) }
 			onMouseLeave = { toggleDetails(false) }
 			onClick = { toggleDetails(!showDetails) }
@@ -59,16 +58,11 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 					src = props.searchResult.posterPath
 					alt = "${props.searchResult.title}  Poster"
 				}
-				if (showDetails) {
-					div {
-						className =
-							ClassName("absolute inset-0 left-0 right-0 flex flex-col justify-between p-2 bg-slate-600 bg-opacity-80")
+				SearchResultCardDetail {
+					searchResult = props.searchResult
+					showDetail = showDetails
 
-						SearchResultCardDetail {
-							searchResult = props.searchResult
-						}
-						RequestButton {}
-					}
+					RequestButton {}
 				}
 			}
 		}

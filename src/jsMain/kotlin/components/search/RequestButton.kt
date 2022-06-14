@@ -26,6 +26,8 @@ val RequestButton = FC<Props>("RequestButton") {
 			| transition duration-150 ease-in-out
 		""".trimMargin()
 		)
+		onClick = { it.stopPropagation() }
+
 		DownloadIcon {
 			className = ClassName("text-white flex-shrink h-6 w-6")
 		}
