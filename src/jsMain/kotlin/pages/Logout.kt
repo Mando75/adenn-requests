@@ -19,9 +19,9 @@ val LogoutPage = FC<Props>("LogoutPage") {
 		MainScope().promise {
 			apiClient.get(AuthResource.Logout())
 		}
-			.then { setAuth(SessionState(null)) }
+			.then { setAuth(SessionState(null, false)) }
 			.then { navigate("/login") }
 	}
 
-	+"Loading..."
+	+"Logging you out..."
 }

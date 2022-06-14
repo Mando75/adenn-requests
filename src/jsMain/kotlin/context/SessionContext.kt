@@ -7,31 +7,27 @@ import react.*
 import react.router.useNavigate
 
 
-data class SessionState(val user: UserEntity?)
+data class SessionState(val user: UserEntity?, val loading: Boolean)
 
 private val SessionContext = createContext<StateInstance<SessionState>>()
 
 val SessionProvider = FC<PropsWithChildren>("SessionManager") { props ->
 	val navigate = useNavigate()
 	val query = useMeQuery()
-	val sessionStateInstance = useState(SessionState(null))
+	val sessionStateInstance = useState(SessionState(null, query.isLoading))
 	val (_, setSessionState) = sessionStateInstance
 	query.refetch
 
 	useEffect(query.isLoading, query.isError) {
 		if (!query.isError) {
-			setSessionState(SessionState(query.data))
+			setSessionState(SessionState(query.data, query.isLoading))
 		} else {
-			setSessionState(SessionState(null))
+			setSessionState(SessionState(null, query.isLoading))
 			navigate("/login", jso { replace = true })
 		}
 	}
 	SessionContext.Provider(sessionStateInstance) {
-		if (query.isLoading || query.isFetching) {
-			+"Loading..."
-		} else {
-			+props.children
-		}
+		+props.children
 	}
 }
 
