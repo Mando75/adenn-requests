@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS "requests"
     "status"           Request_Status_Enum NOT NULL DEFAULT 'REQUESTED',
     "requester_id"     INT                 NOT NULL REFERENCES users (id),
     "rejection_reason" TEXT                NULL,
-    "date_requested"   TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "date_fulfilled"   TIMESTAMP           NULL,
     "date_rejected"    TIMESTAMP           NULL,
     "created_at"       TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
