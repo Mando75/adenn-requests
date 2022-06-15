@@ -1,6 +1,7 @@
 package db.tables
 
 import db.util.postgresEnumeration
+import entities.RequestStatus
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -8,14 +9,6 @@ import java.time.Instant
 
 @Suppress("unused")
 object RequestTable : IntIdTable("requests") {
-	enum class RequestStatus {
-		REQUESTED,
-		FULFILLED,
-		REJECTED,
-		WAITING,
-		IMPORTED,
-		DOWNLOADING
-	}
 
 	enum class MediaType {
 		MOVIE,
@@ -34,7 +27,6 @@ object RequestTable : IntIdTable("requests") {
 	val rejectionReason: Column<String?> = text("rejection_reason").nullable()
 
 	// Dates Columns
-	val dateRequested: Column<Instant> = timestamp("date_requested").default(Instant.now())
 	val dateFulfilled: Column<Instant?> = timestamp("date_fulfilled").nullable()
 	val dateRejected: Column<Instant?> = timestamp("date_rejected").nullable()
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
@@ -45,3 +37,9 @@ object RequestTable : IntIdTable("requests") {
 		uniqueIndex("unique_tmdb_id_for_media_type", tmdbId, mediaType)
 	}
 }
+
+//fun ResultRow.toRequestEntity(): RequestEntity {
+//	return when (this[RequestTable.mediaType]) {
+//		RequestTable.MediaType.MOVIE -> RequestEntity.MovieRequest(),
+//		RequestTable.MediaType.TV -> RequestEntity.TVShowRequest()
+//}
