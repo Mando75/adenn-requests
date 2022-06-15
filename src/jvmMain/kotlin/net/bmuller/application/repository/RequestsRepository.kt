@@ -1,20 +1,21 @@
 package net.bmuller.application.repository
 
 import db.tables.RequestTable
-import db.tables.UserTable
+import db.tables.toRequestEntity
 import entities.RequestEntity
+import entities.UserEntity
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 interface RequestsRepository {
-	suspend fun createAndReturnRequest(newRequest: RequestEntity): RequestEntity
+	suspend fun createAndReturnRequest(newRequest: RequestEntity, requester: UserEntity): RequestEntity
 }
 
 
 class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
-	override suspend fun createAndReturnRequest(newRequest: RequestEntity): RequestEntity {
+	override suspend fun createAndReturnRequest(newRequest: RequestEntity, requester: UserEntity): RequestEntity {
 		return newSuspendedTransaction(Dispatchers.IO, db) {
 			val id = RequestTable.insertAndGetId { request ->
 				request[tmdbId] = newRequest.tmdbId
@@ -23,13 +24,12 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				request[title] = newRequest.title
 				request[posterPath] = newRequest.posterPath
 				request[status] = newRequest.status
-				request[requesterId] = newRequest.requester.id
+				request[requesterId] = requester.id
 			}
 
-			val result = (RequestTable innerJoin UserTable).select { RequestTable.id eq id }.single()
-			println(result)
+			val result = RequestTable.select { RequestTable.id eq id }.single()
 
-			newRequest
+			return@newSuspendedTransaction result.toRequestEntity()
 		}
 
 	}
