@@ -12,20 +12,31 @@ object RequestTable : IntIdTable("requests") {
 		REQUESTED,
 		FULFILLED,
 		REJECTED,
-		CANCELLED,
 		WAITING,
 		IMPORTED,
 		DOWNLOADING
 	}
 
+	enum class MediaType {
+		MOVIE,
+		TV
+	}
 
-	val dateCancelled: Column<Instant?> = timestamp("date_cancelled").nullable()
+	val tmdbId: Column<Int> = integer("moviedb_id").index()
+	val mediaType: Column<MediaType> = postgresEnumeration<MediaType>("media_type", "Media_Type_Enum").index()
+	val title: Column<String> = text("title")
+	val posterPath: Column<String> = text("poster_path")
+	val releaseDate: Column<Instant?> = timestamp("release_date").nullable()
+
+
+	val status: Column<RequestStatus> = postgresEnumeration<RequestStatus>("status", "Request_Status_Enum").index()
+	val requesterId: Column<Int> = integer("requester_id").references(UserTable.id).index("requester_id_fk")
+	val rejectionReason: Column<String?> = text("rejection_reason").nullable()
+
+	// Dates Columns
+	val dateRequested: Column<Instant> = timestamp("date_requested").default(Instant.now())
 	val dateFulfilled: Column<Instant?> = timestamp("date_fulfilled").nullable()
 	val dateRejected: Column<Instant?> = timestamp("date_rejected").nullable()
-	val dateRequested: Column<Instant> = timestamp("date_requested").default(Instant.now())
-	val rejectionReason: Column<String?> = text("rejection_reason").nullable()
-	val status: Column<RequestStatus> = postgresEnumeration("status", "Request_Status_Enum")
-	val userId: Column<Int> = integer("user_id").references(UserTable.id).index("user_id_fk")
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
 	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
 }
