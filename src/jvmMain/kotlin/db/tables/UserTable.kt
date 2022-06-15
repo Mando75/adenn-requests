@@ -3,6 +3,7 @@ package db.tables
 import db.util.postgresEnumeration
 import entities.UserEntity
 import entities.UserType
+import lib.parseDateColumn
 import net.bmuller.application.entities.AdminUser
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
@@ -63,7 +64,7 @@ fun ResultRow.toAdminUser(): AdminUser {
 		movieQuotaDays = get(UserTable.movieQuotaDays),
 		tvQuotaLimit = get(UserTable.tvQuotaLimit),
 		tvQuotaDays = get(UserTable.tvQuotaDays),
-		createdAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.createdAt).epochSecond),
-		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond)
+		createdAt = parseDateColumn(get(UserTable.createdAt).epochSecond),
+		modifiedAt = parseDateColumn(get(UserTable.modifiedAt).epochSecond)
 	)
 }

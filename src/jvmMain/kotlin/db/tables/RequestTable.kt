@@ -1,9 +1,14 @@
 package db.tables
 
 import db.util.postgresEnumeration
+import entities.RequestEntity
 import entities.RequestStatus
+import entities.UserEntity
+import lib.parseDateColumn
+import lib.parseNullableDateColumn
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
@@ -38,8 +43,35 @@ object RequestTable : IntIdTable("requests") {
 	}
 }
 
-//fun ResultRow.toRequestEntity(): RequestEntity {
-//	return when (this[RequestTable.mediaType]) {
-//		RequestTable.MediaType.MOVIE -> RequestEntity.MovieRequest(),
-//		RequestTable.MediaType.TV -> RequestEntity.TVShowRequest()
-//}
+fun ResultRow.toRequestEntity(requester: UserEntity? = null): RequestEntity {
+	return when (this[RequestTable.mediaType]) {
+		RequestTable.MediaType.MOVIE -> RequestEntity.MovieRequest(
+			id = get(RequestTable.id).value,
+			tmdbId = get(RequestTable.tmdbId),
+			title = get(RequestTable.title),
+			posterPath = get(RequestTable.posterPath),
+			releaseDate = parseNullableDateColumn(get(RequestTable.releaseDate)?.epochSecond),
+			status = get(RequestTable.status),
+			requester = requester,
+			rejectionReason = get(RequestTable.rejectionReason),
+			dateFulfilled = parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
+			dateRejected = parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
+			createdAt = parseDateColumn(get(RequestTable.createdAt).epochSecond),
+			modifiedAt = parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
+		)
+		RequestTable.MediaType.TV -> RequestEntity.TVShowRequest(
+			id = get(RequestTable.id).value,
+			tmdbId = get(RequestTable.tmdbId),
+			title = get(RequestTable.title),
+			posterPath = get(RequestTable.posterPath),
+			releaseDate = parseNullableDateColumn(get(RequestTable.releaseDate)?.epochSecond),
+			status = get(RequestTable.status),
+			requester = requester,
+			rejectionReason = get(RequestTable.rejectionReason),
+			dateFulfilled = parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
+			dateRejected = parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
+			createdAt = parseDateColumn(get(RequestTable.createdAt).epochSecond),
+			modifiedAt = parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
+		)
+	}
+}
