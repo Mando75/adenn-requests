@@ -3,6 +3,7 @@ package entities
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
+@Suppress("unused")
 @kotlinx.serialization.Serializable
 enum class RequestStatus {
 	REQUESTED,
@@ -21,7 +22,7 @@ sealed class RequestEntity {
 	abstract val posterPath: String
 	abstract val releaseDate: Instant?
 	abstract val status: RequestStatus
-	abstract val requester: UserEntity
+	abstract val requester: UserEntity?
 	abstract val rejectionReason: String?
 	abstract val dateFulfilled: Instant?
 	abstract val dateRejected: Instant?
@@ -35,8 +36,8 @@ sealed class RequestEntity {
 		override val title: String,
 		override val posterPath: String,
 		override val releaseDate: Instant? = null,
-		override val status: RequestStatus,
-		override val requester: UserEntity,
+		override val status: RequestStatus = RequestStatus.REQUESTED,
+		override val requester: UserEntity?,
 		override val rejectionReason: String? = null,
 		override val dateFulfilled: Instant? = null,
 		override val dateRejected: Instant? = null,
@@ -51,8 +52,8 @@ sealed class RequestEntity {
 		override val title: String,
 		override val posterPath: String,
 		override val releaseDate: Instant? = null,
-		override val status: RequestStatus,
-		override val requester: UserEntity,
+		override val status: RequestStatus = RequestStatus.REQUESTED,
+		override val requester: UserEntity?,
 		override val rejectionReason: String? = null,
 		override val dateFulfilled: Instant? = null,
 		override val dateRejected: Instant? = null,
