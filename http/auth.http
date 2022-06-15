@@ -1,3 +1,17 @@
 ###
 GET {{host}}/auth/plex/login-url
 Content-Type: application/json
+
+###
+GET {{host}}/api/plex/callback?pinId=123
+Content-Type: application/json
+
+###
+GET http://localhost:8080/health
+Content-Type: application/json
+
+
+###
+GET {{host}}/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
