@@ -22,8 +22,8 @@ object RequestTable : IntIdTable("requests") {
 		TV
 	}
 
-	val tmdbId: Column<Int> = integer("moviedb_id").index()
-	val mediaType: Column<MediaType> = postgresEnumeration<MediaType>("media_type", "Media_Type_Enum").index()
+	val tmdbId: Column<Int> = integer("tmdb_id")
+	val mediaType: Column<MediaType> = postgresEnumeration("media_type", "Media_Type_Enum")
 	val title: Column<String> = text("title")
 	val posterPath: Column<String> = text("poster_path")
 	val releaseDate: Column<Instant?> = timestamp("release_date").nullable()
@@ -39,4 +39,9 @@ object RequestTable : IntIdTable("requests") {
 	val dateRejected: Column<Instant?> = timestamp("date_rejected").nullable()
 	val createdAt: Column<Instant> = timestamp("created_at").index().default(Instant.now())
 	val modifiedAt: Column<Instant> = timestamp("modified_at").index().default(Instant.now())
+
+
+	init {
+		uniqueIndex("unique_tmdb_id_for_media_type", tmdbId, mediaType)
+	}
 }
