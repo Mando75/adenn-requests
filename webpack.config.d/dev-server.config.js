@@ -1,5 +1,5 @@
 (() => {
-  const devServer = config.devServer || {}
+  const devServer = config.devServer || {};
   config.devServer = {
     ...devServer,
     proxy: {
@@ -21,5 +21,6 @@
     },
     historyApiFallback: true,
     open: false,
-  }
+  };
+  config.devtool = undefined;
 })();

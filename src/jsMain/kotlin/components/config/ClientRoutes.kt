@@ -30,7 +30,7 @@ val ClientRoutes = FC<Props>("ClientRoutes") {
 
 			Route {
 				path = "user"
-				element = TokenPage.create()
+				element = FC<Props> { +"User" }.create()
 
 				Route {
 					path = "token"

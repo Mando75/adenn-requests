@@ -34,7 +34,7 @@ class SearchService : BaseService() {
 	private fun transformTV(result: BaseTVShowResult): SearchResult.TVResult = SearchResult.TVResult(
 		id = result.id,
 		overview = result.overview,
-		posterPath = result.posterPath,
+		posterPath = createPosterPath(result.posterPath),
 		releaseDate = result.firstAirDate,
 		title = result.title,
 	)
@@ -43,9 +43,11 @@ class SearchService : BaseService() {
 		SearchResult.MovieResult(
 			id = result.id,
 			overview = result.overview,
-			posterPath = result.posterPath,
+			posterPath = createPosterPath(result.posterPath),
 			title = result.title,
 			releaseDate = result.releaseDate
 		)
+
+	private fun createPosterPath(path: String?): String = path?.let { "https://image.tmdb.org/t/p/w300_and_h450_face$path" } ?: ""
 }
 

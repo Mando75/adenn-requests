@@ -1,9 +1,12 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
 	kotlin("multiplatform") version "1.7.0"
 	application
 	kotlin("plugin.serialization") version "1.7.0"
+	id("io.github.turansky.seskar") version "0.7.0"
 }
 
 group = "net.bmuller"
@@ -105,17 +108,23 @@ kotlin {
 		val jsMain by getting {
 			dependencies {
 
+				implementation("io.github.turansky.seskar:seskar-core:0.7.0")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.343")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.1-pre.343")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:18.0.0-pre.331-kotlin-1.6.20")
 
+				// NPM
+				implementation(npm("react-transition-state", "1.1.4"))
+
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))
 				implementation(npm("postcss-loader", "4.2.0"))
 				implementation(npm("autoprefixer", "10.4.7"))
 				implementation(npm("tailwindcss", "3.0.24"))
+				implementation(npm("@tailwindcss/line-clamp", "0.4.0"))
+				implementation(npm("@heroicons/react", "1.0.6"))
 			}
 		}
 	}

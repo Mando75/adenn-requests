@@ -12,7 +12,7 @@ import react.router.Outlet
 import wrappers.ReactQueryDevtools
 
 
-val DefaultLayout = FC<PropsWithChildren> {
+val DefaultLayout = FC<PropsWithChildren>("DefaultLayout") {
 	div {
 		className = ClassName("grid grid-cols-12 gap-4 min-h-screen")
 
@@ -24,7 +24,7 @@ val DefaultLayout = FC<PropsWithChildren> {
 			}
 
 			main {
-				className = ClassName("col-span-10")
+				className = ClassName("col-span-10 mb-4 mr-4 mt-6")
 				Outlet()
 				ReactQueryDevtools {
 					initialIsOpen = false

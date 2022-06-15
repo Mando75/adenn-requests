@@ -1,7 +1,7 @@
 package pages
 
-import components.config.SessionState
-import hooks.useAuth
+import context.SessionState
+import context.useSession
 import http.AuthResource
 import io.ktor.client.plugins.resources.*
 import kotlinx.coroutines.MainScope
@@ -14,14 +14,14 @@ import support.apiClient
 
 val LogoutPage = FC<Props>("LogoutPage") {
 	val navigate = useNavigate()
-	val (_, setAuth) = useAuth()
+	val (_, setAuth) = useSession()
 	useEffectOnce {
 		MainScope().promise {
 			apiClient.get(AuthResource.Logout())
 		}
-			.then { setAuth(SessionState(null)) }
+			.then { setAuth(SessionState(null, false)) }
 			.then { navigate("/login") }
 	}
 
-	+"Loading..."
+	+"Logging you out..."
 }

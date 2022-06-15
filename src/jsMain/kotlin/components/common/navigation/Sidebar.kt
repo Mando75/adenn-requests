@@ -1,7 +1,7 @@
 package components.common.navigation
 
+import context.useSession
 import csstype.ClassName
-import hooks.useAuth
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -19,7 +19,7 @@ private val navigationItems = listOf(
 )
 
 val Sidebar = FC<Props>("Sidebar") {
-	val (auth) = useAuth()
+	val (auth) = useSession()
 	val authPath = auth.user?.let { "/logout" } ?: "/login"
 	val authText = auth.user?.let { "Logout" } ?: "Login"
 
@@ -29,7 +29,7 @@ val Sidebar = FC<Props>("Sidebar") {
 			div {
 				className = ClassName("flex items-center space-x-4 p-2 mb-5")
 
-				+"Avatar Zone"
+				+"Plex Requests"
 			}
 			ul {
 				className = ClassName("space-y-2 text-sm")

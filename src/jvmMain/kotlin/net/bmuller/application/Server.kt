@@ -6,7 +6,13 @@ import io.ktor.server.netty.*
 import net.bmuller.application.plugins.*
 
 fun main() {
-	embeddedServer(Netty, port = 8080, host = "127.0.0.1", module = Application::mainModule).start(wait = true)
+	embeddedServer(
+		Netty,
+		port = 8080,
+		host = "127.0.0.1",
+		module = Application::mainModule,
+		watchPaths = listOf("classes")
+	).start(wait = true)
 }
 
 fun Application.mainModule() {

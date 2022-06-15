@@ -2,7 +2,7 @@ package pages
 
 import api.queries.usePlexLoginUrl
 import csstype.ClassName
-import hooks.useAuth
+import context.useSession
 import kotlinx.browser.window
 import kotlinx.js.jso
 import org.w3c.dom.HTMLButtonElement
@@ -19,7 +19,7 @@ import react.useEffect
 
 fun useCheckForSession() {
 	val navigate = useNavigate()
-	val (auth) = useAuth()
+	val (auth) = useSession()
 	useEffect(auth, navigate) {
 		auth.user?.let { navigate("/", jso { replace = true }) }
 	}

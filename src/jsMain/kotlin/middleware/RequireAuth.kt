@@ -1,16 +1,21 @@
 package middleware
 
-import hooks.useAuth
+import context.useSession
+import kotlinx.js.jso
 import react.FC
 import react.PropsWithChildren
-import react.router.Navigate
+import react.router.useNavigate
 
 
 val RequireAuth = FC<PropsWithChildren>("RequireAuth") { props ->
-	val (auth) = useAuth()
+	val (auth) = useSession()
+	val navigate = useNavigate()
 
-	auth.user?.let { +props.children } ?: Navigate {
-		to = "/login"
-		replace = true
+	if (auth.loading) {
+		+"Loading..."
+	} else if (auth.user == null) {
+		navigate("/login", jso { replace = true })
+	} else {
+		+props.children
 	}
 }
