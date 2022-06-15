@@ -1,7 +1,9 @@
 package net.bmuller.application.repository
 
 import db.tables.RequestTable
+import db.tables.UserTable
 import db.tables.toRequestEntity
+import db.tables.toUserEntity
 import entities.RequestEntity
 import entities.UserEntity
 import kotlinx.coroutines.Dispatchers
@@ -10,12 +12,20 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 interface RequestsRepository {
-	suspend fun createAndReturnRequest(newRequest: RequestEntity, requester: UserEntity): RequestEntity
+	suspend fun createAndReturnRequest(
+		newRequest: RequestEntity,
+		requester: UserEntity,
+		includeRequester: Boolean = false
+	): RequestEntity
 }
 
 
 class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
-	override suspend fun createAndReturnRequest(newRequest: RequestEntity, requester: UserEntity): RequestEntity {
+	override suspend fun createAndReturnRequest(
+		newRequest: RequestEntity,
+		requester: UserEntity,
+		includeRequester: Boolean
+	): RequestEntity {
 		return newSuspendedTransaction(Dispatchers.IO, db) {
 			val id = RequestTable.insertAndGetId { request ->
 				request[tmdbId] = newRequest.tmdbId
@@ -27,12 +37,17 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				request[requesterId] = requester.id
 			}
 
-			val result = RequestTable.select { RequestTable.id eq id }.single()
+			val table = if (includeRequester) {
+				(RequestTable innerJoin UserTable)
+			} else RequestTable
 
-			return@newSuspendedTransaction result.toRequestEntity()
+			val result = table.select { RequestTable.id eq id }.single()
+			val user = if (includeRequester) {
+				result.toUserEntity()
+			} else null
+
+			return@newSuspendedTransaction result.toRequestEntity(user)
 		}
-
 	}
-
 
 }
