@@ -20,7 +20,7 @@ sealed class RequestEntity {
 	abstract val tmdbId: Int
 	abstract val title: String
 	abstract val posterPath: String
-	abstract val releaseDate: Instant?
+	abstract val releaseDate: String?
 	abstract val status: RequestStatus
 	abstract val requester: UserEntity?
 	abstract val rejectionReason: String?
@@ -29,13 +29,34 @@ sealed class RequestEntity {
 	abstract val createdAt: Instant
 	abstract val modifiedAt: Instant
 
+	companion object {
+		fun fromSearchResult(searchResult: SearchResult, requester: UserEntity? = null): RequestEntity {
+			return when (searchResult) {
+				is SearchResult.MovieResult -> MovieRequest(
+					tmdbId = searchResult.id,
+					title = searchResult.title,
+					posterPath = searchResult.posterPath ?: "",
+					releaseDate = searchResult.releaseDate,
+					requester = requester,
+				)
+				is SearchResult.TVResult -> TVShowRequest(
+					tmdbId = searchResult.id,
+					title = searchResult.title,
+					posterPath = searchResult.posterPath ?: "",
+					releaseDate = searchResult.releaseDate,
+					requester = requester,
+				)
+			}
+		}
+	}
+
 	@kotlinx.serialization.Serializable
 	data class MovieRequest(
 		override val id: Int = 0,
 		override val tmdbId: Int,
 		override val title: String,
 		override val posterPath: String,
-		override val releaseDate: Instant? = null,
+		override val releaseDate: String? = null,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
 		override val requester: UserEntity?,
 		override val rejectionReason: String? = null,
@@ -51,7 +72,7 @@ sealed class RequestEntity {
 		override val tmdbId: Int,
 		override val title: String,
 		override val posterPath: String,
-		override val releaseDate: Instant? = null,
+		override val releaseDate: String? = null,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
 		override val requester: UserEntity?,
 		override val rejectionReason: String? = null,

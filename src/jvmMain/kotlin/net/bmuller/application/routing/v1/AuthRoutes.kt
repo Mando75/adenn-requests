@@ -42,7 +42,7 @@ fun Route.auth() {
 	get<AuthResource.Plex.Callback> { resource ->
 		effect<Any, Any> {
 			val pinId = resource.pinId
-			val authToken = plexOAuthService.checkForAuthToken(pinId.toLongOrNull())
+			val authToken = plexOAuthService.checkForAuthToken(pinId)
 				.mapLeft { error ->
 					val (statusCode, message) = when (error) {
 						is PlexOAuthService.CheckForAuthTokenError.MissingPinId ->

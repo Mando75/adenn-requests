@@ -7,10 +7,7 @@ import net.bmuller.application.http.PlexClientImpl
 import net.bmuller.application.http.TMDBClient
 import net.bmuller.application.http.TMDBClientImpl
 import net.bmuller.application.repository.*
-import net.bmuller.application.service.PlexOAuthService
-import net.bmuller.application.service.SearchService
-import net.bmuller.application.service.UserAuthService
-import net.bmuller.application.service.UserService
+import net.bmuller.application.service.*
 import org.koin.dsl.module
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -42,6 +39,7 @@ val serviceModule = module {
 	single { UserAuthService() }
 	single { UserService() }
 	single { SearchService() }
+	single { RequestService() }
 }
 
 val adminModule = module {

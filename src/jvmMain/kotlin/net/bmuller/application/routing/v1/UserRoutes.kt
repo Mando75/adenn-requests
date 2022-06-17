@@ -13,7 +13,6 @@ import net.bmuller.application.service.UserService
 fun Route.users() {
 	val userService: UserService by inject()
 
-
 	get<UserResource.Me> {
 		val session = call.parseUserAuth()
 		userService.me(session?.id).mapLeft { error ->

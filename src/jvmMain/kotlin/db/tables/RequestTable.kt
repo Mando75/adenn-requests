@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
+import kotlin.reflect.full.primaryConstructor
 
 @Suppress("unused")
 object RequestTable : IntIdTable("requests") {
@@ -24,7 +25,7 @@ object RequestTable : IntIdTable("requests") {
 	val mediaType: Column<MediaType> = postgresEnumeration("media_type", "Media_Type_Enum")
 	val title: Column<String> = text("title")
 	val posterPath: Column<String> = text("poster_path")
-	val releaseDate: Column<Instant?> = timestamp("release_date").nullable()
+	val releaseDate: Column<String?> = text("release_date").nullable()
 
 
 	val status: Column<RequestStatus> = postgresEnumeration<RequestStatus>("status", "Request_Status_Enum").index()
@@ -44,34 +45,22 @@ object RequestTable : IntIdTable("requests") {
 }
 
 fun ResultRow.toRequestEntity(requester: UserEntity? = null): RequestEntity {
-	return when (this[RequestTable.mediaType]) {
-		RequestTable.MediaType.MOVIE -> RequestEntity.MovieRequest(
-			id = get(RequestTable.id).value,
-			tmdbId = get(RequestTable.tmdbId),
-			title = get(RequestTable.title),
-			posterPath = get(RequestTable.posterPath),
-			releaseDate = parseNullableDateColumn(get(RequestTable.releaseDate)?.epochSecond),
-			status = get(RequestTable.status),
-			requester = requester,
-			rejectionReason = get(RequestTable.rejectionReason),
-			dateFulfilled = parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
-			dateRejected = parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
-			createdAt = parseDateColumn(get(RequestTable.createdAt).epochSecond),
-			modifiedAt = parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
-		)
-		RequestTable.MediaType.TV -> RequestEntity.TVShowRequest(
-			id = get(RequestTable.id).value,
-			tmdbId = get(RequestTable.tmdbId),
-			title = get(RequestTable.title),
-			posterPath = get(RequestTable.posterPath),
-			releaseDate = parseNullableDateColumn(get(RequestTable.releaseDate)?.epochSecond),
-			status = get(RequestTable.status),
-			requester = requester,
-			rejectionReason = get(RequestTable.rejectionReason),
-			dateFulfilled = parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
-			dateRejected = parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
-			createdAt = parseDateColumn(get(RequestTable.createdAt).epochSecond),
-			modifiedAt = parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
-		)
+	val requestKlass = when (get(RequestTable.mediaType)) {
+		RequestTable.MediaType.MOVIE -> RequestEntity.MovieRequest::class
+		RequestTable.MediaType.TV -> RequestEntity.TVShowRequest::class
 	}
+	return requestKlass.primaryConstructor!!.call(
+		get(RequestTable.id).value,
+		get(RequestTable.tmdbId),
+		get(RequestTable.title),
+		get(RequestTable.posterPath),
+		get(RequestTable.releaseDate),
+		get(RequestTable.status),
+		requester,
+		get(RequestTable.rejectionReason),
+		parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
+		parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
+		parseDateColumn(get(RequestTable.createdAt).epochSecond),
+		parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
+	)
 }

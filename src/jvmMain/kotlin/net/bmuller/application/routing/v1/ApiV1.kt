@@ -11,6 +11,7 @@ fun Routing.apiV1() {
 			tmdb()
 			users()
 			search()
+			requests()
 		}
 	}
 }
