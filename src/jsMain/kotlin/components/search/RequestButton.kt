@@ -8,7 +8,11 @@ import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.span
 import wrappers.DownloadIcon
 
-val RequestButton = FC<Props>("RequestButton") {
+external interface RequestButtonProps : Props {
+	var onClick: () -> Unit
+}
+
+val RequestButton = FC<RequestButtonProps>("RequestButton") { props ->
 	// STATE
 
 	// HOOKS
@@ -26,7 +30,10 @@ val RequestButton = FC<Props>("RequestButton") {
 			| transition duration-150 ease-in-out
 		""".trimMargin()
 		)
-		onClick = { it.stopPropagation() }
+		onClick = {
+			it.stopPropagation()
+			props.onClick.invoke()
+		}
 
 		DownloadIcon {
 			className = ClassName("text-white flex-shrink h-6 w-6")

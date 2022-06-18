@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ServerKt" type="JetRunConfigurationType" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="net.bmuller.application.ServerKt" />
+    <module name="adenn-requests.jvmMain" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Dio.kto.development=true" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

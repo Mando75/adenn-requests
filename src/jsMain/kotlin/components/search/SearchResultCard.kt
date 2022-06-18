@@ -1,5 +1,6 @@
 package components.search
 
+import api.mutations.useSubmitRequestMutation
 import context.useIsTouch
 import csstype.ClassName
 import entities.SearchResult
@@ -11,6 +12,7 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
 import support.extensions.TransitionState
+import support.extensions.exec
 import wrappers.useTransition
 
 external interface SearchResultCardProps : Props {
@@ -24,6 +26,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 		preEnter = true
 		initialEntered = false
 	})
+	val submitRequestMutation = useSubmitRequestMutation()
 
 	// STATE
 	val showDetails = transition == TransitionState.ENTERED || transition == TransitionState.ENTERING
@@ -62,7 +65,9 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 					searchResult = props.searchResult
 					showDetail = showDetails
 
-					RequestButton {}
+					RequestButton {
+						onClick = { submitRequestMutation.exec(props.searchResult) }
+					}
 				}
 			}
 		}
