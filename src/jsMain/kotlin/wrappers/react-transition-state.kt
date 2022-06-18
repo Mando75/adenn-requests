@@ -4,8 +4,8 @@
 
 package wrappers
 
-import support.extensions.JsTriple
-import support.extensions.TransitionState
+import utils.extensions.JsTriple
+import utils.extensions.TransitionState
 
 
 external interface Timeout {

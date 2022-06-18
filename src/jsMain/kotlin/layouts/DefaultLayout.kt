@@ -1,6 +1,6 @@
 package layouts
 
-import components.common.navigation.Sidebar
+import components.navigation.Sidebar
 import csstype.ClassName
 import react.FC
 import react.Fragment

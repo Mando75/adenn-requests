@@ -1,7 +1,6 @@
-import components.config.ClientRoutes
-import context.InteractionProvider
-import context.SessionProvider
 import kotlinx.browser.document
+import providers.InteractionProvider
+import providers.SessionProvider
 import react.FC
 import react.Props
 import react.StrictMode
@@ -9,9 +8,10 @@ import react.create
 import react.dom.client.createRoot
 import react.query.QueryClientProvider
 import react.router.dom.BrowserRouter
-import support.queryClient
+import routes.AppRoutes
+import utils.queryClient
 
-private val App = FC<Props> {
+private val App = FC<Props>("Root") {
 	StrictMode {
 		BrowserRouter {
 			QueryClientProvider {
@@ -19,7 +19,7 @@ private val App = FC<Props> {
 
 				SessionProvider {
 					InteractionProvider {
-						ClientRoutes()
+						AppRoutes()
 					}
 				}
 			}
