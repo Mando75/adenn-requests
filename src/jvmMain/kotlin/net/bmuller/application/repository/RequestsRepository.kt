@@ -7,6 +7,8 @@ import db.tables.toUserEntity
 import entities.RequestEntity
 import entities.UserEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.datetime.Instant
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -17,6 +19,8 @@ interface RequestsRepository {
 		requester: UserEntity,
 		includeRequester: Boolean = false
 	): RequestEntity
+
+	suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long
 }
 
 
@@ -50,4 +54,14 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 		}
 	}
 
+	override suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val mediaType = if (isMovie) RequestTable.MediaType.MOVIE else RequestTable.MediaType.TV
+			return@newSuspendedTransaction RequestTable
+				.select { RequestTable.requesterId eq userId }
+				.andWhere { RequestTable.mediaType eq mediaType }
+				.andWhere { RequestTable.createdAt greaterEq timePeriod }
+				.count()
+		}
+	}
 }
