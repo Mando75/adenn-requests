@@ -7,9 +7,7 @@ import db.tables.toUserEntity
 import entities.RequestEntity
 import entities.UserEntity
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Instant
 
@@ -39,6 +37,12 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				request[posterPath] = newRequest.posterPath
 				request[status] = newRequest.status
 				request[requesterId] = requester.id
+			}
+
+			UserTable.update({ UserTable.id eq requester.id }) {
+				with(SqlExpressionBuilder) {
+					it[requestCount] = requestCount + 1
+				}
 			}
 
 			val table = if (includeRequester) {
