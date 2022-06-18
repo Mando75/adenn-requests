@@ -29,6 +29,10 @@ fun Route.requests() {
 			.mapLeft { error ->
 				when (error) {
 					is RequestServiceErrors.UserNotFound -> call.respond(HttpStatusCode.Forbidden, "User not found")
+					is RequestServiceErrors.QuotaExceeded -> call.respond(
+						HttpStatusCode.UnprocessableEntity,
+						"Quota exceeded"
+					)
 				}
 			}
 	}

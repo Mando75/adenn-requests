@@ -7,11 +7,11 @@ import arrow.core.right
 import entities.RequestEntity
 import entities.SearchResult
 import entities.UserEntity
-import kotlinx.datetime.Clock
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.repository.RequestsRepository
 import net.bmuller.application.repository.UserRepository
 import org.koin.java.KoinJavaComponent.inject
+import java.time.Instant
 import kotlin.time.Duration.Companion.days
 
 sealed class RequestServiceErrors {
@@ -41,7 +41,7 @@ class RequestService : BaseService() {
 		val limit = if (isMovie) user.movieQuotaLimit else user.tvQuotaLimit
 		val days = if (isMovie) user.movieQuotaDays else user.tvQuotaDays
 
-		val timePeriod = (Clock.System.now() - days.days)
+		val timePeriod: Instant = Instant.now().minusSeconds(days.days.inWholeSeconds)
 
 		val quotaUsage = requestsRepository.getQuotaUsage(user.id, timePeriod, isMovie)
 

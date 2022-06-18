@@ -7,11 +7,11 @@ import db.tables.toUserEntity
 import entities.RequestEntity
 import entities.UserEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.Instant
 
 interface RequestsRepository {
 	suspend fun createAndReturnRequest(
