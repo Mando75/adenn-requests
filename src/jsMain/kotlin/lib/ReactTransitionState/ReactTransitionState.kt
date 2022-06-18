@@ -1,4 +1,4 @@
-package utils.extensions
+package lib.ReactTransitionState
 
 import seskar.js.JsString
 import seskar.js.JsUnion

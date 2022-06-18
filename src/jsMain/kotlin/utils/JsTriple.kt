@@ -1,6 +1,6 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package utils.extensions
+package utils
 
 class JsTriple<out A, out B, out C>
 private constructor() {

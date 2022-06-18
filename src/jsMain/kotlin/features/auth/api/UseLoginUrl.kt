@@ -7,10 +7,10 @@ import io.ktor.client.plugins.resources.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
+import lib.ApiClient.apiClient
 import react.query.QueryKey
 import react.query.UseQueryResult
 import react.query.useQuery
-import utils.apiClient
 
 fun usePlexLoginUrl(host: String): UseQueryResult<LoginUrlResponse, Error> {
 	val queryKey: QueryKey = "login-url-query".unsafeCast<QueryKey>()

@@ -1,7 +1,7 @@
 package net.bmuller.application.service
 
 import arrow.core.Either
-import arrow.core.continuations.effect
+import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
 import entities.RequestEntity
@@ -23,16 +23,15 @@ class RequestService : BaseService() {
 	private val requestsRepository: RequestsRepository by inject(RequestsRepository::class.java)
 	private val usersRepository: UserRepository by inject(UserRepository::class.java)
 
-	suspend fun submitRequest(result: SearchResult, session: UserSession): Either<RequestServiceErrors, RequestEntity> =
-		effect {
-			val user = getUser(session.id).bind()
-			checkRequestQuota(user, result is SearchResult.MovieResult).bind()
+	suspend fun submitRequest(result: SearchResult, session: UserSession) = either {
+		val user = getUser(session.id).bind()
+		checkRequestQuota(user, result is SearchResult.MovieResult).bind()
 
-			val newRequest = RequestEntity.fromSearchResult(result)
-			val request = requestsRepository.createAndReturnRequest(newRequest, user, true)
-			submitRequestToJobQueue(request)
-			return@effect request
-		}.toEither()
+		val newRequest = RequestEntity.fromSearchResult(result)
+		val request = requestsRepository.createAndReturnRequest(newRequest, user, true)
+		submitRequestToJobQueue(request)
+		return@either request
+	}
 
 	private suspend fun checkRequestQuota(
 		user: UserEntity,

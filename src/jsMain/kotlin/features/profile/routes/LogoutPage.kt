@@ -4,13 +4,13 @@ import http.AuthResource
 import io.ktor.client.plugins.resources.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
+import lib.ApiClient.apiClient
 import providers.SessionState
 import providers.useSession
 import react.FC
 import react.Props
 import react.router.useNavigate
 import react.useEffectOnce
-import utils.apiClient
 
 val LogoutPage = FC<Props>("LogoutPage") {
 	val navigate = useNavigate()

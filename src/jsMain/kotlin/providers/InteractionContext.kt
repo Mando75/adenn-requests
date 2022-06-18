@@ -10,7 +10,7 @@ value class InteractionContextValue(val isTouch: Boolean)
 
 private val InteractionContext = createContext(InteractionContextValue(false))
 
-val InteractionProvider = FC<PropsWithChildren> { props ->
+val InteractionProvider = FC<PropsWithChildren>("InteractionProvider") { props ->
 	val isTouch = useInteraction()
 
 	InteractionContext.Provider(value = InteractionContextValue(isTouch)) {

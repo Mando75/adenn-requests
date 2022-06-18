@@ -9,9 +9,9 @@ import io.ktor.http.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
+import lib.ApiClient.apiClient
+import lib.ReactQuery.createQueryKey
 import react.query.*
-import utils.apiClient
-import utils.createQueryKey
 
 
 private typealias MeQueryKey = QueryKey

@@ -4,6 +4,8 @@ import csstype.ClassName
 import entities.SearchResult
 import features.search.api.useSubmitRequestMutation
 import kotlinx.js.jso
+import lib.ReactQuery.exec
+import lib.ReactTransitionState.TransitionState
 import providers.useIsTouch
 import react.FC
 import react.Props
@@ -11,8 +13,6 @@ import react.dom.aria.AriaRole
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
-import utils.extensions.TransitionState
-import utils.extensions.exec
 import wrappers.useTransition
 
 external interface SearchResultCardProps : Props {

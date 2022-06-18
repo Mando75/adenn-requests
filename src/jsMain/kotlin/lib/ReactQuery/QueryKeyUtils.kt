@@ -1,4 +1,4 @@
-package utils
+package lib.ReactQuery
 
 import react.query.EnsuredQueryKey
 import react.query.QueryKey

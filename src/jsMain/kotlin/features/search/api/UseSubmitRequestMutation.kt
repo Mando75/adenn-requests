@@ -9,11 +9,11 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
+import lib.ApiClient.apiClient
 import react.query.MutationFunction
 import react.query.UseMutationOptions
 import react.query.UseMutationResult
 import react.query.useMutation
-import utils.apiClient
 
 
 private val submitRequestMutation: MutationFunction<RequestEntity, SearchResult> = { searchResult ->

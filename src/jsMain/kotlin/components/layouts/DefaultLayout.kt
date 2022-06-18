@@ -1,4 +1,4 @@
-package layouts
+package components.layouts
 
 import components.navigation.Sidebar
 import csstype.ClassName

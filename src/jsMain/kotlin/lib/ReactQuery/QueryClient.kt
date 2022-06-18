@@ -1,4 +1,4 @@
-package utils
+package lib.ReactQuery
 
 import kotlinx.js.jso
 import react.query.DefaultOptions

@@ -1,11 +1,11 @@
 package routes
 
+import components.layouts.DefaultLayout
 import components.spinners.BarsScaleMiddle
 import csstype.ClassName
 import features.profile.routes.ProfileRoutes
 import features.search.routes.SearchRoutes
 import kotlinx.js.jso
-import layouts.DefaultLayout
 import react.FC
 import react.Props
 import react.Suspense
