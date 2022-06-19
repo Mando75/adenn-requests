@@ -3,6 +3,7 @@ package features.search.components
 
 import csstype.ClassName
 import entities.SearchResult
+import features.search.hooks.useRequestStatusIcon
 import react.FC
 import react.PropsWithChildren
 import react.dom.html.ReactHTML
@@ -20,6 +21,7 @@ val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDe
 	val isMovie = props.searchResult is SearchResult.MovieResult
 	val mediaType = if (isMovie) "Movie" else "TV Show"
 	// HOOKS
+	val requestStatusIcon = useRequestStatusIcon(props.searchResult.request)
 
 	// EFFECTS
 
@@ -43,6 +45,14 @@ val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDe
 				)
 
 				+mediaType
+			}
+			requestStatusIcon?.let { request ->
+				div {
+
+					request.icon {
+						className = request.className
+					}
+				}
 			}
 		}
 		// Details title, year, and description
