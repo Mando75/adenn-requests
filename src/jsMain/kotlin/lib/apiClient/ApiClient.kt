@@ -8,6 +8,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
+import lib.JsonSchemaDiscriminator
 
 val apiClient = HttpClient {
 	expectSuccess = true
@@ -17,6 +18,7 @@ val apiClient = HttpClient {
 			encodeDefaults = true
 			ignoreUnknownKeys = true
 			prettyPrint = true
+			classDiscriminator = JsonSchemaDiscriminator
 		})
 	}
 	install(DefaultRequest) {

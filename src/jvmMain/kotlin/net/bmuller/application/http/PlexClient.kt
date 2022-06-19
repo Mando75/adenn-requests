@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import lib.JsonSchemaDiscriminator
 
 interface PlexClient {
 	val client: HttpClient
@@ -33,6 +34,7 @@ class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(),
 		ignoreUnknownKeys = true
 		prettyPrint = true
 		isLenient = true
+		classDiscriminator = JsonSchemaDiscriminator
 	}
 
 	override val client = createClient(jsonBuilder) {

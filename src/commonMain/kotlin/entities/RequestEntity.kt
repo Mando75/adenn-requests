@@ -35,14 +35,14 @@ sealed class RequestEntity {
 				is SearchResult.MovieResult -> MovieRequest(
 					tmdbId = searchResult.id,
 					title = searchResult.title,
-					posterPath = searchResult.posterPath ?: "",
+					posterPath = searchResult.posterPath,
 					releaseDate = searchResult.releaseDate,
 					requester = requester,
 				)
 				is SearchResult.TVResult -> TVShowRequest(
 					tmdbId = searchResult.id,
 					title = searchResult.title,
-					posterPath = searchResult.posterPath ?: "",
+					posterPath = searchResult.posterPath,
 					releaseDate = searchResult.releaseDate,
 					requester = requester,
 				)

@@ -8,9 +8,6 @@ import entities.RequestEntity
 import entities.SearchResult
 import entities.UserEntity
 import net.bmuller.application.entities.UserSession
-import net.bmuller.application.repository.RequestsRepository
-import net.bmuller.application.repository.UserRepository
-import org.koin.java.KoinJavaComponent.inject
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 
@@ -20,8 +17,6 @@ sealed class RequestServiceErrors {
 }
 
 class RequestService : BaseService() {
-	private val requestsRepository: RequestsRepository by inject(RequestsRepository::class.java)
-	private val usersRepository: UserRepository by inject(UserRepository::class.java)
 
 	suspend fun submitRequest(result: SearchResult, session: UserSession) = either {
 		val user = getUser(session.id).bind()
@@ -52,7 +47,7 @@ class RequestService : BaseService() {
 	}
 
 	private suspend fun getUser(userId: Int): Either<RequestServiceErrors.UserNotFound, UserEntity> {
-		return usersRepository.getUserById(userId)?.right() ?: RequestServiceErrors.UserNotFound.left()
+		return userRepository.getUserById(userId)?.right() ?: RequestServiceErrors.UserNotFound.left()
 	}
 
 	private fun submitRequestToJobQueue(request: RequestEntity) {

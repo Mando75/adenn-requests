@@ -23,7 +23,7 @@ val SessionProvider = FC<PropsWithChildren>("SessionManager") { props ->
 			setSessionState(SessionState(query.data, query.isLoading))
 		} else {
 			setSessionState(SessionState(null, query.isLoading))
-			navigate("/login", jso { replace = true })
+			navigate("/auth/login", jso { replace = true })
 		}
 	}
 	SessionContext.Provider(sessionStateInstance) {
