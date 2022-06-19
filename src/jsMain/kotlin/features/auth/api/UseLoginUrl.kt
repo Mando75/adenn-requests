@@ -7,7 +7,7 @@ import io.ktor.client.plugins.resources.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
-import lib.ApiClient.apiClient
+import lib.apiClient.apiClient
 import react.query.QueryKey
 import react.query.UseQueryResult
 import react.query.useQuery

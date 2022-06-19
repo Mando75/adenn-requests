@@ -1,4 +1,4 @@
-package lib.ApiClient
+package lib.apiClient
 
 import io.ktor.client.*
 import io.ktor.client.plugins.*

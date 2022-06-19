@@ -1,5 +1,5 @@
 import kotlinx.browser.document
-import lib.ReactQuery.queryClient
+import lib.reactQuery.queryClient
 import providers.InteractionProvider
 import providers.SessionProvider
 import react.FC

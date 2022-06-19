@@ -9,7 +9,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlinx.js.jso
-import lib.ApiClient.apiClient
+import lib.apiClient.apiClient
 import react.query.MutationFunction
 import react.query.UseMutationOptions
 import react.query.UseMutationResult

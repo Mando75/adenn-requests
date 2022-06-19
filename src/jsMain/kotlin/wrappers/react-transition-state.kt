@@ -4,7 +4,7 @@
 
 package wrappers
 
-import lib.ReactTransitionState.TransitionState
+import lib.reactTransitionState.TransitionState
 import utils.JsTriple
 
 

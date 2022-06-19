@@ -3,7 +3,7 @@ package features.profile.routes
 import csstype.ClassName
 import features.profile.api.CreateAuthTokenVariables
 import features.profile.api.useCreateAuthTokenMutation
-import lib.ReactQuery.exec
+import lib.reactQuery.exec
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.button

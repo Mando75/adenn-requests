@@ -1,8 +1,9 @@
-package lib.ReactTransitionState
+package lib.reactTransitionState
 
 import seskar.js.JsString
 import seskar.js.JsUnion
 
+@Suppress("UNUSED")
 @JsUnion
 external enum class TransitionState {
 	@JsString("preEnter")

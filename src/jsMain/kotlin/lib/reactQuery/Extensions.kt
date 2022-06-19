@@ -1,4 +1,4 @@
-package lib.ReactQuery
+package lib.reactQuery
 
 import react.query.MutateOptions
 import react.query.MutationObserverResult

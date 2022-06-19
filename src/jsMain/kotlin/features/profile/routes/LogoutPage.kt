@@ -4,7 +4,7 @@ import http.AuthResource
 import io.ktor.client.plugins.resources.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
-import lib.ApiClient.apiClient
+import lib.apiClient.apiClient
 import providers.SessionState
 import providers.useSession
 import react.FC

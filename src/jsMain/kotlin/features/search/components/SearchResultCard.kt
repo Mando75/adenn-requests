@@ -4,8 +4,8 @@ import csstype.ClassName
 import entities.SearchResult
 import features.search.api.useSubmitRequestMutation
 import kotlinx.js.jso
-import lib.ReactQuery.exec
-import lib.ReactTransitionState.TransitionState
+import lib.reactQuery.exec
+import lib.reactTransitionState.TransitionState
 import providers.useIsTouch
 import react.FC
 import react.Props
