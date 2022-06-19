@@ -65,7 +65,11 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 					searchResult = props.searchResult
 					showDetail = showDetails
 
-					RequestButton {
+					props.searchResult.request?.let { request ->
+						RequestInfoLink {
+							status = request.status
+						}
+					} ?: RequestButton {
 						onClick = { submitRequestMutation.exec(props.searchResult) }
 					}
 				}
