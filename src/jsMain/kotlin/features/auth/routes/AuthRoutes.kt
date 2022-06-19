@@ -9,7 +9,7 @@ import react.router.Routes
 val AuthRoutes = FC<Props>("AuthRoutes") {
 	Routes {
 		Route {
-			path = "/login"
+			path = "login"
 			element = LoginPage.create()
 		}
 	}

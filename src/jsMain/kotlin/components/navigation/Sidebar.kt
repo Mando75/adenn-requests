@@ -11,17 +11,20 @@ import react.key
 
 data class NavigationItem(val displayText: String, val target: String)
 
-private val navigationItems = listOf(
+private val protectedItems = listOf(
 	NavigationItem("Home", "/"),
 	NavigationItem("Search", "/search"),
 	NavigationItem("Requests", "/requests"),
 	NavigationItem("Profile", "/profile")
 )
 
+private val publicItems = listOf(
+	NavigationItem("Login", "/auth/login"),
+)
+
 val Sidebar = FC<Props>("Sidebar") {
 	val (auth) = useSession()
-	val authPath = auth.user?.let { "/profile/logout" } ?: "/login"
-	val authText = auth.user?.let { "Logout" } ?: "Login"
+	val items = auth.user?.let { protectedItems } ?: publicItems
 
 	div {
 		className = ClassName("bg-white rounded p-3 shadow-lg h-full flex flex-col justify-between")
@@ -34,7 +37,7 @@ val Sidebar = FC<Props>("Sidebar") {
 			ul {
 				className = ClassName("space-y-2 text-sm")
 
-				navigationItems.map { navItem ->
+				items.map { navItem ->
 					li {
 						key = navItem.displayText
 
@@ -55,16 +58,18 @@ val Sidebar = FC<Props>("Sidebar") {
 				}
 			}
 		}
-		react.router.dom.Link {
-			to = authPath
-			className =
-				ClassName(
-					"""flex items-center space-x-3 p-4 rounded-md 
+		auth.user?.let {
+			react.router.dom.Link {
+				to = "/profile/logout"
+				className =
+					ClassName(
+						"""flex items-center space-x-3 p-4 rounded-md 
 					| text-gray-700 font-medium 
 					| hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline""".trimMargin()
-				)
+					)
 
-			+authText
+				+"Logout"
+			}
 		}
 	}
 }

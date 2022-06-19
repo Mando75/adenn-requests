@@ -1,11 +1,11 @@
 package routes
 
 import components.layouts.DefaultLayout
-import components.spinners.BarsScaleMiddle
-import csstype.ClassName
+import components.suspenseFallback.FullScreenFallback
 import features.profile.routes.ProfileRoutes
 import features.search.routes.SearchRoutes
 import kotlinx.js.jso
+import middleware.RequireAuth
 import react.FC
 import react.Props
 import react.Suspense
@@ -14,37 +14,32 @@ import react.dom.html.ReactHTML.div
 import react.router.Outlet
 import react.router.RouteObject
 
-val Fallback = FC<Props>("SuspenseFallback") {
-	div {
-		className = ClassName("h-full, w-full flex items-center justify-center")
-		BarsScaleMiddle()
-	}
-}
+val PrivateApp = FC<Props>("PrivateApp") {
+	RequireAuth {
+		DefaultLayout {
+			Suspense {
+				fallback = FullScreenFallback.create()
 
-val App = FC<Props>("App") {
-	DefaultLayout {
-		Suspense {
-			fallback = Fallback.create()
-
-			Outlet()
+				Outlet()
+			}
 		}
 	}
 }
 
 val PrivateRoutes: List<RouteObject> = listOf(jso {
 	path = "/"
-	element = App.create()
+	element = PrivateApp.create()
 	children = arrayOf(
 		jso {
-			path = "/search"
+			path = "/search/*"
 			element = SearchRoutes.create()
 		},
 		jso {
-			path = "/requests"
+			path = "/requests/*"
 			element = div.create() { +"Requests" }
 		},
 		jso {
-			path = "/profile"
+			path = "/profile/*"
 			element = ProfileRoutes.create()
 		}
 	)
