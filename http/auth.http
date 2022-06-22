@@ -12,6 +12,6 @@ Content-Type: application/json
 
 
 ###
-GET {{host}}/users
+GET {{host}}/auth/plex/callback?pinId=123
 Content-Type: application/json
 Authorization: Bearer {{token}}

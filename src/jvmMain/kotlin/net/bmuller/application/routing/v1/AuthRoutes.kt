@@ -1,6 +1,6 @@
 package net.bmuller.application.routing.v1
 
-import arrow.core.continuations.effect
+import arrow.core.continuations.either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import http.AuthResource
@@ -29,19 +29,17 @@ fun Route.auth() {
 	get<AuthResource.Plex.LoginUrl> { context ->
 		val clientDetails =
 			PlexOAuthService.PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
-		plexOAuthService.requestHostedLoginURL(clientDetails)
-			.mapLeft { error ->
-				call.application.environment.log.error(error.message)
-				call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
-			}
-			.map { result ->
-				call.respond(HttpStatusCode.OK, result)
-			}
+		plexOAuthService.requestHostedLoginURL(clientDetails).mapLeft { error ->
+			call.application.environment.log.error(error.message)
+			call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
+		}.map { result ->
+			call.respond(HttpStatusCode.OK, result)
+		}
 	}
 
 	get<AuthResource.Plex.Callback> { resource ->
-		effect<Any, Any> {
-			val pinId = resource.pinId
+		either {
+			val pinId = resource.pinId.toLongOrNull()
 			val authToken = plexOAuthService.checkForAuthToken(pinId)
 				.mapLeft { error ->
 					val (statusCode, message) = when (error) {
@@ -92,14 +90,11 @@ fun Route.auth() {
 		post<AuthResource.Token> {
 			val user = call.principal<UserSession>()
 
-			val token = JWT.create()
-				.withAudience(env.jwtAudience)
-				.withIssuer(env.jwtIssuer)
-				.withClaim("userId", user?.id)
-				.withClaim("plexUsername", user?.plexUsername)
-				.withClaim("version", user?.version)
-				.withExpiresAt(Date(System.currentTimeMillis() + env.jwtLifetime))
-				.sign(Algorithm.HMAC256(env.jwtTokenSecret))
+			val token =
+				JWT.create().withAudience(env.jwtAudience).withIssuer(env.jwtIssuer).withClaim("userId", user?.id)
+					.withClaim("plexUsername", user?.plexUsername).withClaim("version", user?.version)
+					.withExpiresAt(Date(System.currentTimeMillis() + env.jwtLifetime))
+					.sign(Algorithm.HMAC256(env.jwtTokenSecret))
 			call.respond(HttpStatusCode.OK, mapOf("token" to token))
 		}
 	}

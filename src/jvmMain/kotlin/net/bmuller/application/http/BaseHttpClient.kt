@@ -8,12 +8,14 @@ import io.ktor.client.plugins.resources.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.serialization.kotlinx.xml.*
 import kotlinx.serialization.json.Json
+import lib.JsonSchemaDiscriminator
 
 abstract class BaseHttpClient {
 	private val defaultJsonBuilder = Json {
 		encodeDefaults = true
 		ignoreUnknownKeys = true
 		prettyPrint = true
+		classDiscriminator = JsonSchemaDiscriminator
 	}
 
 	fun createClient(

@@ -19,6 +19,8 @@ interface RequestsRepository {
 	): RequestEntity
 
 	suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long
+
+	suspend fun getRequests(tmdbIds: List<Int>): Map<Int, RequestEntity>
 }
 
 
@@ -66,6 +68,14 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				.andWhere { RequestTable.mediaType eq mediaType }
 				.andWhere { RequestTable.createdAt greaterEq timePeriod }
 				.count()
+		}
+	}
+
+	override suspend fun getRequests(tmdbIds: List<Int>): Map<Int, RequestEntity> {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			RequestTable
+				.select { RequestTable.tmdbId inList tmdbIds }
+				.associate { row -> row[RequestTable.tmdbId] to row.toRequestEntity() }
 		}
 	}
 }

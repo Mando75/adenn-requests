@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="net.bmuller.application.ServerKt" />
     <module name="adenn-requests.jvmMain" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dio.kto.development=true" />
+    <option name="VM_PARAMETERS" value="-Dio.ktor.development=true" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

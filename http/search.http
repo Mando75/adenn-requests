@@ -1,4 +1,4 @@
-GET {{host}}/search/multi?searchTerm="S"
+GET {{host}}/search/multi?searchTerm="The Shallows"
 Accept: application/json
 Authorization: Bearer {{token}}
 

@@ -15,8 +15,12 @@ class AuthResource {
 		class LoginUrl(val parent: Plex = Plex(), val forwardHost: String)
 
 		@kotlinx.serialization.Serializable
+		@Resource("pin")
+		class Pin(val parent: Plex = Plex(), val pinId: String)
+
+		@kotlinx.serialization.Serializable
 		@Resource("callback")
-		class Callback(val parent: Plex = Plex(), val pinId: Long)
+		class Callback(val parent: Plex = Plex(), val pinId: String)
 	}
 
 	@kotlinx.serialization.Serializable

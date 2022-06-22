@@ -1,7 +1,7 @@
-import components.config.ClientRoutes
-import context.InteractionProvider
-import context.SessionProvider
 import kotlinx.browser.document
+import lib.reactQuery.queryClient
+import providers.InteractionProvider
+import providers.SessionProvider
 import react.FC
 import react.Props
 import react.StrictMode
@@ -9,18 +9,16 @@ import react.create
 import react.dom.client.createRoot
 import react.query.QueryClientProvider
 import react.router.dom.BrowserRouter
-import support.queryClient
+import routes.AppRoutes
 
-private val App = FC<Props> {
-	StrictMode {
-		BrowserRouter {
-			QueryClientProvider {
-				client = queryClient
+private val App = FC<Props>("Root") {
+	BrowserRouter {
+		QueryClientProvider {
+			client = queryClient
 
-				SessionProvider {
-					InteractionProvider {
-						ClientRoutes()
-					}
+			SessionProvider {
+				InteractionProvider {
+					AppRoutes()
 				}
 			}
 		}
@@ -33,5 +31,5 @@ fun main() {
 	document.body!!.appendChild(container)
 
 	val root = createRoot(container)
-	root.render(App.create())
+	root.render(StrictMode.create() { App() })
 }

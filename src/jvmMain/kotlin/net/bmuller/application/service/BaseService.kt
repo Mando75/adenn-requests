@@ -1,10 +1,7 @@
 package net.bmuller.application.service
 
 import net.bmuller.application.config.EnvironmentValues
-import net.bmuller.application.repository.PlexAuthPinRepository
-import net.bmuller.application.repository.PlexTVRepository
-import net.bmuller.application.repository.TMDBRepository
-import net.bmuller.application.repository.UserRepository
+import net.bmuller.application.repository.*
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.Logger
 
@@ -15,4 +12,5 @@ abstract class BaseService {
 	protected val plexTVRepository: PlexTVRepository by inject(PlexTVRepository::class.java)
 	protected val tmdbRepository: TMDBRepository by inject(TMDBRepository::class.java)
 	protected val userRepository: UserRepository by inject(UserRepository::class.java)
+	protected val requestsRepository: RequestsRepository by inject(RequestsRepository::class.java)
 }
