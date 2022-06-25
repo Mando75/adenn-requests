@@ -1,6 +1,10 @@
 package features.requests.api
 
-import entities.*
+import entities.PaginatedResponse
+import entities.RequestEntity
+import entities.RequestFilters
+import hooks.UsePagination
+import hooks.usePagination
 import http.RequestResource
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
@@ -9,28 +13,32 @@ import kotlinx.coroutines.promise
 import kotlinx.js.jso
 import lib.apiClient.apiClient
 import lib.reactQuery.createQueryKey
-import lib.reactQuery.parseQueryKey
+import lib.reactQuery.parseTripleQueryKey
 import react.query.*
+import utils.IJsTriple
 
-private interface RequestsQueryKey : QueryKey, List<String>
+private interface RequestsQueryKey : QueryKey, IJsTriple<String, Long, RequestFilters>
 private typealias RequestsQueryResponse = PaginatedResponse<RequestEntity>
 
 private val requestsQuery: QueryFunction<RequestsQueryResponse, RequestsQueryKey> = { context ->
 	MainScope().promise {
-		val queryKey = parseQueryKey<String>(context.queryKey)
-		val pagination = Pagination(limit = 1, offset = 0)
-		val filters = RequestFilters(status = listOf(RequestStatus.FULFILLED))
+		val (_, page, filters) = parseTripleQueryKey<String, Long, RequestFilters>(context.queryKey)
 
-		val result = apiClient.get(RequestResource(filters = filters, pagination = pagination))
+		val result = apiClient.get(RequestResource(filters = filters, page = page))
 
 		return@promise result.body()
 	}
 }
 
-fun useRequestsQuery(): UseQueryResult<RequestsQueryResponse, Error> {
-	val queryKey = createQueryKey<RequestsQueryKey>("requests-query")
+fun useRequestsQuery(filters: RequestFilters): Pair<UseQueryResult<RequestsQueryResponse, Error>, UsePagination> {
+	val pagination = usePagination()
+	val queryKey = createQueryKey<RequestsQueryKey>("requests-query", pagination.queryPage, filters)
 
-	val options: UseQueryOptions<RequestsQueryResponse, Error, RequestsQueryResponse, RequestsQueryKey> = jso {}
+	val options: UseQueryOptions<RequestsQueryResponse, Error, RequestsQueryResponse, RequestsQueryKey> = jso {
+		keepPreviousData = true
+	}
 
-	return useQuery(queryKey, requestsQuery, options)
+	val query = useQuery(queryKey, requestsQuery, options)
+
+	return Pair(query, pagination)
 }

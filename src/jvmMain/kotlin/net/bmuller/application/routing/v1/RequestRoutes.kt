@@ -39,7 +39,7 @@ fun Route.requests() {
 	}
 
 	get<RequestResource> { context ->
-		requestService.getRequests(context.filters, context.pagination).map { requests ->
+		requestService.getRequests(context.filters, context.page).map { requests ->
 			call.respond(HttpStatusCode.OK, requests)
 		}.mapLeft { e -> call.respond(HttpStatusCode.InternalServerError, e.message ?: "Unknown Error") }
 	}

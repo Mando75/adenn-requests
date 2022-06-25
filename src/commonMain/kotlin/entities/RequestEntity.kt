@@ -85,4 +85,15 @@ sealed class RequestEntity {
 }
 
 @kotlinx.serialization.Serializable
-data class RequestFilters(val status: List<RequestStatus>? = null)
+enum class RequestFilterMediaType {
+	MOVIE,
+	TV,
+	ALL
+}
+
+@kotlinx.serialization.Serializable
+data class RequestFilters(
+	val status: List<RequestStatus>? = null,
+	val searchTerm: String? = null,
+	val mediaType: RequestFilterMediaType = RequestFilterMediaType.ALL
+)

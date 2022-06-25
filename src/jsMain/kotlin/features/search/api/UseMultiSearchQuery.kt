@@ -9,7 +9,7 @@ import kotlinx.coroutines.promise
 import kotlinx.js.jso
 import lib.apiClient.apiClient
 import lib.reactQuery.createQueryKey
-import lib.reactQuery.parseQueryKey
+import lib.reactQuery.parseListQueryKey
 import react.query.*
 
 
@@ -18,7 +18,7 @@ private typealias MultiSearchQueryResult = List<SearchResult>
 
 private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQueryKey> = { context ->
 	MainScope().promise {
-		val queryKey = parseQueryKey<String>(context.queryKey)
+		val queryKey = parseListQueryKey<String>(context.queryKey)
 		val searchTerm = queryKey.last()
 
 		val result = apiClient.get(SearchResource.Multi(searchTerm = searchTerm))
