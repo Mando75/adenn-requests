@@ -13,7 +13,7 @@ class SearchService : BaseService() {
 
 	suspend fun searchMulti(searchTerm: String): Either<Throwable, List<SearchResult>> = either {
 		val tmdbResults = tmdbRepository.searchMulti(searchTerm).bind()
-		val matchingRequests = requestsRepository.getRequests(tmdbResults.results.map { result -> result.id })
+		val matchingRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.mapNotNull { result ->
 			when (result) {
 				is MultiSearchEntity.PersonResult -> null
@@ -25,13 +25,13 @@ class SearchService : BaseService() {
 
 	suspend fun searchMovie(searchTerm: String): Either<Throwable, List<SearchResult.MovieResult>> = either {
 		val tmdbResults = tmdbRepository.searchMovies(searchTerm).bind()
-		val matchedRequests = requestsRepository.getRequests(tmdbResults.results.map { result -> result.id })
+		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.map { tmdbMovie -> transformMovie(tmdbMovie, matchedRequests[tmdbMovie.id]) }
 	}
 
 	suspend fun searchTV(searchTerm: String): Either<Throwable, List<SearchResult.TVResult>> = either {
 		val tmdbResults = tmdbRepository.searchTVShows(searchTerm).bind()
-		val matchedRequests = requestsRepository.getRequests(tmdbResults.results.map { result -> result.id })
+		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.map { tmdbTv -> transformTV(tmdbTv, matchedRequests[tmdbTv.id]) }
 	}
 

@@ -14,6 +14,7 @@ enum class RequestStatus {
 	DOWNLOADING
 }
 
+
 @kotlinx.serialization.Serializable
 sealed class RequestEntity {
 	abstract val id: Int
@@ -82,3 +83,6 @@ sealed class RequestEntity {
 		override val modifiedAt: Instant = Clock.System.now()
 	) : RequestEntity()
 }
+
+@kotlinx.serialization.Serializable
+data class RequestFilters(val status: List<RequestStatus>? = null)

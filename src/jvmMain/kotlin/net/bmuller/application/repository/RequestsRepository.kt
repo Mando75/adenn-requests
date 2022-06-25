@@ -4,12 +4,12 @@ import db.tables.RequestTable
 import db.tables.UserTable
 import db.tables.toRequestEntity
 import db.tables.toUserEntity
-import entities.RequestEntity
-import entities.UserEntity
+import entities.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Instant
+
 
 interface RequestsRepository {
 	suspend fun createAndReturnRequest(
@@ -20,7 +20,9 @@ interface RequestsRepository {
 
 	suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long
 
-	suspend fun getRequests(tmdbIds: List<Int>): Map<Int, RequestEntity>
+	suspend fun requestsByTMDBId(tmdbIds: List<Int>): Map<Int, RequestEntity>
+
+	suspend fun requests(filters: RequestFilters, pagination: Pagination): PaginatedResponse<RequestEntity>
 }
 
 
@@ -71,11 +73,31 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 		}
 	}
 
-	override suspend fun getRequests(tmdbIds: List<Int>): Map<Int, RequestEntity> {
+	override suspend fun requestsByTMDBId(tmdbIds: List<Int>): Map<Int, RequestEntity> {
 		return newSuspendedTransaction(Dispatchers.IO, db) {
 			RequestTable
 				.select { RequestTable.tmdbId inList tmdbIds }
 				.associate { row -> row[RequestTable.tmdbId] to row.toRequestEntity() }
+		}
+	}
+
+	override suspend fun requests(filters: RequestFilters, pagination: Pagination): PaginatedResponse<RequestEntity> {
+		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val query = RequestTable.selectAll()
+			filters.status?.let { status -> query.andWhere { RequestTable.status inList status } }
+
+
+			val count = query.count()
+			val rows = query
+				.limit(pagination.limit, offset = pagination.offset)
+
+			val requests = rows.mapNotNull { row -> row.toRequestEntity() }
+			return@newSuspendedTransaction PaginatedResponse(
+				items = requests,
+				totalCount = count,
+				limit = pagination.limit,
+				offset = pagination.offset
+			)
 		}
 	}
 }
