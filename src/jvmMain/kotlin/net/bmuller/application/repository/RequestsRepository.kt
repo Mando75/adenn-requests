@@ -4,9 +4,11 @@ import db.tables.RequestTable
 import db.tables.UserTable
 import db.tables.toRequestEntity
 import db.tables.toUserEntity
+import db.util.ilike
 import entities.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Instant
 
@@ -22,7 +24,7 @@ interface RequestsRepository {
 
 	suspend fun requestsByTMDBId(tmdbIds: List<Int>): Map<Int, RequestEntity>
 
-	suspend fun requests(filters: RequestFilters, pagination: Pagination): PaginatedResponse<RequestEntity>
+	suspend fun requests(filters: RequestFilters, pagination: Pagination): Pair<List<RequestEntity>, Long>
 }
 
 
@@ -81,10 +83,20 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 		}
 	}
 
-	override suspend fun requests(filters: RequestFilters, pagination: Pagination): PaginatedResponse<RequestEntity> {
+	override suspend fun requests(filters: RequestFilters, pagination: Pagination): Pair<List<RequestEntity>, Long> {
 		return newSuspendedTransaction(Dispatchers.IO, db) {
+			val mediaType = when (filters.mediaType) {
+				RequestFilterMediaType.ALL -> null
+				RequestFilterMediaType.MOVIE -> RequestTable.MediaType.MOVIE
+				RequestFilterMediaType.TV -> RequestTable.MediaType.TV
+			}
+			val searchTerm = filters.searchTerm?.ifBlank { null } // don't pass empty strings
+
 			val query = RequestTable.selectAll()
+
+			mediaType?.let { type -> { RequestTable.mediaType eq type } }
 			filters.status?.let { status -> query.andWhere { RequestTable.status inList status } }
+			searchTerm?.let { term -> query.andWhere { RequestTable.title ilike "$term%" } }
 
 
 			val count = query.count()
@@ -92,12 +104,8 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				.limit(pagination.limit, offset = pagination.offset)
 
 			val requests = rows.mapNotNull { row -> row.toRequestEntity() }
-			return@newSuspendedTransaction PaginatedResponse(
-				items = requests,
-				totalCount = count,
-				limit = pagination.limit,
-				offset = pagination.offset
-			)
+
+			return@newSuspendedTransaction Pair(requests, count)
 		}
 	}
 }
