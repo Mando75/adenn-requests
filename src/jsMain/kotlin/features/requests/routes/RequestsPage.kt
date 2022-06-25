@@ -25,13 +25,14 @@ val RequestsPage = FC<Props>("RequestsPage") {
 		className = ClassName("mt-4")
 
 		SearchInput {
+			placeholder = "Search Requests"
 			value = searchTerm
 			onChange = changeEventHandler
 		}
 
 		requestsQuery.data?.let { data ->
 			div {
-				p { +data.totalCount.toString() }
+				p { +data.totalPages.toString() }
 				p { +data.items.toString() }
 			}
 		}

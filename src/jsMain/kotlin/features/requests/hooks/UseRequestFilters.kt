@@ -46,7 +46,7 @@ fun useRequestFilters(): UseRequestFilters {
 	val (requestFilter, dispatch) = useReducer(requestFiltersReducer, RequestFilters())
 
 	useEffect(debouncedSearchTerm, dispatch, requestFilter) {
-		if (debouncedSearchTerm != requestFilter.searchTerm) {
+		if (debouncedSearchTerm !== requestFilter.searchTerm) {
 			dispatch(RequestFiltersAction.SetSearchTerm(debouncedSearchTerm))
 		}
 	}
