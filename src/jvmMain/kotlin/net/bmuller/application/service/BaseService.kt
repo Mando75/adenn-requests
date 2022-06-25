@@ -5,6 +5,8 @@ import net.bmuller.application.config.EnvironmentValues
 import net.bmuller.application.repository.*
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.Logger
+import kotlin.math.ceil
+import kotlin.math.roundToLong
 
 abstract class BaseService {
 	private val pageSize = 25
@@ -17,8 +19,12 @@ abstract class BaseService {
 	protected val userRepository: UserRepository by inject(UserRepository::class.java)
 	protected val requestsRepository: RequestsRepository by inject(RequestsRepository::class.java)
 
-	protected fun calcPagination(pageNumber: Long): Pagination {
+	protected fun calcOffset(pageNumber: Long): Pagination {
 		val offset = pageNumber * pageSize
 		return Pagination(offset = offset, limit = pageSize)
+	}
+
+	protected fun calcTotalPages(totalCount: Long): Long {
+		return ceil(totalCount.div(pageSize.toDouble())).roundToLong()
 	}
 }

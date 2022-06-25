@@ -4,10 +4,7 @@ import arrow.core.Either
 import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
-import entities.RequestEntity
-import entities.RequestFilters
-import entities.SearchResult
-import entities.UserEntity
+import entities.*
 import net.bmuller.application.entities.UserSession
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
@@ -19,10 +16,16 @@ sealed class RequestServiceErrors {
 
 class RequestService : BaseService() {
 
-	suspend fun getRequests(filters: RequestFilters, page: Long) = Either.catch {
-		val pagination = calcPagination(page)
-		return@catch requestsRepository.requests(filters, pagination)
-	}
+	suspend fun getRequests(filters: RequestFilters, page: Long): Either<Throwable, PaginatedResponse<RequestEntity>> =
+		Either.catch {
+			val pagination = calcOffset(page)
+			val (requests, count) = requestsRepository.requests(filters, pagination)
+			return@catch PaginatedResponse(
+				items = requests,
+				page = page,
+				totalPages = calcTotalPages(count)
+			)
+		}
 
 	suspend fun submitRequest(result: SearchResult, session: UserSession) = either {
 		val user = getUser(session.id).bind()
