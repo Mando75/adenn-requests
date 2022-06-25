@@ -2,13 +2,13 @@ package routes
 
 import components.layouts.DefaultLayout
 import features.profile.routes.ProfileRoutes
+import features.requests.routes.RequestsRoutes
 import features.search.routes.SearchRoutes
 import kotlinx.js.jso
 import middleware.RequireAuth
 import react.FC
 import react.Props
 import react.create
-import react.dom.html.ReactHTML.div
 import react.router.Outlet
 import react.router.RouteObject
 
@@ -30,7 +30,7 @@ val PrivateRoutes: List<RouteObject> = listOf(jso {
 		},
 		jso {
 			path = "/requests/*"
-			element = div.create() { +"Requests" }
+			element = RequestsRoutes.create()
 		},
 		jso {
 			path = "/profile/*"
