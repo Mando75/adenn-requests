@@ -26,7 +26,7 @@ object RequestTable : IntIdTable("requests") {
 	val title: Column<String> = text("title").index()
 	val posterPath: Column<String> = text("poster_path")
 	val releaseDate: Column<String?> = text("release_date").nullable()
-
+	val overview: Column<String> = text("overview").default("")
 
 	val status: Column<RequestStatus> = postgresEnumeration<RequestStatus>("status", "Request_Status_Enum").index()
 	val requesterId: Column<Int> = integer("requester_id").references(UserTable.id).index()
@@ -61,6 +61,7 @@ fun ResultRow.toRequestEntity(requester: UserEntity? = null): RequestEntity {
 		parseNullableDateColumn(get(RequestTable.dateFulfilled)?.epochSecond),
 		parseNullableDateColumn(get(RequestTable.dateRejected)?.epochSecond),
 		parseDateColumn(get(RequestTable.createdAt).epochSecond),
-		parseDateColumn(get(RequestTable.modifiedAt).epochSecond)
+		parseDateColumn(get(RequestTable.modifiedAt).epochSecond),
+		get(RequestTable.overview)
 	)
 }

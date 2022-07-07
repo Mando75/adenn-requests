@@ -25,6 +25,7 @@ sealed class RequestEntity {
 	abstract val status: RequestStatus
 	abstract val requester: UserEntity?
 	abstract val rejectionReason: String?
+	abstract val overview: String
 	abstract val dateFulfilled: Instant?
 	abstract val dateRejected: Instant?
 	abstract val createdAt: Instant
@@ -38,6 +39,7 @@ sealed class RequestEntity {
 					title = searchResult.title,
 					posterPath = searchResult.posterPath,
 					releaseDate = searchResult.releaseDate,
+					overview = searchResult.overview,
 					requester = requester,
 				)
 				is SearchResult.TVResult -> TVShowRequest(
@@ -45,6 +47,7 @@ sealed class RequestEntity {
 					title = searchResult.title,
 					posterPath = searchResult.posterPath,
 					releaseDate = searchResult.releaseDate,
+					overview = searchResult.overview,
 					requester = requester,
 				)
 			}
@@ -65,6 +68,7 @@ sealed class RequestEntity {
 		override val dateRejected: Instant? = null,
 		override val createdAt: Instant = Clock.System.now(),
 		override val modifiedAt: Instant = Clock.System.now(),
+		override val overview: String,
 	) : RequestEntity()
 
 	@kotlinx.serialization.Serializable
@@ -80,7 +84,8 @@ sealed class RequestEntity {
 		override val dateFulfilled: Instant? = null,
 		override val dateRejected: Instant? = null,
 		override val createdAt: Instant = Clock.System.now(),
-		override val modifiedAt: Instant = Clock.System.now()
+		override val modifiedAt: Instant = Clock.System.now(),
+		override val overview: String
 	) : RequestEntity()
 }
 
