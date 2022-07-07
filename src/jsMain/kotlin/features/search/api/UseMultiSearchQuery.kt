@@ -27,8 +27,9 @@ private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQ
 	}
 }
 
+const val MultiSearchQueryKeyPrefix = "multi-search"
 fun useMultiSearchQuery(searchTerm: String): UseQueryResult<MultiSearchQueryResult, Error> {
-	val queryKey = createQueryKey<MultiSearchQueryKey>("multi-search", searchTerm.trim())
+	val queryKey = createQueryKey<MultiSearchQueryKey>(MultiSearchQueryKeyPrefix, searchTerm.trim())
 
 	val options: UseQueryOptions<MultiSearchQueryResult, Error, MultiSearchQueryResult, MultiSearchQueryKey> = jso {
 		enabled = searchTerm.isNotBlank()
