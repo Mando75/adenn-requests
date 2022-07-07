@@ -30,7 +30,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					isMovie = props.request is RequestEntity.MovieRequest
 					releaseDate = props.request.releaseDate
 					request = props.request
-					overview = "Test Overview"
+					overview = props.request.overview
 				}
 			}
 		}

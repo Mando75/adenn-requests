@@ -42,6 +42,8 @@ class RequestsRepositoryImpl : BaseRepository(), RequestsRepository {
 				request[title] = newRequest.title
 				request[posterPath] = newRequest.posterPath
 				request[status] = newRequest.status
+				request[releaseDate] = newRequest.releaseDate
+				request[overview] = newRequest.overview
 				request[requesterId] = requester.id
 			}
 

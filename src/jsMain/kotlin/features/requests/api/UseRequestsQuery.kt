@@ -30,9 +30,11 @@ private val requestsQuery: QueryFunction<RequestsQueryResponse, RequestsQueryKey
 	}
 }
 
+const val RequestsQueryKeyPrefix = "requests-query"
+
 fun useRequestsQuery(filters: RequestFilters): Pair<UseQueryResult<RequestsQueryResponse, Error>, UsePagination> {
 	val pagination = usePagination()
-	val queryKey = createQueryKey<RequestsQueryKey>("requests-query", pagination.queryPage, filters)
+	val queryKey = createQueryKey<RequestsQueryKey>(RequestsQueryKeyPrefix, pagination.queryPage, filters)
 
 	val options: UseQueryOptions<RequestsQueryResponse, Error, RequestsQueryResponse, RequestsQueryKey> = jso {
 		keepPreviousData = true
