@@ -1,7 +1,13 @@
-package net.bmuller.application.entities
+package entities
 
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -17,7 +23,6 @@ interface BaseSearchResult {
 
 interface BaseMovieResult {
 	val backdropPath: String?
-	val genreIds: List<Int>
 	val originalLanguage: String
 	val originalTitle: String
 	val posterPath: String?
@@ -26,7 +31,7 @@ interface BaseMovieResult {
 	val voteCount: Int
 	val adult: Boolean
 	val id: Int
-	val overview: String
+	val overview: String?
 	val popularity: Float
 	val title: String
 }
@@ -34,7 +39,7 @@ interface BaseMovieResult {
 @kotlinx.serialization.Serializable
 data class MovieResult(
 	@SerialName("backdrop_path") override val backdropPath: String?,
-	@SerialName("genre_ids") override val genreIds: List<Int>,
+	@SerialName("genre_ids") val genreIds: List<Int>,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
@@ -60,7 +65,6 @@ data class MovieSearchResults(
 interface BaseTVShowResult {
 	val backdropPath: String?
 	val firstAirDate: String?
-	val genreIds: List<Int>
 	val originCountry: List<String>
 	val originalLanguage: String
 	val originalName: String
@@ -69,7 +73,7 @@ interface BaseTVShowResult {
 	val voteCount: Int
 	val id: Int
 	val title: String
-	val overview: String
+	val overview: String?
 	val popularity: Float
 }
 
@@ -77,7 +81,7 @@ interface BaseTVShowResult {
 data class TVShowResult(
 	@SerialName("backdrop_path") override val backdropPath: String? = null,
 	@SerialName("first_air_date") override val firstAirDate: String? = null,
-	@SerialName("genre_ids") override val genreIds: List<Int>,
+	@SerialName("genre_ids") val genreIds: List<Int>,
 	@SerialName("origin_country") override val originCountry: List<String>,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_name") override val originalName: String,
@@ -143,7 +147,7 @@ sealed class MultiSearchEntity {
 		override val overview: String,
 		@SerialName("release_date") override val releaseDate: String? = null,
 		@SerialName("original_title") override val originalTitle: String,
-		@SerialName("genre_ids") override val genreIds: List<Int>,
+		@SerialName("genre_ids") val genreIds: List<Int>,
 		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.movie,
 		@SerialName("original_language") override val originalLanguage: String,
@@ -166,7 +170,7 @@ sealed class MultiSearchEntity {
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.tv,
 		@SerialName("first_air_date") override val firstAirDate: String? = null,
 		@SerialName("origin_country") override val originCountry: List<String>,
-		@SerialName("genre_ids") override val genreIds: List<Int>,
+		@SerialName("genre_ids") val genreIds: List<Int>,
 		@SerialName("original_language") override val originalLanguage: String,
 		@SerialName("vote_count") override val voteCount: Int,
 		@SerialName("name") override val title: String,
@@ -195,3 +199,85 @@ sealed class MultiSearchEntity {
 	}
 }
 
+@kotlinx.serialization.Serializable
+data class TMDBMovie(
+	@SerialName("backdrop_path") override val backdropPath: String?,
+	@SerialName("imdb_id") val imdbId: Int,
+	@SerialName("original_language") override val originalLanguage: String,
+	@SerialName("original_title") override val originalTitle: String,
+	@SerialName("poster_path") override val posterPath: String?,
+	@SerialName("production_companies") val productionCompanies: List<ProductionCompany>,
+	@SerialName("production_countries") val productionCountries: List<ProductionCountry>,
+	@SerialName("release_date") override val releaseDate: String?,
+	@SerialName("spoken_languages") val spokenLanguages: List<SpokenLanguage>,
+	@SerialName("vote_average") override val voteAverage: Float,
+	@SerialName("vote_count") override val voteCount: Int,
+	override val adult: Boolean,
+	override val id: Int,
+	override val overview: String?,
+	override val popularity: Float,
+	override val title: String,
+	val budget: Int,
+	val genres: List<Genre>,
+	val homepage: String?,
+	val revenue: Int,
+	val runtime: Int?,
+	val status: MovieStatus,
+	val tagline: String?,
+	val video: Boolean,
+) : BaseMovieResult
+
+
+@kotlinx.serialization.Serializable
+data class Genre(val id: Int, val name: String)
+
+@kotlinx.serialization.Serializable
+data class ProductionCompany(
+	val name: String,
+	val id: Int,
+	@SerialName("logo_path") val logoPath: String,
+	@SerialName("origin_country") val originCountry: String
+)
+
+@kotlinx.serialization.Serializable
+data class ProductionCountry(
+	@SerialName("iso_3166_1") val iso31661: String,
+	val name: String
+)
+
+@kotlinx.serialization.Serializable
+data class SpokenLanguage(@SerialName("iso_639_1") val iso6391: String, val name: String)
+
+@kotlinx.serialization.Serializable(with = MovieStatusSerializer::class)
+enum class MovieStatus(val key: String) {
+	Rumored("Rumored"),
+	Planned("Planned"),
+	InProduction("In Production"),
+	PostProduction("Post Production"),
+	Released("Released"),
+	Canceled("Canceled"),
+	Unknown("Unknown");
+
+	companion object {
+		fun findByKey(key: String, default: MovieStatus = Unknown): MovieStatus {
+			return MovieStatus.values().find { it.key === key } ?: default
+		}
+	}
+}
+
+object MovieStatusSerializer : KSerializer<MovieStatus> {
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("MovieStatus", PrimitiveKind.STRING)
+
+	override fun serialize(encoder: Encoder, value: MovieStatus) {
+		encoder.encodeString(value.key)
+	}
+
+	override fun deserialize(decoder: Decoder): MovieStatus {
+		return try {
+			val key = decoder.decodeString()
+			MovieStatus.findByKey(key)
+		} catch (e: IllegalArgumentException) {
+			MovieStatus.Unknown
+		}
+	}
+}

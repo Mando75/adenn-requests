@@ -1,13 +1,13 @@
 package net.bmuller.application.repository
 
 import arrow.core.Either
+import entities.MovieSearchResults
+import entities.MultiSearchResults
+import entities.TMDBConfigurationResult
+import entities.TVShowSearchResults
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*
-import net.bmuller.application.entities.MovieSearchResults
-import net.bmuller.application.entities.MultiSearchResults
-import net.bmuller.application.entities.TMDBConfigurationResult
-import net.bmuller.application.entities.TVShowSearchResults
 
 
 @Suppress("unused")

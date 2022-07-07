@@ -64,7 +64,7 @@ sealed class RequestEntity {
 		override val dateFulfilled: Instant? = null,
 		override val dateRejected: Instant? = null,
 		override val createdAt: Instant = Clock.System.now(),
-		override val modifiedAt: Instant = Clock.System.now()
+		override val modifiedAt: Instant = Clock.System.now(),
 	) : RequestEntity()
 
 	@kotlinx.serialization.Serializable

@@ -2,12 +2,8 @@ package net.bmuller.application.service
 
 import arrow.core.Either
 import arrow.core.continuations.either
-import entities.RequestEntity
-import entities.SearchResult
+import entities.*
 import lib.PlaceholderImageUrl
-import net.bmuller.application.entities.BaseMovieResult
-import net.bmuller.application.entities.BaseTVShowResult
-import net.bmuller.application.entities.MultiSearchEntity
 
 class SearchService : BaseService() {
 
@@ -39,7 +35,7 @@ class SearchService : BaseService() {
 	private fun transformTV(result: BaseTVShowResult, matchedRequest: RequestEntity?): SearchResult.TVResult =
 		SearchResult.TVResult(
 			id = result.id,
-			overview = result.overview,
+			overview = result.overview ?: "",
 			posterPath = createPosterPath(result.posterPath),
 			releaseDate = result.firstAirDate,
 			title = result.title,
@@ -49,7 +45,7 @@ class SearchService : BaseService() {
 	private fun transformMovie(result: BaseMovieResult, matchedRequest: RequestEntity?): SearchResult.MovieResult =
 		SearchResult.MovieResult(
 			id = result.id,
-			overview = result.overview,
+			overview = result.overview ?: "",
 			posterPath = createPosterPath(result.posterPath),
 			title = result.title,
 			releaseDate = result.releaseDate,
