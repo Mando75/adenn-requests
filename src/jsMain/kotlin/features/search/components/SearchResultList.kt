@@ -1,20 +1,19 @@
-package components.listView
+package features.search.components
 
 
 import csstype.ClassName
 import entities.SearchResult
-import features.search.components.SearchResultCard
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.ul
 
-external interface ListViewProps : Props {
+external interface SearchResultListProps : Props {
 	var items: List<SearchResult>
 	var isLoading: Boolean
 }
 
-val ListView = FC<ListViewProps>("ListView") { props ->
+val SearchResultList = FC<SearchResultListProps>("SearchResultList") { props ->
 	// STATE
 	val isEmpty = !props.isLoading && props.items.isEmpty()
 

@@ -1,27 +1,30 @@
-package features.search.components
+package components.posterCard
 
 
 import csstype.ClassName
-import entities.SearchResult
+import entities.RequestEntity
 import features.search.hooks.useRequestStatusIcon
 import react.FC
 import react.PropsWithChildren
 import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.span
 
-external interface SearchResultCardDetailProps : PropsWithChildren {
-	var searchResult: SearchResult
+external interface PosterCardDetailProps : PropsWithChildren {
+	var title: String
+	var overview: String
+	var isMovie: Boolean
+	var releaseDate: String?
 	var showDetail: Boolean
+	var request: RequestEntity?
 }
 
-val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDetail") { props ->
+val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 	// STATE
-	val year = props.searchResult.releaseDate?.substring(0, 4) ?: "Unknown"
-	val isMovie = props.searchResult is SearchResult.MovieResult
-	val mediaType = if (isMovie) "Movie" else "TV Show"
+	val year = props.releaseDate?.substring(0, 4) ?: "Unknown"
+	val mediaType = if (props.isMovie) "Movie" else "TV Show"
+
 	// HOOKS
-	val requestStatusIcon = useRequestStatusIcon(props.searchResult.request)
+	val requestStatusIcon = useRequestStatusIcon(props.request)
 
 	// EFFECTS
 
@@ -37,10 +40,10 @@ val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDe
 		div {
 			className = ClassName("flex flex-row justify-between")
 
-			span {
+			ReactHTML.span {
 				className = ClassName(
 					"""text-white text-sm font-medium rounded-full px-2 py-1
-								| ${if (isMovie) "bg-purple-500" else "bg-blue-500"}
+								| ${if (props.isMovie) "bg-purple-500" else "bg-blue-500"}
 							""".trimMargin()
 				)
 
@@ -62,22 +65,22 @@ val SearchResultCardDetail = FC<SearchResultCardDetailProps>("SearchResultCardDe
 
 
 				div {
-					span {
+					ReactHTML.span {
 						className = ClassName("text-white text-sm font-bold")
 						+year
 					}
 					ReactHTML.h3 {
 						className = ClassName("text-white text-2xl font-bold")
 
-						+props.searchResult.title
+						+props.title
 					}
 					ReactHTML.p {
 						className = ClassName("text-white line-clamp-3")
 
-						+props.searchResult.overview
+						+props.overview
 					}
 				}
-				// For Request Button
+				// For Action Button
 				+props.children
 			}
 		}

@@ -3,12 +3,11 @@ package features.requests.routes
 
 import csstype.ClassName
 import features.requests.api.useRequestsQuery
+import features.requests.components.RequestList
 import features.requests.hooks.useRequestFilters
 import features.search.components.SearchInput
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.section
 
 val RequestsPage = FC<Props>("RequestsPage") {
@@ -29,12 +28,10 @@ val RequestsPage = FC<Props>("RequestsPage") {
 			value = searchTerm
 			onChange = changeEventHandler
 		}
-
-		requestsQuery.data?.let { data ->
-			div {
-				p { +data.totalPages.toString() }
-				p { +data.items.toString() }
-			}
+		RequestList {
+			isLoading = requestsQuery.isLoading
+			items = requestsQuery.data?.items ?: emptyList()
 		}
+
 	}
 }

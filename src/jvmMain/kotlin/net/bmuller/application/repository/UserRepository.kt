@@ -68,6 +68,7 @@ class UserRepositoryImpl : BaseRepository(), UserRepository {
 	override fun getAdminUser(): AdminUser = transaction {
 		UserTable
 			.select { UserTable.userType eq UserType.ADMIN }
+			.limit(1)
 			.single()
 			.toAdminUser()
 	}
