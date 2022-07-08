@@ -16,10 +16,10 @@ data class MovieDetail(
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
-	@SerialName("production_companies") val productionCompanies: List<ProductionCompany>,
-	@SerialName("production_countries") val productionCountries: List<ProductionCountry>,
+	@SerialName("production_companies") val productionCompanies: List<ProductionCompany> = emptyList(),
+	@SerialName("production_countries") val productionCountries: List<ProductionCountry> = emptyList(),
 	@SerialName("release_date") override val releaseDate: String?,
-	@SerialName("spoken_languages") val spokenLanguages: List<SpokenLanguage>,
+	@SerialName("spoken_languages") val spokenLanguages: List<SpokenLanguage> = emptyList(),
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
 	override val adult: Boolean,
@@ -28,7 +28,7 @@ data class MovieDetail(
 	override val popularity: Float,
 	override val title: String,
 	val budget: Int,
-	val genres: List<Genre>,
+	val genres: List<Genre> = emptyList(),
 	val homepage: String?,
 	val revenue: Int,
 	val runtime: Int?,
@@ -36,27 +36,6 @@ data class MovieDetail(
 	val tagline: String?,
 	val video: Boolean,
 ) : BaseMovieResult
-
-
-@kotlinx.serialization.Serializable
-data class Genre(val id: Int, val name: String)
-
-@kotlinx.serialization.Serializable
-data class ProductionCompany(
-	val name: String,
-	val id: Int,
-	@SerialName("logo_path") val logoPath: String,
-	@SerialName("origin_country") val originCountry: String
-)
-
-@kotlinx.serialization.Serializable
-data class ProductionCountry(
-	@SerialName("iso_3166_1") val iso31661: String,
-	val name: String
-)
-
-@kotlinx.serialization.Serializable
-data class SpokenLanguage(@SerialName("iso_639_1") val iso6391: String, val name: String)
 
 @kotlinx.serialization.Serializable(with = MovieStatusSerializer::class)
 enum class MovieStatus(val key: String) {
