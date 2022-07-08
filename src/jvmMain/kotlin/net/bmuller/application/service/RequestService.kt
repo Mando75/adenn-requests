@@ -20,6 +20,19 @@ class RequestService : BaseService() {
 		Either.catch {
 			val pagination = calcOffset(page)
 			val (requests, count) = requestsRepository.requests(filters, pagination)
+			// TODO: Batch with something like a flow?
+			requests.forEach { request ->
+				when (request) {
+					is RequestEntity.MovieRequest -> {
+						val detail = tmdbRepository.movieDetail(request.tmdbId)
+						println(detail)
+					}
+					is RequestEntity.TVShowRequest -> {
+						val detail = tmdbRepository.tvDetail(request.tmdbId)
+						println(detail)
+					}
+				}
+			}
 			return@catch PaginatedResponse(
 				items = requests,
 				page = page,

@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 @kotlinx.serialization.Serializable
 data class MovieDetail(
 	@SerialName("backdrop_path") override val backdropPath: String?,
-	@SerialName("imdb_id") val imdbId: Int,
+	@SerialName("imdb_id") val imdbId: String,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
@@ -49,7 +49,7 @@ enum class MovieStatus(val key: String) {
 
 	companion object {
 		fun findByKey(key: String, default: MovieStatus = Unknown): MovieStatus {
-			return MovieStatus.values().find { it.key === key } ?: default
+			return MovieStatus.values().find { it.key == key } ?: default
 		}
 	}
 }

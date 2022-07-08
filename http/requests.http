@@ -1,1 +1,3 @@
 GET {{host}}/requests
+Content-Type: application/json
+Authorization: Bearer {{token}}
