@@ -1,10 +1,10 @@
 package net.bmuller.application.repository
 
 import arrow.core.Either
-import entities.MovieSearchResults
-import entities.MultiSearchResults
-import entities.TMDBConfigurationResult
-import entities.TVShowSearchResults
+import entities.tmdb.MovieSearchResults
+import entities.tmdb.MultiSearchResults
+import entities.tmdb.TMDBConfigurationResult
+import entities.tmdb.TVShowSearchResults
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*

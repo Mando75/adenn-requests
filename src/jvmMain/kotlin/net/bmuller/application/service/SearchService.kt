@@ -2,7 +2,11 @@ package net.bmuller.application.service
 
 import arrow.core.Either
 import arrow.core.continuations.either
-import entities.*
+import entities.RequestEntity
+import entities.SearchResult
+import entities.tmdb.BaseMovieResult
+import entities.tmdb.BaseTVShowResult
+import entities.tmdb.MultiSearchEntity
 import lib.PlaceholderImageUrl
 
 class SearchService : BaseService() {
