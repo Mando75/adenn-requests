@@ -30,7 +30,7 @@ val RequestList = FC<RequestListProps>("RequestList") { props ->
 		}
 	} else {
 		ul {
-			className = ClassName("grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8")
+			className = ClassName("grid grid-cols-1 gap-8")
 			props.items.map { result -> RequestCard { request = result } }
 		}
 	}
