@@ -10,6 +10,29 @@ import io.ktor.serialization.kotlinx.xml.*
 import kotlinx.serialization.json.Json
 import lib.JsonSchemaDiscriminator
 
+
+private val defaultJsonBuilder = Json {
+	encodeDefaults = true
+	ignoreUnknownKeys = true
+	prettyPrint = true
+	classDiscriminator = JsonSchemaDiscriminator
+}
+
+fun createClient(
+	jsonBuilder: Json = defaultJsonBuilder,
+	defaultRequestBlock: DefaultRequest.DefaultRequestBuilder.() -> Unit
+) = HttpClient(CIO) {
+	expectSuccess = true
+	install(Resources)
+	install(ContentNegotiation) {
+		json(jsonBuilder)
+		xml()
+	}
+	install(DefaultRequest) {
+		defaultRequestBlock()
+	}
+}
+
 abstract class BaseHttpClient {
 	private val defaultJsonBuilder = Json {
 		encodeDefaults = true

@@ -8,6 +8,7 @@ import io.ktor.resources.*
 import net.bmuller.application.entities.PlexAccountResponse
 import net.bmuller.application.entities.PlexFriendsResponse
 import net.bmuller.application.entities.PlexUser
+import net.bmuller.application.http.PlexClient
 
 @Resource("/")
 @kotlinx.serialization.Serializable
@@ -36,6 +37,24 @@ class PlexTVResources {
 interface PlexTVRepository {
 	suspend fun getUser(authToken: String): PlexUser
 	suspend fun getFriends(authToken: String): PlexFriendsResponse
+}
+
+fun plexTVRepository(plex: PlexClient) = object : PlexTVRepository {
+	override suspend fun getUser(authToken: String): PlexUser {
+		val response = plex.client.get(PlexTVResources.Users.Account()) {
+			header("X-Plex-Token", authToken)
+		}
+		val account: PlexAccountResponse = response.body()
+		return account.user
+	}
+
+	override suspend fun getFriends(authToken: String): PlexFriendsResponse {
+		val response = plex.client.get(PlexTVResources.PMS.Friends.All()) {
+			header("X-Plex-Token", authToken)
+			accept(ContentType.Text.Xml)
+		}
+		return response.body()
+	}
 }
 
 class PlexTVRepositoryImpl : BaseRepository(), PlexTVRepository {

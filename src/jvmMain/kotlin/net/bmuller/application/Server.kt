@@ -3,16 +3,20 @@ package net.bmuller.application
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import net.bmuller.application.config.Env
+import net.bmuller.application.lib.awaitShutdown
 import net.bmuller.application.plugins.*
 
-fun main() {
+fun main(): Unit = runBlocking(Dispatchers.Default) {
+	val env = Env()
 	embeddedServer(
 		Netty,
-		port = 8080,
-		host = "127.0.0.1",
-		module = Application::mainModule,
+		port = env.http.port,
+		host = env.http.host,
 		watchPaths = listOf("classes")
-	).start(wait = true)
+	) { mainModule() }.awaitShutdown()
 }
 
 fun Application.mainModule() {

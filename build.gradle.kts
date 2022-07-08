@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	kotlin("multiplatform") version "1.7.0"
@@ -53,6 +54,7 @@ kotlin {
 		val commonMain by getting {
 			dependencies {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
+				implementation("io.arrow-kt:arrow-fx-coroutines:$arrowKtVersion")
 				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
@@ -132,6 +134,14 @@ kotlin {
 
 application {
 	mainClass.set("net.bmuller.application.ServerKt")
+}
+
+tasks {
+	withType<KotlinCompile>().configureEach {
+		kotlinOptions {
+			freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+		}
+	}
 }
 
 tasks.getByName<Jar>("jvmJar") {

@@ -10,13 +10,33 @@ interface PlexClient {
 	val client: HttpClient
 }
 
-const val PLEX_PIN_HOST = "plex.tv"
+private const val PLEX_PIN_HOST = "plex.tv"
+
+data class PlexClientConfig(
+	val host: String = PLEX_PIN_HOST,
+)
+
+fun plexClient(config: PlexClientConfig = PlexClientConfig()) = object : PlexClient {
+	private val jsonBuilder = Json {
+		encodeDefaults = true
+		ignoreUnknownKeys = true
+		prettyPrint = true
+		isLenient = true
+		classDiscriminator = JsonSchemaDiscriminator
+	}
+
+	override val client = createClient(jsonBuilder) {
+		url {
+			host = config.host
+			protocol = URLProtocol.HTTPS
+		}
+		contentType(ContentType.Application.Json)
+		accept(ContentType.Application.Json)
+	}
+}
 
 
 class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(), PlexClient {
-	data class PlexClientConfig(
-		val host: String,
-	)
 
 
 	private val config: PlexClientConfig

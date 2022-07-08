@@ -63,7 +63,7 @@ class UserAuthService : BaseService() {
 		// Check friends access
 		val friends = plexTVRepository.getFriends(adminUser.plexToken)
 		return friends.users.find { friend -> friend.id == plexUser.id }?.let { friend ->
-			if (friend.server.machineIdentifier === env.plexMachineId) plexUser.right()
+			if (friend.server.machineIdentifier == env.plex.machineId) plexUser.right()
 			else UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
 		} ?: UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
 	}

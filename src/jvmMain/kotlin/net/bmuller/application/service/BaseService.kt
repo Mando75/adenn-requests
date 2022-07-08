@@ -1,18 +1,16 @@
 package net.bmuller.application.service
 
 import entities.Pagination
-import net.bmuller.application.config.EnvironmentValues
+import net.bmuller.application.config.Env
 import net.bmuller.application.repository.*
 import org.koin.java.KoinJavaComponent.inject
-import org.slf4j.Logger
 import kotlin.math.ceil
 import kotlin.math.roundToLong
 
 abstract class BaseService {
 	private val pageSize = 25
 
-	protected val logger: Logger by inject(Logger::class.java)
-	protected val env: EnvironmentValues by inject(EnvironmentValues::class.java)
+	protected val env: Env by inject(Env::class.java)
 	protected val plexAuthPinRepository: PlexAuthPinRepository by inject(PlexAuthPinRepository::class.java)
 	protected val plexTVRepository: PlexTVRepository by inject(PlexTVRepository::class.java)
 	protected val tmdbRepository: TMDBRepository by inject(TMDBRepository::class.java)

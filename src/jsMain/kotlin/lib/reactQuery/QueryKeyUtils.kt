@@ -12,5 +12,5 @@ fun <T> parseListQueryKey(key: EnsuredQueryKey<QueryKey>): List<T> = (key as Arr
 
 fun <A, B, C> parseTripleQueryKey(key: EnsuredQueryKey<QueryKey>): JsTriple<A, B, C> {
 	val list = (key as Array<*>).toList()
-	return jsTriple<A, B, C>(list[0].unsafeCast<A>(), list[1].unsafeCast<B>(), list[2].unsafeCast<C>())
+	return jsTriple(list[0].unsafeCast<A>(), list[1].unsafeCast<B>(), list[2].unsafeCast<C>())
 }

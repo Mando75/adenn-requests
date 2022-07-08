@@ -9,13 +9,13 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
-import net.bmuller.application.config.EnvironmentValues
+import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.service.UserAuthService
 
 
 fun Application.configureAuthentication() {
-	val env: EnvironmentValues by inject()
+	val env: Env by inject()
 	val userAuthentication: UserAuthService by inject()
 
 	install(Authentication) {
@@ -30,11 +30,11 @@ fun Application.configureAuthentication() {
 			}
 		}
 		jwt("bearer_token") {
-			realm = env.jwtRealm
+			realm = env.auth.jwtRealm
 			verifier(
-				JWT.require(Algorithm.HMAC256(env.jwtTokenSecret))
-					.withAudience(env.jwtAudience)
-					.withIssuer(env.jwtIssuer)
+				JWT.require(Algorithm.HMAC256(env.auth.jwtTokenSecret))
+					.withAudience(env.auth.jwtAudience)
+					.withIssuer(env.auth.jwtIssuer)
 					.build()
 			)
 			validate { credential ->
@@ -51,13 +51,13 @@ fun Application.configureAuthentication() {
 		}
 	}
 	install(Sessions) {
-		val secretEncryptKey = hex(env.sessionSecretEncryptKey)
-		val secretSignKey = hex(env.sessionSignKey)
+		val secretEncryptKey = hex(env.auth.sessionSecretEncryptKey)
+		val secretSignKey = hex(env.auth.sessionSignKey)
 		cookie<UserSession>("ar.sid") {
 			cookie.path = "/"
 			cookie.httpOnly = true
 			cookie.maxAgeInSeconds = 60 * 60 * 24 * 7
-			cookie.secure = env.prod
+			cookie.secure = env.http.prod
 			cookie.extensions["SameSite"] = "Strict"
 			transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretSignKey))
 		}

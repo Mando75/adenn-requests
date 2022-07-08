@@ -1,7 +1,7 @@
 package net.bmuller.application.di
 
 import db.ExposedDatabase
-import net.bmuller.application.config.EnvironmentValues
+import net.bmuller.application.config.Env
 import net.bmuller.application.http.PlexClient
 import net.bmuller.application.http.PlexClientImpl
 import net.bmuller.application.http.TMDBClient
@@ -13,7 +13,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 val envModule = module {
-	single { EnvironmentValues() }
+	single { Env() }
 	single<Logger> { LoggerFactory.getLogger("Primary") }
 }
 

@@ -11,6 +11,7 @@ import io.ktor.resources.*
 import kotlinx.coroutines.delay
 import net.bmuller.application.entities.PlexClientHeaders
 import net.bmuller.application.entities.PlexCodeResponse
+import net.bmuller.application.http.PlexClient
 
 sealed class PollForAuthTokenError {
 	data class Unknown(val message: String?) : PollForAuthTokenError()
@@ -46,6 +47,51 @@ class AuthPinResources {
 			@Resource("{id}")
 			@kotlinx.serialization.Serializable
 			class ID(val parent: Pins = Pins(), val id: Long)
+		}
+	}
+}
+
+fun plexAuthPinRepository(plex: PlexClient) = object : PlexAuthPinRepository {
+	private val POLL_DELAY = 1500L
+
+	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse> = Either.catch {
+		val response = plex.client.post(AuthPinResources.V2.Pins()) {
+			parameter("strong", true)
+			headers(buildHeaders(clientHeaders))
+		}
+		return@catch response.body<PlexCodeResponse>()
+	}
+
+	override suspend fun pollForAuthToken(
+		pinId: Long,
+		clientHeaders: PlexClientHeaders,
+		retries: Int
+	): Either<PollForAuthTokenError, String> {
+		repeat(retries) {
+			try {
+				val response = plex.client.get(AuthPinResources.V2.Pins.ID(id = pinId)) {
+					headers(buildHeaders(clientHeaders))
+				}
+				val pin = response.body<PlexCodeResponse>()
+				if (pin.authToken !== null) {
+					return pin.authToken.right()
+				}
+				delay(POLL_DELAY)
+			} catch (e: Throwable) {
+				return PollForAuthTokenError.Unknown(e.message).left()
+			}
+		}
+		return PollForAuthTokenError.TimedOut.left()
+	}
+
+
+	private fun buildHeaders(clientHeaders: PlexClientHeaders): HeadersBuilder.() -> Unit {
+		return {
+			append("X-Plex-Client-Identifier", clientHeaders.clientId)
+			append("X-Plex-Device", clientHeaders.device)
+			append("X-Plex-Platform", clientHeaders.platform)
+			append("X-Plex-Product", clientHeaders.product)
+			append("X-Plex-version", clientHeaders.version)
 		}
 	}
 }

@@ -12,9 +12,10 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import net.bmuller.application.config.EnvironmentValues
+import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.plugins.inject
+import net.bmuller.application.service.PlexClientDetails
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthErrors
 import net.bmuller.application.service.UserAuthService
@@ -22,13 +23,13 @@ import java.util.*
 
 
 fun Route.auth() {
-	val env: EnvironmentValues by inject()
+	val env: Env by inject()
 	val plexOAuthService: PlexOAuthService by inject()
 	val userAuthService: UserAuthService by inject()
 
 	get<AuthResource.Plex.LoginUrl> { context ->
 		val clientDetails =
-			PlexOAuthService.PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
+			PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
 		plexOAuthService.requestHostedLoginURL(clientDetails).mapLeft { error ->
 			call.application.environment.log.error(error.message)
 			call.respond(HttpStatusCode.InternalServerError, "An unknown error occurred")
@@ -91,10 +92,11 @@ fun Route.auth() {
 			val user = call.principal<UserSession>()
 
 			val token =
-				JWT.create().withAudience(env.jwtAudience).withIssuer(env.jwtIssuer).withClaim("userId", user?.id)
+				JWT.create().withAudience(env.auth.jwtAudience).withIssuer(env.auth.jwtIssuer)
+					.withClaim("userId", user?.id)
 					.withClaim("plexUsername", user?.plexUsername).withClaim("version", user?.version)
-					.withExpiresAt(Date(System.currentTimeMillis() + env.jwtLifetime))
-					.sign(Algorithm.HMAC256(env.jwtTokenSecret))
+					.withExpiresAt(Date(System.currentTimeMillis() + env.auth.jwtTokenLifetime))
+					.sign(Algorithm.HMAC256(env.auth.jwtTokenSecret))
 			call.respond(HttpStatusCode.OK, mapOf("token" to token))
 		}
 	}
