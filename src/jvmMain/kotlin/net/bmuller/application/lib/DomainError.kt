@@ -30,7 +30,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondError(error: DomainErr
 		  - error: ${error.error}
 	""".trimIndent()
 	)
-	is MissingOrInvalidParam -> unprocessable(
+	is MissingOrInvalidParam -> badRequest(
 		"""
 		Error parsing param:
 		 - description: ${error.description}
