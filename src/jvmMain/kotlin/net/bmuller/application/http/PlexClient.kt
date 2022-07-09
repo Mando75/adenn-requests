@@ -34,35 +34,3 @@ fun plexClient(config: PlexClientConfig = PlexClientConfig()) = object : PlexCli
 		accept(ContentType.Application.Json)
 	}
 }
-
-
-class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(), PlexClient {
-
-
-	private val config: PlexClientConfig
-
-	init {
-		config = customConfig ?: defaultConfig()
-	}
-
-	private fun defaultConfig() = PlexClientConfig(
-		host = PLEX_PIN_HOST,
-	)
-
-	private val jsonBuilder = Json {
-		encodeDefaults = true
-		ignoreUnknownKeys = true
-		prettyPrint = true
-		isLenient = true
-		classDiscriminator = JsonSchemaDiscriminator
-	}
-
-	override val client = createClient(jsonBuilder) {
-		url {
-			host = config.host
-			protocol = URLProtocol.HTTPS
-		}
-		contentType(ContentType.Application.Json)
-		accept(ContentType.Application.Json)
-	}
-}
