@@ -13,9 +13,3 @@ fun userService(userRepository: UserRepository) = object : IUserService {
 		userId?.let { id -> userRepository.getUserById(id) }
 	}
 }
-
-class UserService : BaseService() {
-	suspend fun me(userId: Int?) = Either.catch {
-		userId?.let { id -> userRepository.getUserById(id) }
-	}
-}

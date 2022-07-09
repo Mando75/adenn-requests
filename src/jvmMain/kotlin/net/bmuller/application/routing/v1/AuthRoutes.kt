@@ -37,11 +37,11 @@ fun Route.auth(env: Env, plexOAuthService: IPlexOAuthService, userAuthService: I
 			val authToken = plexOAuthService.checkForAuthToken(pinId)
 				.mapLeft { error ->
 					val (statusCode, message) = when (error) {
-						is PlexOAuthService.CheckForAuthTokenError.MissingPinId ->
+						is CheckForAuthTokenError.MissingPinId ->
 							Pair(HttpStatusCode.BadRequest, "Missing or invalid pinId")
-						is PlexOAuthService.CheckForAuthTokenError.TimedOutWaitingForToken ->
+						is CheckForAuthTokenError.TimedOutWaitingForToken ->
 							Pair(HttpStatusCode.RequestTimeout, mapOf("msg" to "Timed out waiting for token"))
-						is PlexOAuthService.CheckForAuthTokenError.Unknown -> {
+						is CheckForAuthTokenError.Unknown -> {
 							call.application.environment.log.error(error.message)
 							Pair(HttpStatusCode.InternalServerError, "An unknown error occurred")
 						}
