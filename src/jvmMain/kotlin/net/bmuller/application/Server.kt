@@ -6,27 +6,30 @@ import io.ktor.server.netty.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import net.bmuller.application.config.Env
+import net.bmuller.application.di.Dependencies
+import net.bmuller.application.di.dependencies
 import net.bmuller.application.lib.awaitShutdown
 import net.bmuller.application.plugins.*
 
 fun main(): Unit = runBlocking(Dispatchers.Default) {
 	val env = Env()
-	embeddedServer(
-		Netty,
-		port = env.http.port,
-		host = env.http.host,
-		watchPaths = listOf("classes")
-	) { mainModule() }.awaitShutdown()
+	dependencies(env).use { module ->
+		embeddedServer(
+			Netty,
+			port = env.http.port,
+			host = env.http.host,
+			watchPaths = listOf("classes")
+		) { mainModule(module) }.awaitShutdown()
+	}
 }
 
-fun Application.mainModule() {
+fun Application.mainModule(dependencies: Dependencies) {
 	configureDI()
-	configureDatabase()
-	configureAuthentication()
+	configureAuthentication(dependencies.env, dependencies.userAuthService)
 	configureCors()
 	configureContentNegotiation()
 	configureLogging()
 	configureCompression()
 	configureResources()
-	configureRouting()
+	configureRouting(dependencies)
 }

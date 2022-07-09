@@ -16,6 +16,7 @@ class Dependencies(
 	val userService: IUserService,
 	val searchService: ISearchService,
 	val requestService: IRequestService,
+	val env: Env,
 )
 
 fun dependencies(env: Env): Resource<Dependencies> = resource {
@@ -43,5 +44,5 @@ fun dependencies(env: Env): Resource<Dependencies> = resource {
 	val searchService = searchService(tmdbRepo, requestsRepo)
 	val userAuthService = userAuthService(env.plex, adminUser, userRepo, plexTVRepo)
 	val userService = userService(userRepo)
-	Dependencies(plexOAuthService, userAuthService, userService, searchService, requestsService)
+	Dependencies(plexOAuthService, userAuthService, userService, searchService, requestsService, env)
 }

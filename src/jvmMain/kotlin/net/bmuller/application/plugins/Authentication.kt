@@ -11,18 +11,16 @@ import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
-import net.bmuller.application.service.UserAuthService
+import net.bmuller.application.service.IUserAuthService
 
 
-fun Application.configureAuthentication() {
-	val env: Env by inject()
-	val userAuthentication: UserAuthService by inject()
+fun Application.configureAuthentication(env: Env, userAuthService: IUserAuthService) {
 
 	install(Authentication) {
 		session<UserSession>("user_session") {
 			validate { session ->
 				val validAuthToken =
-					userAuthentication.validateAuthToken(session.id, session.version)
+					userAuthService.validateAuthToken(session.id, session.version)
 				return@validate if (validAuthToken) session else null
 			}
 			challenge {
@@ -41,7 +39,7 @@ fun Application.configureAuthentication() {
 				credential.payload.getClaim("plexUsername")?.let {
 					val userId = credential.payload.getClaim("userId").asInt()
 					val version = credential.payload.getClaim("version").asInt()
-					val validToken = userAuthentication.validateAuthToken(userId, version)
+					val validToken = userAuthService.validateAuthToken(userId, version)
 					return@validate if (validToken) JWTPrincipal(credential.payload) else null
 				}
 			}
