@@ -24,7 +24,6 @@ fun main(): Unit = runBlocking(Dispatchers.Default) {
 }
 
 fun Application.mainModule(dependencies: Dependencies) {
-	configureDI()
 	configureAuthentication(dependencies.env, dependencies.userAuthService)
 	configureCors()
 	configureContentNegotiation()
