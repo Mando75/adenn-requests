@@ -4,11 +4,11 @@ import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import net.bmuller.application.di.Dependencies
 
-fun Routing.apiV1(dependencies: Dependencies) {
+fun Routing.apiV1(module: Dependencies) {
 	route("/api/v1") {
-		auth(dependencies.env, dependencies.plexOAuthService, dependencies.userAuthService)
+		auth(module.env, module.plexOAuthService, module.userAuthService)
 		authenticate("user_session", "bearer_token") {
-			users()
+			users(module.userService)
 			search()
 			requests()
 		}
