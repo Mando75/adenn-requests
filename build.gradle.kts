@@ -75,6 +75,7 @@ kotlin {
 			dependencies {
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
 				implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
+				// Removing this breaks idea... who know why?
 				implementation("io.insert-koin:koin-ktor:$koinVersion")
 				// KTOR
 				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
