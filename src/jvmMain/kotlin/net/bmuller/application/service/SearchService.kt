@@ -8,19 +8,20 @@ import entities.tmdb.BaseMovieResult
 import entities.tmdb.BaseTVShowResult
 import entities.tmdb.MultiSearchEntity
 import lib.PlaceholderImageUrl
+import net.bmuller.application.lib.error.DomainError
 import net.bmuller.application.repository.RequestsRepository
 import net.bmuller.application.repository.TMDBRepository
 
 interface ISearchService {
-	suspend fun searchMulti(searchTerm: String): Either<Throwable, List<SearchResult>>
+	suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResult>>
 
-	suspend fun searchMovie(searchTerm: String): Either<Throwable, List<SearchResult.MovieResult>>
+	suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResult.MovieResult>>
 
-	suspend fun searchTV(searchTerm: String): Either<Throwable, List<SearchResult.TVResult>>
+	suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResult.TVResult>>
 }
 
 fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRepository) = object : ISearchService {
-	override suspend fun searchMulti(searchTerm: String): Either<Throwable, List<SearchResult>> = either {
+	override suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResult>> = either {
 		val tmdbResults = tmdbRepository.searchMulti(searchTerm).bind()
 		val matchingRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.mapNotNull { result ->
@@ -32,13 +33,13 @@ fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRe
 		}
 	}
 
-	override suspend fun searchMovie(searchTerm: String): Either<Throwable, List<SearchResult.MovieResult>> = either {
+	override suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResult.MovieResult>> = either {
 		val tmdbResults = tmdbRepository.searchMovies(searchTerm).bind()
 		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.map { tmdbMovie -> transformMovie(tmdbMovie, matchedRequests[tmdbMovie.id]) }
 	}
 
-	override suspend fun searchTV(searchTerm: String): Either<Throwable, List<SearchResult.TVResult>> = either {
+	override suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResult.TVResult>> = either {
 		val tmdbResults = tmdbRepository.searchTVShows(searchTerm).bind()
 		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
 		return@either tmdbResults.results.map { tmdbTv -> transformTV(tmdbTv, matchedRequests[tmdbTv.id]) }

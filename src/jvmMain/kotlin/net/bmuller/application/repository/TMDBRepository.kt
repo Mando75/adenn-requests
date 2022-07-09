@@ -6,6 +6,8 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*
 import net.bmuller.application.http.TMDBClient
+import net.bmuller.application.lib.catchUnknown
+import net.bmuller.application.lib.error.Unknown
 
 
 @Suppress("unused")
@@ -52,45 +54,45 @@ private class TMDBAPIResource {
 }
 
 interface TMDBRepository {
-	suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults>
-	suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults>
+	suspend fun searchMovies(query: String): Either<Unknown, MovieSearchResults>
+	suspend fun searchTVShows(query: String): Either<Unknown, TVShowSearchResults>
 
-	suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults>
-	suspend fun getConfiguration(): Either<Throwable, TMDBConfigurationResult>
+	suspend fun searchMulti(query: String): Either<Unknown, MultiSearchResults>
+	suspend fun getConfiguration(): Either<Unknown, TMDBConfigurationResult>
 
-	suspend fun movieDetail(id: Int): MovieDetail
+	suspend fun movieDetail(id: Int): Either<Unknown, MovieDetail>
 
-	suspend fun tvDetail(id: Int): TVShowDetail
+	suspend fun tvDetail(id: Int): Either<Unknown, TVShowDetail>
 }
 
 fun tmdbRepository(tmdb: TMDBClient) = object : TMDBRepository {
-	override suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults> = Either.catch {
+	override suspend fun searchMovies(query: String): Either<Unknown, MovieSearchResults> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Movie(query = query))
-		return@catch response.body()
+		response.body()
 	}
 
-	override suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults> = Either.catch {
+	override suspend fun searchTVShows(query: String): Either<Unknown, TVShowSearchResults> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Search.TV(query = query))
-		return@catch response.body()
+		response.body()
 	}
 
-	override suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults> = Either.catch {
+	override suspend fun searchMulti(query: String): Either<Unknown, MultiSearchResults> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Multi(query = query))
-		return@catch response.body()
+		response.body()
 	}
 
-	override suspend fun getConfiguration(): Either<Throwable, TMDBConfigurationResult> = Either.catch {
+	override suspend fun getConfiguration(): Either<Unknown, TMDBConfigurationResult> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Configuration())
-		return@catch response.body()
+		response.body()
 	}
 
-	override suspend fun movieDetail(id: Int): MovieDetail {
+	override suspend fun movieDetail(id: Int): Either<Unknown, MovieDetail> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.Movie.Id(id = id))
-		return response.body()
+		response.body()
 	}
 
-	override suspend fun tvDetail(id: Int): TVShowDetail {
+	override suspend fun tvDetail(id: Int): Either<Unknown, TVShowDetail> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.TV.Id(id = id))
-		return response.body()
+		response.body()
 	}
 }
