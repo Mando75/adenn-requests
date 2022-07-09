@@ -1,5 +1,6 @@
 package net.bmuller.application.repository
 
+import arrow.core.Either
 import db.tables.RequestTable
 import db.tables.UserTable
 import db.tables.toRequestEntity
@@ -7,6 +8,8 @@ import db.tables.toUserEntity
 import db.util.ilike
 import entities.*
 import kotlinx.coroutines.Dispatchers
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.catchUnknown
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -18,13 +21,16 @@ interface RequestsRepository {
 		newRequest: RequestEntity,
 		requester: UserEntity,
 		includeRequester: Boolean = false
-	): RequestEntity
+	): Either<DomainError, RequestEntity>
 
-	suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long
+	suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Either<DomainError, Long>
 
-	suspend fun requestsByTMDBId(tmdbIds: List<Int>): Map<Int, RequestEntity>
+	suspend fun requestsByTMDBId(tmdbIds: List<Int>): Either<DomainError, Map<Int, RequestEntity>>
 
-	suspend fun requests(filters: RequestFilters, pagination: Pagination): Pair<List<RequestEntity>, Long>
+	suspend fun requests(
+		filters: RequestFilters,
+		pagination: Pagination
+	): Either<DomainError, Pair<List<RequestEntity>, Long>>
 }
 
 fun requestsRepository(exposed: Database) = object : RequestsRepository {
@@ -32,8 +38,8 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 		newRequest: RequestEntity,
 		requester: UserEntity,
 		includeRequester: Boolean
-	): RequestEntity {
-		return newSuspendedTransaction(Dispatchers.IO, exposed) {
+	): Either<DomainError, RequestEntity> = Either.catchUnknown {
+		newSuspendedTransaction(Dispatchers.IO, exposed) {
 			val id = RequestTable.insertAndGetId { request ->
 				request[tmdbId] = newRequest.tmdbId
 				request[mediaType] =
@@ -65,27 +71,32 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 		}
 	}
 
-	override suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Long {
-		return newSuspendedTransaction(Dispatchers.IO, exposed) {
-			val mediaType = if (isMovie) RequestTable.MediaType.MOVIE else RequestTable.MediaType.TV
-			return@newSuspendedTransaction RequestTable
-				.select { RequestTable.requesterId eq userId }
-				.andWhere { RequestTable.mediaType eq mediaType }
-				.andWhere { RequestTable.createdAt greaterEq timePeriod }
-				.count()
+	override suspend fun getQuotaUsage(userId: Int, timePeriod: Instant, isMovie: Boolean): Either<DomainError, Long> =
+		Either.catchUnknown {
+			newSuspendedTransaction(Dispatchers.IO, exposed) {
+				val mediaType = if (isMovie) RequestTable.MediaType.MOVIE else RequestTable.MediaType.TV
+				return@newSuspendedTransaction RequestTable
+					.select { RequestTable.requesterId eq userId }
+					.andWhere { RequestTable.mediaType eq mediaType }
+					.andWhere { RequestTable.createdAt greaterEq timePeriod }
+					.count()
+			}
 		}
-	}
 
-	override suspend fun requestsByTMDBId(tmdbIds: List<Int>): Map<Int, RequestEntity> {
-		return newSuspendedTransaction(Dispatchers.IO, exposed) {
-			RequestTable
-				.select { RequestTable.tmdbId inList tmdbIds }
-				.associate { row -> row[RequestTable.tmdbId] to row.toRequestEntity() }
+	override suspend fun requestsByTMDBId(tmdbIds: List<Int>): Either<DomainError, Map<Int, RequestEntity>> =
+		Either.catchUnknown {
+			newSuspendedTransaction(Dispatchers.IO, exposed) {
+				RequestTable
+					.select { RequestTable.tmdbId inList tmdbIds }
+					.associate { row -> row[RequestTable.tmdbId] to row.toRequestEntity() }
+			}
 		}
-	}
 
-	override suspend fun requests(filters: RequestFilters, pagination: Pagination): Pair<List<RequestEntity>, Long> {
-		return newSuspendedTransaction(Dispatchers.IO, exposed) {
+	override suspend fun requests(
+		filters: RequestFilters,
+		pagination: Pagination
+	): Either<DomainError, Pair<List<RequestEntity>, Long>> = Either.catchUnknown {
+		newSuspendedTransaction(Dispatchers.IO, exposed) {
 			val mediaType = when (filters.mediaType) {
 				RequestFilterMediaType.ALL -> null
 				RequestFilterMediaType.MOVIE -> RequestTable.MediaType.MOVIE

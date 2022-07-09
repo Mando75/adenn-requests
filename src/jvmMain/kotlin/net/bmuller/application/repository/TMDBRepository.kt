@@ -6,8 +6,8 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*
 import net.bmuller.application.http.TMDBClient
+import net.bmuller.application.lib.Unknown
 import net.bmuller.application.lib.catchUnknown
-import net.bmuller.application.lib.error.Unknown
 
 
 @Suppress("unused")

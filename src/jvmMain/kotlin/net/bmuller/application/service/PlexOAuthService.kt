@@ -7,21 +7,16 @@ import entities.LoginUrlResponse
 import io.ktor.http.*
 import io.ktor.server.util.*
 import net.bmuller.application.entities.PlexClientHeaders
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.MissingOrInvalidParam
 import net.bmuller.application.repository.PlexAuthPinRepository
-import net.bmuller.application.repository.PollForAuthTokenError
 
 interface IPlexOAuthService {
-	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse>
+	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<DomainError, LoginUrlResponse>
 
 	suspend fun checkForAuthToken(
 		pinId: Long?, clientInfo: PlexClientHeaders = PlexClientHeaders()
-	): Either<CheckForAuthTokenError, String>
-}
-
-sealed class CheckForAuthTokenError {
-	object TimedOutWaitingForToken : CheckForAuthTokenError()
-	object MissingPinId : CheckForAuthTokenError()
-	data class Unknown(val message: String?) : CheckForAuthTokenError()
+	): Either<DomainError, String>
 }
 
 data class PlexClientDetails(
@@ -41,7 +36,7 @@ fun plexOAuthService(plexAuthPinRepository: PlexAuthPinRepository) = object : IP
 		path(PLEX_AUTH_PATH)
 	}
 
-	override suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse> =
+	override suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<DomainError, LoginUrlResponse> =
 		either {
 			val pin = plexAuthPinRepository.getPin(clientInfo.headers).bind()
 
@@ -64,23 +59,14 @@ fun plexOAuthService(plexAuthPinRepository: PlexAuthPinRepository) = object : IP
 			// Plex uses the anchor tag to indicate it should parse the url params
 			val loginUrl = "$plexApiUrl#!?${loginParameters.formUrlEncode()}"
 
-
-			return@either LoginUrlResponse(loginUrl, pin.id)
+			LoginUrlResponse(loginUrl, pin.id)
 		}
 
 	override suspend fun checkForAuthToken(
 		pinId: Long?, clientInfo: PlexClientHeaders
-	): Either<CheckForAuthTokenError, String> {
-		if (pinId == null || pinId == 0L) {
-			return CheckForAuthTokenError.MissingPinId.left()
-		}
-		return plexAuthPinRepository.pollForAuthToken(pinId, clientInfo)
-			.mapLeft { error ->
-				when (error) {
-					is PollForAuthTokenError.TimedOut -> CheckForAuthTokenError.TimedOutWaitingForToken
-					is PollForAuthTokenError.Unknown -> CheckForAuthTokenError.Unknown(error.message)
-				}
-			}
+	): Either<DomainError, String> {
+		return pinId?.let { pin -> plexAuthPinRepository.pollForAuthToken(pin, clientInfo) }
+			?: MissingOrInvalidParam("pinId is missing or not of type Long").left()
 	}
 }
 

@@ -35,14 +35,11 @@ fun dependencies(env: Env): Resource<Dependencies> = resource {
 	val tmdbRepo = tmdbRepository(tmdbClient)
 	val userRepo = userRepository(exposed)
 
-	// admin user
-	val adminUser = userRepo.getAdminUser()
-
 	// Services
 	val plexOAuthService = plexOAuthService(plexAuthPinRepo)
 	val requestsService = requestService(requestsRepo, tmdbRepo, userRepo)
 	val searchService = searchService(tmdbRepo, requestsRepo)
-	val userAuthService = userAuthService(env.plex, adminUser, userRepo, plexTVRepo)
+	val userAuthService = userAuthService(env, userRepo, plexTVRepo)
 	val userService = userService(userRepo)
 	Dependencies(plexOAuthService, userAuthService, userService, searchService, requestsService, env)
 }

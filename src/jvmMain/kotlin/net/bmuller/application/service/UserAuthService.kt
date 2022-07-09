@@ -1,80 +1,112 @@
 package net.bmuller.application.service
 
-import arrow.core.Either
+import arrow.core.*
 import arrow.core.continuations.either
-import arrow.core.flatMap
-import arrow.core.left
-import arrow.core.right
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import entities.UserEntity
 import net.bmuller.application.config.Env
-import net.bmuller.application.entities.AdminUser
+import net.bmuller.application.entities.PlexFriendsResponse
 import net.bmuller.application.entities.PlexUser
+import net.bmuller.application.entities.UserSession
+import net.bmuller.application.lib.*
 import net.bmuller.application.repository.PlexTVRepository
 import net.bmuller.application.repository.UserRepository
+import java.util.*
 
-sealed class UserAuthErrors {
-	data class CouldNotFetchPlexUser(val error: Throwable) : UserAuthErrors()
-	data class ErrorFetchingUser(val error: Throwable) : UserAuthErrors()
-	data class UserDoesNotHaveServerAccess(val user: PlexUser) : UserAuthErrors()
-	data class CouldNotCreateUser(val error: Throwable) : UserAuthErrors()
-}
+@kotlinx.serialization.Serializable
+data class JwtTokenResponse(val token: String)
 
 interface IUserAuthService {
-	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Boolean
+	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit>
 
-	suspend fun signInFlow(authToken: String): Either<UserAuthErrors, UserEntity>
+	suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity>
+
+	fun createJwtToken(user: UserSession): Either<DomainError, JwtTokenResponse>
 }
 
 fun userAuthService(
-	env: Env.Plex,
-	adminUser: AdminUser,
-	userRepository: UserRepository,
-	plexTVRepository: PlexTVRepository
+	env: Env, userRepository: UserRepository, plexTVRepository: PlexTVRepository
 ) = object : IUserAuthService {
-	override suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Boolean {
-		return userRepository.getUserAuthVersion(userId)
-			?.let { authVersion -> authVersion == tokenVersion } ?: false
-	}
+	override suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit> = either {
+		userRepository
+			.getUserAuthVersion(userId).bind()
+			?.let { authVersion ->
+				if (authVersion == tokenVersion) Unit.right()
+				else Unauthorized.left()
+			}?.bind()
+	}.leftIfNull { Unauthorized }
 
-	override suspend fun signInFlow(authToken: String): Either<UserAuthErrors, UserEntity> = either {
+	override suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity> = either {
 		val plexUser = getPlexUser(authToken).flatMap { user -> validateUserAccess(user) }.bind()
 
 		return@either getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
 	}
 
+	override fun createJwtToken(user: UserSession): Either<DomainError, JwtTokenResponse> = Either.catchUnknown {
+		val token = JWT.create()
+			.withAudience(env.auth.jwtAudience)
+			.withIssuer(env.auth.jwtIssuer)
+			.withClaim("userId", user.id)
+			.withClaim("plexUsername", user.plexUsername)
+			.withClaim("version", user.version)
+			.withExpiresAt(Date(System.currentTimeMillis() + env.auth.jwtTokenLifetime))
+			.sign(Algorithm.HMAC256(env.auth.jwtTokenSecret))
+		JwtTokenResponse(token)
+	}
+
 	/**
 	 * Fetch user from plex api
 	 */
-	private suspend fun getPlexUser(authToken: String): Either<UserAuthErrors, PlexUser> =
-		Either.catch { plexTVRepository.getUser(authToken) }
-			.mapLeft { error -> UserAuthErrors.CouldNotFetchPlexUser(error) }
+	private suspend fun getPlexUser(authToken: String): Either<DomainError, PlexUser> =
+		plexTVRepository.getUser(authToken).mapLeft { e -> Unknown("Could not fetch Plex user data", e.error) }
 
 	/**
 	 * Use PlexId to check for an existing user account
 	 */
-	private suspend fun getExistingUser(plexUserId: Int): Either<UserAuthErrors, UserEntity?> =
-		Either.catch { userRepository.getUserByPlexId(plexUserId) }
-			.mapLeft { error -> UserAuthErrors.ErrorFetchingUser(error) }
+	private suspend fun getExistingUser(plexUserId: Int): Either<DomainError, UserEntity?> {
+		return when (val userResult = userRepository.getUserByPlexId(plexUserId)) {
+			is Either.Right -> userResult.value.right()
+			is Either.Left -> when (userResult.value) {
+				// If entity was not found, return null, so we can fall back
+				// to registering a new user
+				is EntityNotFound -> null.right()
+				else -> Unknown("Error fetching user data").left()
+			}
+		}
+	}
+
 
 	/**
 	 * Creates a new user record from an external plex user
 	 */
-	private suspend fun registerNewUser(plexUser: PlexUser): Either<UserAuthErrors, UserEntity> = Either.catch {
+	private suspend fun registerNewUser(plexUser: PlexUser): Either<DomainError, UserEntity> = either {
 		val newUser = UserEntity.createNew(plexUser.username, plexUser.id, plexUser.email)
-		return@catch userRepository.createAndReturnUser(plexUser.authToken, newUser)
-	}.mapLeft { error -> UserAuthErrors.CouldNotCreateUser(error) }
+		userRepository.createAndReturnUser(plexUser.authToken, newUser).bind()
+	}.mapLeft { e -> Unknown("Could not register new user", e.error) }
 
 	/**
 	 * Validates that a plex user has access to the server
 	 */
-	private suspend fun validateUserAccess(plexUser: PlexUser): Either<UserAuthErrors, PlexUser> {
+	private suspend fun validateUserAccess(plexUser: PlexUser): Either<DomainError, PlexUser> = either {
 		// They are the server owner, they have access
-		if (plexUser.id == adminUser.plexId) return plexUser.right()
+		val adminUser = userRepository.getAdminUser().bind()
+		if (plexUser.id == adminUser.plexId) return@either plexUser
+
 		// Check friends access
-		val friends = plexTVRepository.getFriends(adminUser.plexToken)
-		return friends.users.find { friend -> friend.id == plexUser.id }?.let { friend ->
-			if (friend.server.machineIdentifier == env.machineId) plexUser.right()
-			else UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
-		} ?: UserAuthErrors.UserDoesNotHaveServerAccess(plexUser).left()
+		val friends = plexTVRepository.getFriends(adminUser.plexToken).bind()
+		val friend = friends.users.find { friend -> friend.id == plexUser.id }
+		friendValidator(friend, plexUser).bind()
+	}
+
+	/**
+	 * Validates the friend exists and has access to server
+	 */
+	private fun friendValidator(friend: PlexFriendsResponse.User?, plexUser: PlexUser): Either<DomainError, PlexUser> {
+		val forbidden = Forbidden("User does not have access to plex server")
+		return friend?.let { f ->
+			if (f.server.machineIdentifier == env.plex.machineId) plexUser.right()
+			else forbidden.left()
+		} ?: forbidden.left()
 	}
 }

@@ -5,7 +5,7 @@ import http.UserResource
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
-import net.bmuller.application.lib.error.DomainError
+import net.bmuller.application.lib.DomainError
 import net.bmuller.application.lib.respond
 import net.bmuller.application.plugins.parseUserAuth
 import net.bmuller.application.service.IUserService

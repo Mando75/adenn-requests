@@ -8,7 +8,7 @@ import entities.tmdb.BaseMovieResult
 import entities.tmdb.BaseTVShowResult
 import entities.tmdb.MultiSearchEntity
 import lib.PlaceholderImageUrl
-import net.bmuller.application.lib.error.DomainError
+import net.bmuller.application.lib.DomainError
 import net.bmuller.application.repository.RequestsRepository
 import net.bmuller.application.repository.TMDBRepository
 
@@ -23,7 +23,8 @@ interface ISearchService {
 fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRepository) = object : ISearchService {
 	override suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResult>> = either {
 		val tmdbResults = tmdbRepository.searchMulti(searchTerm).bind()
-		val matchingRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
+		val matchingRequests =
+			requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id }).bind()
 		return@either tmdbResults.results.mapNotNull { result ->
 			when (result) {
 				is MultiSearchEntity.PersonResult -> null
@@ -35,13 +36,15 @@ fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRe
 
 	override suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResult.MovieResult>> = either {
 		val tmdbResults = tmdbRepository.searchMovies(searchTerm).bind()
-		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
+		val matchedRequests =
+			requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id }).bind()
 		return@either tmdbResults.results.map { tmdbMovie -> transformMovie(tmdbMovie, matchedRequests[tmdbMovie.id]) }
 	}
 
 	override suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResult.TVResult>> = either {
 		val tmdbResults = tmdbRepository.searchTVShows(searchTerm).bind()
-		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
+		val matchedRequests =
+			requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id }).bind()
 		return@either tmdbResults.results.map { tmdbTv -> transformTV(tmdbTv, matchedRequests[tmdbTv.id]) }
 	}
 

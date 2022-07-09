@@ -1,44 +1,33 @@
 package net.bmuller.application.routing.v1
 
+import arrow.core.continuations.either
+import entities.RequestFilters
 import entities.SearchResult
 import http.RequestResource
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.receiveCatching
+import net.bmuller.application.lib.respond
 import net.bmuller.application.plugins.parseUserAuth
 import net.bmuller.application.service.IRequestService
-import net.bmuller.application.service.RequestServiceErrors
 
 fun Route.requests(requestService: IRequestService) {
 
 	post<RequestResource> {
-		val session = call.parseUserAuth() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-		val searchResult: SearchResult = try {
-			call.receive()
-		} catch (e: Throwable) {
-			return@post call.respond(HttpStatusCode.BadRequest, "Invalid search result in body")
-		}
-
-		requestService.submitRequest(searchResult, session)
-			.map { request -> call.respond(HttpStatusCode.Created, request) }
-			.mapLeft { error ->
-				when (error) {
-					is RequestServiceErrors.UserNotFound -> call.respond(HttpStatusCode.Forbidden, "User not found")
-					is RequestServiceErrors.QuotaExceeded -> call.respond(
-						HttpStatusCode.UnprocessableEntity,
-						"Quota exceeded"
-					)
-				}
-			}
+		either<DomainError, Unit> {
+			val session = call.parseUserAuth().bind()
+			val searchResult = receiveCatching<SearchResult>().bind()
+			requestService.submitRequest(searchResult, session).bind()
+		}.respond(HttpStatusCode.Created)
 	}
 
 	get<RequestResource> { context ->
-		requestService.getRequests(context.filters, context.page).map { requests ->
-			call.respond(HttpStatusCode.OK, requests)
-		}.mapLeft { e -> call.respond(HttpStatusCode.InternalServerError, e.message ?: "Unknown Error") }
+		val filters = context.filters ?: RequestFilters()
+		val page = context.page ?: 0
+		requestService.getRequests(filters, page).respond()
 	}
 }

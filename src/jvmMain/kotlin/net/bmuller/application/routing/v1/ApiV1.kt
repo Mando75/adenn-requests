@@ -6,7 +6,7 @@ import net.bmuller.application.di.Dependencies
 
 fun Routing.apiV1(module: Dependencies) {
 	route("/api/v1") {
-		auth(module.env, module.plexOAuthService, module.userAuthService)
+		auth(module.plexOAuthService, module.userAuthService)
 		authenticate("user_session", "bearer_token") {
 			users(module.userService)
 			search(module.searchService)

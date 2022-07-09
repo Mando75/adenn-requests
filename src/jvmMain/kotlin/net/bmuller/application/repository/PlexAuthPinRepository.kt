@@ -12,20 +12,17 @@ import kotlinx.coroutines.delay
 import net.bmuller.application.entities.PlexClientHeaders
 import net.bmuller.application.entities.PlexCodeResponse
 import net.bmuller.application.http.PlexClient
-
-sealed class PollForAuthTokenError {
-	data class Unknown(val message: String?) : PollForAuthTokenError()
-	object TimedOut : PollForAuthTokenError()
-}
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.TimedOut
+import net.bmuller.application.lib.catchUnknown
 
 interface PlexAuthPinRepository {
-
-	suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse>
+	suspend fun getPin(clientHeaders: PlexClientHeaders): Either<DomainError, PlexCodeResponse>
 	suspend fun pollForAuthToken(
 		pinId: Long,
 		clientHeaders: PlexClientHeaders,
 		retries: Int = DEFAULT_MAX_RETRIES
-	): Either<PollForAuthTokenError, String>
+	): Either<DomainError, String>
 
 	companion object {
 		private const val DEFAULT_MAX_RETRIES = 60
@@ -54,21 +51,22 @@ private class AuthPinResources {
 fun plexAuthPinRepository(plex: PlexClient) = object : PlexAuthPinRepository {
 	private val POLL_DELAY = 1500L
 
-	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<Throwable, PlexCodeResponse> = Either.catch {
-		val response = plex.client.post(AuthPinResources.V2.Pins()) {
-			parameter("strong", true)
-			headers(buildHeaders(clientHeaders))
+	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<DomainError, PlexCodeResponse> =
+		Either.catchUnknown {
+			val response = plex.client.post(AuthPinResources.V2.Pins()) {
+				parameter("strong", true)
+				headers(buildHeaders(clientHeaders))
+			}
+			response.body()
 		}
-		return@catch response.body<PlexCodeResponse>()
-	}
 
 	override suspend fun pollForAuthToken(
 		pinId: Long,
 		clientHeaders: PlexClientHeaders,
 		retries: Int
-	): Either<PollForAuthTokenError, String> {
+	): Either<DomainError, String> {
 		repeat(retries) {
-			try {
+			Either.catchUnknown {
 				val response = plex.client.get(AuthPinResources.V2.Pins.ID(id = pinId)) {
 					headers(buildHeaders(clientHeaders))
 				}
@@ -77,11 +75,9 @@ fun plexAuthPinRepository(plex: PlexClient) = object : PlexAuthPinRepository {
 					return pin.authToken.right()
 				}
 				delay(POLL_DELAY)
-			} catch (e: Throwable) {
-				return PollForAuthTokenError.Unknown(e.message).left()
 			}
 		}
-		return PollForAuthTokenError.TimedOut.left()
+		return TimedOut("Timed out waiting for Plex token").left()
 	}
 
 
