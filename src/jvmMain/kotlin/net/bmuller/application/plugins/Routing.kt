@@ -16,7 +16,7 @@ fun Application.configureRouting(dependencies: Dependencies) {
 		}
 
 		// Configure api routes
-		apiV1()
+		apiV1(dependencies)
 
 		static("/") {
 			resources("")

@@ -14,18 +14,11 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
-import net.bmuller.application.plugins.inject
-import net.bmuller.application.service.PlexClientDetails
-import net.bmuller.application.service.PlexOAuthService
-import net.bmuller.application.service.UserAuthErrors
-import net.bmuller.application.service.UserAuthService
+import net.bmuller.application.service.*
 import java.util.*
 
 
-fun Route.auth() {
-	val env: Env by inject()
-	val plexOAuthService: PlexOAuthService by inject()
-	val userAuthService: UserAuthService by inject()
+fun Route.auth(env: Env, plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthService) {
 
 	get<AuthResource.Plex.LoginUrl> { context ->
 		val clientDetails =
