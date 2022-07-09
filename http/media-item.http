@@ -1,6 +1,0 @@
-##
-GET {{host}}/media-items/search?title="Star Wars"
-Authorization: Bearer {{token}}
-
-###
-GET {{host}}/media-items/1/providers

@@ -4,6 +4,7 @@ import arrow.core.*
 import arrow.core.continuations.either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import entities.AuthTokenResponse
 import entities.UserEntity
 import net.bmuller.application.config.Env
 import net.bmuller.application.entities.PlexFriendsResponse
@@ -14,15 +15,12 @@ import net.bmuller.application.repository.PlexTVRepository
 import net.bmuller.application.repository.UserRepository
 import java.util.*
 
-@kotlinx.serialization.Serializable
-data class JwtTokenResponse(val token: String)
-
 interface IUserAuthService {
 	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit>
 
 	suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity>
 
-	fun createJwtToken(user: UserSession): Either<DomainError, JwtTokenResponse>
+	fun createJwtToken(user: UserSession): Either<DomainError, AuthTokenResponse>
 }
 
 fun userAuthService(
@@ -43,7 +41,7 @@ fun userAuthService(
 		return@either getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
 	}
 
-	override fun createJwtToken(user: UserSession): Either<DomainError, JwtTokenResponse> = Either.catchUnknown {
+	override fun createJwtToken(user: UserSession): Either<DomainError, AuthTokenResponse> = Either.catchUnknown {
 		val token = JWT.create()
 			.withAudience(env.auth.jwtAudience)
 			.withIssuer(env.auth.jwtIssuer)
@@ -52,7 +50,7 @@ fun userAuthService(
 			.withClaim("version", user.version)
 			.withExpiresAt(Date(System.currentTimeMillis() + env.auth.jwtTokenLifetime))
 			.sign(Algorithm.HMAC256(env.auth.jwtTokenSecret))
-		JwtTokenResponse(token)
+		AuthTokenResponse(token)
 	}
 
 	/**

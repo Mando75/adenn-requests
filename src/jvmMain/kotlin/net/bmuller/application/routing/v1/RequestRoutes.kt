@@ -9,7 +9,6 @@ import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.routing.*
-import net.bmuller.application.lib.DomainError
 import net.bmuller.application.lib.receiveCatching
 import net.bmuller.application.lib.respond
 import net.bmuller.application.plugins.parseUserAuth
@@ -18,7 +17,7 @@ import net.bmuller.application.service.IRequestService
 fun Route.requests(requestService: IRequestService) {
 
 	post<RequestResource> {
-		either<DomainError, Unit> {
+		either {
 			val session = call.parseUserAuth().bind()
 			val searchResult = receiveCatching<SearchResult>().bind()
 			requestService.submitRequest(searchResult, session).bind()

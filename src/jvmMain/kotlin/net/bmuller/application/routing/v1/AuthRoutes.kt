@@ -10,7 +10,10 @@ import io.ktor.server.resources.post
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.bmuller.application.entities.UserSession
-import net.bmuller.application.lib.*
+import net.bmuller.application.lib.catchUnknown
+import net.bmuller.application.lib.principalCatching
+import net.bmuller.application.lib.respond
+import net.bmuller.application.lib.respondRedirect
 import net.bmuller.application.service.IPlexOAuthService
 import net.bmuller.application.service.IUserAuthService
 import net.bmuller.application.service.PlexClientDetails
@@ -19,7 +22,7 @@ import net.bmuller.application.service.PlexClientDetails
 fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthService) {
 
 	get<AuthResource.Plex.LoginUrl> { context ->
-		either<DomainError, Unit> {
+		either {
 			val clientDetails =
 				PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
 			plexOAuthService.requestHostedLoginURL(clientDetails).bind()
@@ -44,9 +47,9 @@ fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthSe
 
 	authenticate("user_session") {
 		post<AuthResource.Token> {
-			either<DomainError, Unit> {
+			either {
 				val user = principalCatching<UserSession>().bind()
-				userAuthService.createJwtToken(user)
+				userAuthService.createJwtToken(user).bind()
 			}.respond()
 		}
 	}
