@@ -7,8 +7,6 @@ fun Routing.apiV1() {
 	route("/api/v1") {
 		auth()
 		authenticate("user_session", "bearer_token") {
-			mediaItems()
-			tmdb()
 			users()
 			search()
 			requests()
