@@ -9,13 +9,11 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.bmuller.application.plugins.inject
 import net.bmuller.application.plugins.parseUserAuth
-import net.bmuller.application.service.RequestService
+import net.bmuller.application.service.IRequestService
 import net.bmuller.application.service.RequestServiceErrors
 
-fun Route.requests() {
-	val requestService: RequestService by inject()
+fun Route.requests(requestService: IRequestService) {
 
 	post<RequestResource> {
 		val session = call.parseUserAuth() ?: return@post call.respond(HttpStatusCode.Unauthorized)

@@ -9,8 +9,8 @@ fun Routing.apiV1(module: Dependencies) {
 		auth(module.env, module.plexOAuthService, module.userAuthService)
 		authenticate("user_session", "bearer_token") {
 			users(module.userService)
-			search()
-			requests()
+			search(module.searchService)
+			requests(module.requestService)
 		}
 	}
 }
