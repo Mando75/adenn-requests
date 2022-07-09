@@ -56,22 +56,3 @@ fun plexTVRepository(plex: PlexClient) = object : PlexTVRepository {
 		return response.body()
 	}
 }
-
-class PlexTVRepositoryImpl : BaseRepository(), PlexTVRepository {
-
-	override suspend fun getUser(authToken: String): PlexUser {
-		val response = plex.client.get(PlexTVResources.Users.Account()) {
-			header("X-Plex-Token", authToken)
-		}
-		val account: PlexAccountResponse = response.body()
-		return account.user
-	}
-
-	override suspend fun getFriends(authToken: String): PlexFriendsResponse {
-		val response = plex.client.get(PlexTVResources.PMS.Friends.All()) {
-			header("X-Plex-Token", authToken)
-			accept(ContentType.Text.Xml)
-		}
-		return response.body()
-	}
-}

@@ -94,36 +94,3 @@ fun tmdbRepository(tmdb: TMDBClient) = object : TMDBRepository {
 		return response.body()
 	}
 }
-
-class TMDBRepositoryImpl : BaseRepository(), TMDBRepository {
-
-	override suspend fun searchMovies(query: String): Either<Throwable, MovieSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Movie(query = query))
-		return@catch response.body()
-	}
-
-	override suspend fun searchTVShows(query: String): Either<Throwable, TVShowSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBAPIResource.Search.TV(query = query))
-		return@catch response.body()
-	}
-
-	override suspend fun searchMulti(query: String): Either<Throwable, MultiSearchResults> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBAPIResource.Search.Multi(query = query))
-		return@catch response.body()
-	}
-
-	override suspend fun getConfiguration(): Either<Throwable, TMDBConfigurationResult> = Either.catch {
-		val response = tmdb.client.get(resource = TMDBAPIResource.Configuration())
-		return@catch response.body()
-	}
-
-	override suspend fun movieDetail(id: Int): MovieDetail {
-		val response = tmdb.client.get(resource = TMDBAPIResource.Movie.Id(id = id))
-		return response.body()
-	}
-
-	override suspend fun tvDetail(id: Int): TVShowDetail {
-		val response = tmdb.client.get(resource = TMDBAPIResource.TV.Id(id = id))
-		return response.body()
-	}
-}
