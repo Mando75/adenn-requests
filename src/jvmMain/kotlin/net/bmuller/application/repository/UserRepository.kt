@@ -1,5 +1,8 @@
 package net.bmuller.application.repository
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import db.tables.UserTable
 import db.tables.toAdminUser
 import db.tables.toUserEntity
@@ -7,6 +10,7 @@ import entities.UserEntity
 import entities.UserType
 import kotlinx.coroutines.Dispatchers
 import net.bmuller.application.entities.AdminUser
+import net.bmuller.application.lib.error.EntityNotFound
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,7 +19,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 interface UserRepository {
 	suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): UserEntity
 	fun getAdminUser(): AdminUser
-	suspend fun getUserById(userId: Int): UserEntity?
+	suspend fun getUserById(userId: Int): Either<EntityNotFound, UserEntity>
 	suspend fun getUserByPlexId(plexUserId: Int): UserEntity?
 
 	suspend fun getUserPlexToken(userId: Int): String?
@@ -69,11 +73,11 @@ fun userRepository(exposed: Database) = object : UserRepository {
 			.toAdminUser()
 	}
 
-	override suspend fun getUserById(userId: Int): UserEntity? {
+	override suspend fun getUserById(userId: Int): Either<EntityNotFound, UserEntity> {
 		val user = newSuspendedTransaction(Dispatchers.IO, exposed) {
 			UserTable.slice(defaultUserSlice).select { UserTable.id eq userId }.singleOrNull()
 		}
-		return user?.toUserEntity()
+		return user?.toUserEntity()?.right() ?: EntityNotFound(userId.toString()).left()
 	}
 
 	override suspend fun getUserByPlexId(plexUserId: Int): UserEntity? {
