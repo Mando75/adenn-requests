@@ -9,7 +9,7 @@ data class TVShowSearchResult(
 	@SerialName("genre_ids") val genreIds: List<Int>,
 	@SerialName("origin_country") override val originCountry: List<String>,
 	@SerialName("original_language") override val originalLanguage: String,
-	@SerialName("original_name") override val originalName: String,
+	@SerialName("original_name") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
@@ -17,7 +17,7 @@ data class TVShowSearchResult(
 	@SerialName("name") override val title: String,
 	override val overview: String,
 	override val popularity: Float,
-) : BaseTVShowResult
+) : BaseTVShowEntity
 
 @kotlinx.serialization.Serializable
 data class TVShowSearchResults(

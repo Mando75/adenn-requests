@@ -16,9 +16,14 @@ import net.bmuller.application.lib.catchUnknown
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-
 interface UserRepository {
-	suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): Either<Unknown, UserEntity>
+	suspend fun createAndReturnUser(
+		plexUsername: String,
+		plexId: Int,
+		plexToken: String,
+		email: String
+	): Either<Unknown, UserEntity>
+
 	suspend fun getAdminUser(): Either<DomainError, AdminUser>
 	suspend fun getUserById(userId: Int): Either<DomainError, UserEntity>
 	suspend fun getUserByPlexId(plexUserId: Int): Either<DomainError, UserEntity>
@@ -47,16 +52,21 @@ fun userRepository(exposed: Database) = object : UserRepository {
 		UserTable.authVersion
 	)
 
-	override suspend fun createAndReturnUser(plexToken: String, newUser: UserEntity): Either<Unknown, UserEntity> =
+	override suspend fun createAndReturnUser(
+		plexUsername: String,
+		plexId: Int,
+		plexToken: String,
+		email: String
+	): Either<Unknown, UserEntity> =
 		Either.catchUnknown {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
 				val userType: UserType =
 					if (UserTable.selectAll().limit(1).count() <= 0) UserType.ADMIN else UserType.DEFAULT
 				val id = UserTable.insertAndGetId { user ->
-					user[this.plexUsername] = newUser.plexUsername
-					user[this.plexId] = newUser.plexId
+					user[this.plexUsername] = plexUsername
+					user[this.plexId] = plexId
 					user[this.plexToken] = plexToken
-					user[this.email] = newUser.email
+					user[this.email] = email
 					user[this.userType] = userType
 				}
 				UserTable

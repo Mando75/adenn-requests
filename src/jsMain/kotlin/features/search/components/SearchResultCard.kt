@@ -31,7 +31,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 					overview = props.searchResult.overview
 					isMovie = props.searchResult is SearchResult.MovieResult
 					releaseDate = props.searchResult.releaseDate
-					request = props.searchResult.request
+					requestStatus = props.searchResult.request?.status
 					showDetail = showDetails
 
 					props.searchResult.request?.let { request ->

@@ -35,7 +35,7 @@ data class MovieDetail(
 	val status: MovieStatus,
 	val tagline: String?,
 	val video: Boolean,
-) : BaseMovieResult
+) : BaseMovieEntity
 
 @kotlinx.serialization.Serializable(with = MovieStatusSerializer::class)
 enum class MovieStatus(val key: String) {

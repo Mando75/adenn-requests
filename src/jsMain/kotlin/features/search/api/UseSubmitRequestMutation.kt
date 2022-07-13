@@ -1,6 +1,7 @@
 package features.search.api
 
-import entities.RequestEntity
+import entities.CreatedRequest
+import entities.RequestListItem
 import entities.SearchResult
 import features.requests.api.RequestsQueryKeyPrefix
 import http.RequestResource
@@ -14,7 +15,7 @@ import lib.apiClient.apiClient
 import react.query.*
 
 
-private val submitRequestMutation: MutationFunction<RequestEntity, SearchResult> = { searchResult ->
+private val submitRequestMutation: MutationFunction<CreatedRequest, SearchResult> = { searchResult ->
 	MainScope().promise {
 		val result = apiClient.post(RequestResource()) {
 			setBody(searchResult)
@@ -23,9 +24,9 @@ private val submitRequestMutation: MutationFunction<RequestEntity, SearchResult>
 	}
 }
 
-fun useSubmitRequestMutation(): UseMutationResult<RequestEntity, Error, SearchResult, *> {
+fun useSubmitRequestMutation(): UseMutationResult<RequestListItem, Error, SearchResult, *> {
 	val queryClient = useQueryClient()
-	val options: UseMutationOptions<RequestEntity, Error, SearchResult, *> = jso {
+	val options: UseMutationOptions<RequestListItem, Error, SearchResult, *> = jso {
 		onSuccess = { _, _, _ ->
 			queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix))
 		}

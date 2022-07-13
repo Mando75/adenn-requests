@@ -7,7 +7,10 @@ sealed class SearchResult {
 	abstract val posterPath: String
 	abstract val releaseDate: String?
 	abstract val title: String
-	abstract val request: RequestEntity?
+	abstract val request: RequestData?
+
+	@kotlinx.serialization.Serializable
+	data class RequestData(val id: Int, val status: RequestStatus)
 
 	@kotlinx.serialization.Serializable
 	data class TVResult(
@@ -16,7 +19,7 @@ sealed class SearchResult {
 		override val posterPath: String,
 		override val releaseDate: String?,
 		override val title: String,
-		override val request: RequestEntity? = null
+		override val request: RequestData? = null
 	) : SearchResult()
 
 	@kotlinx.serialization.Serializable
@@ -26,6 +29,6 @@ sealed class SearchResult {
 		override val posterPath: String,
 		override val releaseDate: String?,
 		override val title: String,
-		override val request: RequestEntity? = null
+		override val request: RequestData? = null
 	) : SearchResult()
 }

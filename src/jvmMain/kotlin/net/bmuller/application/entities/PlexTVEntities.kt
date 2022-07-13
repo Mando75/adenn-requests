@@ -44,16 +44,16 @@ data class PlexAccountResponse(
 
 @kotlinx.serialization.Serializable
 data class PlexUser(
+	val username: String,
 	val id: Int,
-	val uuid: String,
+	val authToken: String,
 	val email: String,
+	val uuid: String,
 	@SerialName("joined_at")
 	val joinedAt: String,
-	val username: String,
 	val title: String,
 	val thumb: String,
 	val hasPassword: String,
-	val authToken: String,
 	val subscription: Subscription,
 	val roles: Roles,
 	val entitlements: List<String>

@@ -45,7 +45,7 @@ sealed class MultiSearchEntity {
 		@SerialName("vote_count") override val voteCount: Int,
 		val video: Boolean,
 		@SerialName("vote_average") override val voteAverage: Float,
-	) : BaseMovieResult, MultiSearchEntity()
+	) : BaseMovieEntity, MultiSearchEntity()
 
 	@kotlinx.serialization.Serializable
 	data class TVResult(
@@ -62,8 +62,8 @@ sealed class MultiSearchEntity {
 		@SerialName("original_language") override val originalLanguage: String,
 		@SerialName("vote_count") override val voteCount: Int,
 		@SerialName("name") override val title: String,
-		@SerialName("original_name") override val originalName: String,
-	) : BaseTVShowResult, MultiSearchEntity()
+		@SerialName("original_name") override val originalTitle: String,
+	) : BaseTVShowEntity, MultiSearchEntity()
 
 	@kotlinx.serialization.Serializable
 	data class PersonResult(

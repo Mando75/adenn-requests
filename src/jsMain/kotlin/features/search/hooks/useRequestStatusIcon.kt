@@ -1,7 +1,6 @@
 package features.search.hooks
 
 import csstype.ClassName
-import entities.RequestEntity
 import entities.RequestStatus
 import org.w3c.dom.svg.SVGSVGElement
 import react.FC
@@ -13,8 +12,8 @@ import wrappers.ExclamationIcon
 
 data class RequestStatusIcon(val icon: FC<SVGAttributes<SVGSVGElement>>, val className: ClassName)
 
-fun useRequestStatusIcon(request: RequestEntity?): RequestStatusIcon? = request?.let {
-	val icon = when (it.status) {
+fun useRequestStatusIcon(status: RequestStatus?): RequestStatusIcon? = status?.let {
+	val icon = when (status) {
 		RequestStatus.FULFILLED -> CheckCircleIcon
 		RequestStatus.REQUESTED -> ClockIcon
 		RequestStatus.REJECTED -> ExclamationIcon
@@ -23,7 +22,7 @@ fun useRequestStatusIcon(request: RequestEntity?): RequestStatusIcon? = request?
 		RequestStatus.DOWNLOADING -> CloudDownloadIcon
 	}
 	val baseStyle = "h-6 w-6 text-white p-1 rounded-full"
-	val className = when (it.status) {
+	val className = when (status) {
 		RequestStatus.REQUESTED -> ClassName("bg-blue-500 $baseStyle")
 		RequestStatus.FULFILLED -> ClassName("bg-green-500 $baseStyle")
 		RequestStatus.REJECTED -> ClassName("bg-red-500 $baseStyle")

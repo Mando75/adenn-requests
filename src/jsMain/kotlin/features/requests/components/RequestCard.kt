@@ -2,7 +2,8 @@ package features.requests.components
 
 
 import csstype.ClassName
-import entities.RequestEntity
+import entities.RequestListItem
+import lib.ImageTools
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -12,7 +13,7 @@ import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
 
 external interface RequestCardProps : Props {
-	var request: RequestEntity
+	var request: RequestListItem
 }
 
 val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
@@ -48,7 +49,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 								| duration-300 hover:scale-105
 								""".trimMargin()
 						)
-					src = props.request.posterPath
+					src = ImageTools.tmdbPosterPath(props.request.media.posterPath)
 					alt = "Poster for ${props.request.title}"
 				}
 				div {
@@ -63,7 +64,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					}
 					p {
 						className = ClassName("text-base")
-						+props.request.overview
+						+(props.request.media.overview ?: "")
 					}
 				}
 			}

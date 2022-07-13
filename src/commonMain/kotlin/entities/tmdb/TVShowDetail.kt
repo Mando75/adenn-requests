@@ -17,7 +17,7 @@ data class TVShowDetail(
 	@SerialName("number_of_seasons") val numberOfSeasons: Int,
 	@SerialName("origin_country") override val originCountry: List<String>,
 	@SerialName("original_language") override val originalLanguage: String,
-	@SerialName("original_name") override val originalName: String,
+	@SerialName("original_name") override val originalTitle: String,
 	@SerialName("poster_path") override val posterPath: String?,
 	@SerialName("production_companies") val productionCompany: List<ProductionCompany> = emptyList(),
 	@SerialName("production_countries") val productionCountries: List<ProductionCountry> = emptyList(),
@@ -35,7 +35,7 @@ data class TVShowDetail(
 	val status: String,
 	val tagline: String,
 	val type: String,
-) : BaseTVShowResult
+) : BaseTVShowEntity
 
 @kotlinx.serialization.Serializable
 data class CreatedBy(

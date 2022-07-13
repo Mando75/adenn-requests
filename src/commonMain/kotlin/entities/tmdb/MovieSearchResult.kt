@@ -17,7 +17,7 @@ data class MovieSearchResult(
 	override val overview: String,
 	override val popularity: Float,
 	override val title: String,
-) : BaseMovieResult
+) : BaseMovieEntity
 
 @kotlinx.serialization.Serializable
 data class MovieSearchResults(

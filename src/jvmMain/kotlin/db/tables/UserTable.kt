@@ -3,8 +3,8 @@ package db.tables
 import db.util.postgresEnumeration
 import entities.UserEntity
 import entities.UserType
-import lib.parseDateColumn
 import net.bmuller.application.entities.AdminUser
+import net.bmuller.application.lib.toKotlinInstant
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -33,6 +33,8 @@ object UserTable : IntIdTable("users") {
 	val authVersion: Column<Int> = integer("auth_version").default(0)
 }
 
+val KInstant = kotlinx.datetime.Instant
+
 fun ResultRow.toUserEntity(): UserEntity {
 	return UserEntity(
 		id = get(UserTable.id).value,
@@ -45,8 +47,8 @@ fun ResultRow.toUserEntity(): UserEntity {
 		movieQuotaDays = get(UserTable.movieQuotaDays),
 		tvQuotaLimit = get(UserTable.tvQuotaLimit),
 		tvQuotaDays = get(UserTable.tvQuotaDays),
-		createdAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.createdAt).epochSecond),
-		modifiedAt = kotlinx.datetime.Instant.fromEpochSeconds(get(UserTable.modifiedAt).epochSecond),
+		createdAt = get(UserTable.createdAt).toKotlinInstant(),
+		modifiedAt = get(UserTable.modifiedAt).toKotlinInstant(),
 		authVersion = get(UserTable.authVersion)
 	)
 }
@@ -64,7 +66,7 @@ fun ResultRow.toAdminUser(): AdminUser {
 		movieQuotaDays = get(UserTable.movieQuotaDays),
 		tvQuotaLimit = get(UserTable.tvQuotaLimit),
 		tvQuotaDays = get(UserTable.tvQuotaDays),
-		createdAt = parseDateColumn(get(UserTable.createdAt).epochSecond),
-		modifiedAt = parseDateColumn(get(UserTable.modifiedAt).epochSecond)
+		createdAt = get(UserTable.createdAt).toKotlinInstant(),
+		modifiedAt = get(UserTable.modifiedAt).toKotlinInstant()
 	)
 }

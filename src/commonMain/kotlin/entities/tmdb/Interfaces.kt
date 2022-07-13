@@ -1,5 +1,6 @@
 package entities.tmdb
 
+
 interface BaseSearchResult {
 	val page: Int
 
@@ -8,32 +9,25 @@ interface BaseSearchResult {
 	val totalPages: Int
 }
 
-interface BaseMovieResult {
+sealed interface BaseTMDBEntity {
 	val backdropPath: String?
+	val posterPath: String?
+	val id: Int
+	val title: String
+	val overview: String?
+	val popularity: Float
 	val originalLanguage: String
 	val originalTitle: String
-	val posterPath: String?
-	val releaseDate: String?
 	val voteAverage: Float
 	val voteCount: Int
-	val adult: Boolean
-	val id: Int
-	val overview: String?
-	val popularity: Float
-	val title: String
 }
 
-interface BaseTVShowResult {
-	val backdropPath: String?
+interface BaseMovieEntity : BaseTMDBEntity {
+	val releaseDate: String?
+	val adult: Boolean
+}
+
+interface BaseTVShowEntity : BaseTMDBEntity {
 	val firstAirDate: String?
 	val originCountry: List<String>
-	val originalLanguage: String
-	val originalName: String
-	val posterPath: String?
-	val voteAverage: Float
-	val voteCount: Int
-	val id: Int
-	val title: String
-	val overview: String?
-	val popularity: Float
 }

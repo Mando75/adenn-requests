@@ -79,8 +79,8 @@ fun userAuthService(
 	 * Creates a new user record from an external plex user
 	 */
 	private suspend fun registerNewUser(plexUser: PlexUser): Either<DomainError, UserEntity> = either {
-		val newUser = UserEntity.createNew(plexUser.username, plexUser.id, plexUser.email)
-		userRepository.createAndReturnUser(plexUser.authToken, newUser).bind()
+		val (username, id, token, email) = plexUser
+		userRepository.createAndReturnUser(username, id, token, email).bind()
 	}.mapLeft { e -> Unknown("Could not register new user", e.error) }
 
 	/**

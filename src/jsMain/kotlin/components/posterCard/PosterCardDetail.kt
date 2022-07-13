@@ -2,7 +2,7 @@ package components.posterCard
 
 
 import csstype.ClassName
-import entities.RequestEntity
+import entities.RequestStatus
 import features.search.hooks.useRequestStatusIcon
 import react.FC
 import react.PropsWithChildren
@@ -15,7 +15,7 @@ external interface PosterCardDetailProps : PropsWithChildren {
 	var isMovie: Boolean
 	var releaseDate: String?
 	var showDetail: Boolean
-	var request: RequestEntity?
+	var requestStatus: RequestStatus?
 }
 
 val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
@@ -24,7 +24,7 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 	val mediaType = if (props.isMovie) "Movie" else "TV Show"
 
 	// HOOKS
-	val requestStatusIcon = useRequestStatusIcon(props.request)
+	val requestStatusIcon = useRequestStatusIcon(props.requestStatus)
 
 	// EFFECTS
 
@@ -49,11 +49,11 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 
 				+mediaType
 			}
-			requestStatusIcon?.let { request ->
+			requestStatusIcon?.let { requestIcon ->
 				div {
 
-					request.icon {
-						className = request.className
+					requestIcon.icon {
+						className = requestIcon.className
 					}
 				}
 			}
