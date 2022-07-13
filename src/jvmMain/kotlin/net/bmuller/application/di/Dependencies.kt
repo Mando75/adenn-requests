@@ -20,11 +20,11 @@ class Dependencies(
 	val env: Env,
 )
 
-fun dependencies(env: Env): Resource<Dependencies> = resource {
+fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = resource {
 	// Database
 	val hikari = hikari(env.dataSource).bind()
-	val flyway = flyway(env.dataSource).bind()
-	val exposed = exposed(hikari, flyway).bind()
+	val flyway = flyway(env.dataSource)
+	val exposed = exposed(hikari, flyway, cleanDB).bind()
 
 	// HTTP Clients
 	val plexClient = plexClient()

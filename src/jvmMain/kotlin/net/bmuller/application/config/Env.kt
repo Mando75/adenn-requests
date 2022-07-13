@@ -24,12 +24,27 @@ private const val PLEX_MACHINE_ID = "my-plex-machine-id"
 
 private val getenv: (key: String) -> String? = { key -> dotenv()[key] }
 
+enum class RunEnv {
+	TESTING,
+	DEVELOPMENT,
+	PRODUCTION;
+
+	companion object {
+		fun getRunEnv() = when (getenv("RUN_ENV")) {
+			"TESTING" -> TESTING
+			"PRODUCTION" -> PRODUCTION
+			else -> DEVELOPMENT
+		}
+	}
+}
+
 data class Env(
 	val dataSource: DataSource = DataSource(),
 	val http: Http = Http(),
 	val auth: Auth = Auth(),
 	val tmdb: TMDB = TMDB(),
 	val plex: Plex = Plex(),
+	val runEnv: RunEnv = RunEnv.getRunEnv()
 ) {
 	data class Http(
 		val host: String = getenv("HOST") ?: "0.0.0.0",

@@ -26,6 +26,7 @@ val hikariVersion = "5.0.1"
 val dotenvVersion = "6.2.2"
 val koinVersion = "3.2.0"
 val kotlinxDateTimeVersion = "0.3.3"
+val kotestVersion = "5.3.2"
 
 repositories {
 	mavenCentral()
@@ -105,6 +106,12 @@ kotlin {
 		val jvmTest by getting {
 			dependencies {
 				implementation("io.ktor:ktor-server-test-host:$ktorVersion")
+				implementation("org.testcontainers:postgresql:1.17.3")
+				implementation("io.kotest:kotest-framework-engine:$kotestVersion")
+				implementation("io.kotest:kotest-property:$kotestVersion")
+				implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+				implementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
+				implementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.3")
 			}
 		}
 

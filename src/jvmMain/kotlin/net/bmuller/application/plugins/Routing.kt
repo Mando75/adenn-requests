@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import net.bmuller.application.di.Dependencies
-import net.bmuller.application.routing.v1.apiV1
+import net.bmuller.application.routing.v1.api
 
 
 fun Application.configureRouting(dependencies: Dependencies) {
@@ -16,7 +16,7 @@ fun Application.configureRouting(dependencies: Dependencies) {
 		}
 
 		// Configure api routes
-		apiV1(dependencies)
+		api(dependencies)
 
 		static("/") {
 			resources("")
