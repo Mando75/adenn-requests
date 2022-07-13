@@ -3,6 +3,7 @@ package net.bmuller.application.di
 import arrow.fx.coroutines.Resource
 import arrow.fx.coroutines.continuations.resource
 import db.exposed
+import db.flyway
 import db.util.hikari
 import net.bmuller.application.config.Env
 import net.bmuller.application.http.plexClient
@@ -22,7 +23,8 @@ class Dependencies(
 fun dependencies(env: Env): Resource<Dependencies> = resource {
 	// Database
 	val hikari = hikari(env.dataSource).bind()
-	val exposed = exposed(hikari, env.dataSource).bind()
+	val flyway = flyway(env.dataSource).bind()
+	val exposed = exposed(hikari, flyway).bind()
 
 	// HTTP Clients
 	val plexClient = plexClient()
