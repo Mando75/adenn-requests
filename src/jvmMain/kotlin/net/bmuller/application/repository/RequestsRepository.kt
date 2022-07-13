@@ -107,7 +107,7 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
 				RequestTable
 					.innerJoin(UserTable)
-					.slice(RequestTable.id, RequestTable.status)
+					.slice(RequestTable.id, RequestTable.status, RequestTable.tmdbId)
 					.select { RequestTable.tmdbId inList tmdbIds }
 					.associate { row ->
 						row[RequestTable.tmdbId] to RequestByTmdbIDData(

@@ -2,6 +2,7 @@
   const devServer = config.devServer || {};
   config.devServer = {
     ...devServer,
+    port: 8081,
     proxy: {
       '/api': {
         target: {
