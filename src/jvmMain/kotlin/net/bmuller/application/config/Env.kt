@@ -21,6 +21,7 @@ private const val MOVIE_DB_API_KEY = "my-moviedb-api-key"
 private const val MOVIE_DB_REQUEST_TOKEN = "my-moviedb-request-token"
 private const val MOVIE_DB_SESSION_TOKEN = "my-moviedb-session-token"
 private const val PLEX_MACHINE_ID = "my-plex-machine-id"
+private const val PLEX_HOST = "plex.tv"
 
 private val getenv: (key: String) -> String? = { key -> dotenv()[key] }
 
@@ -77,6 +78,7 @@ data class Env(
 	)
 
 	data class Plex(
+		val host: String = getenv("PLEX_HOST") ?: PLEX_HOST,
 		val machineId: String = getenv("PLEX_MACHINE_ID") ?: PLEX_MACHINE_ID
 	)
 

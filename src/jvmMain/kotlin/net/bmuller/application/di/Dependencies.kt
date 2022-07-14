@@ -27,7 +27,7 @@ fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = r
 	val exposed = exposed(hikari, flyway, cleanDB).bind()
 
 	// HTTP Clients
-	val plexClient = plexClient()
+	val plexClient = plexClient(env.plex)
 	val tmdbClient = tmdbClient(env.tmdb)
 
 	// Repositories
