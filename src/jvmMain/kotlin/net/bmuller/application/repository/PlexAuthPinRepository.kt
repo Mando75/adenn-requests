@@ -32,7 +32,7 @@ interface PlexAuthPinRepository {
 @Suppress("unused")
 @Resource("/api")
 @kotlinx.serialization.Serializable
-private class AuthPinResources {
+class AuthPinResources {
 
 	@Resource("v2")
 	@kotlinx.serialization.Serializable
