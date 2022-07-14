@@ -30,7 +30,7 @@ private fun Application.testModule(dependencies: Dependencies) {
 	}
 }
 
-suspend fun withService(test: suspend ServiceTest.() -> Unit): Unit {
+suspend fun withService(test: suspend ServiceTest.() -> Unit) {
 	val dep by KotestProject.dependencies
 	withService(dep, test)
 }
@@ -48,7 +48,7 @@ suspend fun withService(
 				encodeDefaults = true
 				ignoreUnknownKeys = true
 				prettyPrint = true
-				classDiscriminator = lib.JsonSchemaDiscriminator
+				classDiscriminator = JsonSchemaDiscriminator
 			})
 		}
 		install(DefaultRequest) {
