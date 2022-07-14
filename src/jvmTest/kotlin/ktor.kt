@@ -1,3 +1,6 @@
+import arrow.core.Either
+import arrow.core.continuations.either
+import entities.AuthTokenResponse
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -10,6 +13,8 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import lib.JsonSchemaDiscriminator
 import net.bmuller.application.di.Dependencies
+import net.bmuller.application.entities.UserSession
+import net.bmuller.application.lib.DomainError
 import net.bmuller.application.plugins.configureAuthentication
 import net.bmuller.application.plugins.configureContentNegotiation
 import net.bmuller.application.plugins.configureLogging
@@ -33,6 +38,14 @@ private fun Application.testModule(dependencies: Dependencies) {
 suspend fun withService(test: suspend ServiceTest.() -> Unit) {
 	val dep by KotestProject.dependencies
 	withService(dep, test)
+}
+
+suspend fun createTestUserToken(): Either<DomainError, AuthTokenResponse> = either {
+	val dep by KotestProject.dependencies
+	val user = dep.userAuthService.signInFlow("test-auth-token").bind()
+	val session = UserSession(id = user.id, version = user.authVersion, plexUsername = user.plexUsername)
+
+	dep.userAuthService.createJwtToken(session).bind()
 }
 
 suspend fun withService(

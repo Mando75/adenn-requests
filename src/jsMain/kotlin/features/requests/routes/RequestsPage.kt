@@ -13,7 +13,7 @@ import react.dom.html.ReactHTML.section
 val RequestsPage = FC<Props>("RequestsPage") {
 	// STATE
 	val (requestFilters, searchTerm, changeEventHandler) = useRequestFilters()
-	val (requestsQuery, pagination) = useRequestsQuery(requestFilters)
+	val (requestsQuery) = useRequestsQuery(requestFilters)
 
 	// HOOKS
 

@@ -33,8 +33,6 @@ object UserTable : IntIdTable("users") {
 	val authVersion: Column<Int> = integer("auth_version").default(0)
 }
 
-val KInstant = kotlinx.datetime.Instant
-
 fun ResultRow.toUserEntity(): UserEntity {
 	return UserEntity(
 		id = get(UserTable.id).value,
