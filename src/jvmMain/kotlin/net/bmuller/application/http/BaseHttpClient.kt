@@ -1,7 +1,7 @@
 package net.bmuller.application.http
 
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
@@ -19,9 +19,10 @@ private val defaultJsonBuilder = Json {
 }
 
 fun createClient(
+	engine: HttpClientEngine,
 	jsonBuilder: Json = defaultJsonBuilder,
 	defaultRequestBlock: DefaultRequest.DefaultRequestBuilder.() -> Unit
-) = HttpClient(CIO) {
+) = HttpClient(engine) {
 	expectSuccess = true
 	install(Resources)
 	install(ContentNegotiation) {

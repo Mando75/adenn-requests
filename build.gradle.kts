@@ -113,6 +113,7 @@ kotlin {
 				implementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
 				implementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.3")
 				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+				implementation("io.ktor:ktor-client-mock:$ktorVersion")
 			}
 		}
 

@@ -26,7 +26,11 @@ object KotestProject : AbstractProjectConfig() {
 		)
 	}
 
-	private val env: Env by lazy { Env().copy(dataSource = dataSource, runEnv = RunEnv.TESTING) }
+	private val http: Env.Http by lazy {
+		Env.Http(clientEngine = mockEngine)
+	}
+
+	private val env: Env by lazy { Env().copy(dataSource = dataSource, http = http, runEnv = RunEnv.TESTING) }
 
 	val dependencies = TestResource { dependencies(env, cleanDB = true) }
 	private val hikari = TestResource { hikari(env.dataSource) }

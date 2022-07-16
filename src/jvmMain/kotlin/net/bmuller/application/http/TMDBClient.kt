@@ -1,6 +1,7 @@
 package net.bmuller.application.http
 
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import net.bmuller.application.config.Env
@@ -18,11 +19,11 @@ data class TMDBClientConfig(
 	val requestToken: String
 )
 
-fun tmdbClient(config: Env.TMDB) = object : TMDBClient {
+fun tmdbClient(config: Env.TMDB, engine: HttpClientEngine) = object : TMDBClient {
 	private val apiKeyParam = "api_key"
 	private val sessionIdParam = "session_id"
 
-	override val client = createClient {
+	override val client = createClient(engine) {
 		url {
 			host = config.host
 			protocol = URLProtocol.HTTPS

@@ -27,8 +27,8 @@ fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = r
 	val exposed = exposed(hikari, flyway, cleanDB).bind()
 
 	// HTTP Clients
-	val plexClient = plexClient(env.plex)
-	val tmdbClient = tmdbClient(env.tmdb)
+	val plexClient = plexClient(env.plex, env.http.clientEngine)
+	val tmdbClient = tmdbClient(env.tmdb, env.http.clientEngine)
 
 	// Repositories
 	val plexAuthPinRepo = plexAuthPinRepository(plexClient)
@@ -38,7 +38,7 @@ fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = r
 	val userRepo = userRepository(exposed)
 
 	// Services
-	val plexOAuthService = plexOAuthService(plexAuthPinRepo)
+	val plexOAuthService = plexOAuthService(plexAuthPinRepo, env.plex)
 	val requestsService = requestService(requestsRepo, tmdbRepo, userRepo)
 	val searchService = searchService(tmdbRepo, requestsRepo)
 	val userAuthService = userAuthService(env, userRepo, plexTVRepo)

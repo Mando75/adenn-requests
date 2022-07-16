@@ -53,24 +53,6 @@ suspend fun withService(
 	test: suspend ServiceTest.() -> Unit
 ): Unit = testApplication {
 	application { testModule(dependencies) }
-	externalServices {
-		hosts("https://${dependencies.env.plex.host}") {
-			install(io.ktor.server.resources.Resources)
-			install(io.ktor.server.plugins.contentnegotiation.ContentNegotiation) {
-				json(Json {
-					encodeDefaults = true
-					ignoreUnknownKeys = true
-					prettyPrint = true
-					classDiscriminator = JsonSchemaDiscriminator
-				})
-			}
-			routing {
-				route("/") {
-					plexExternalServices(dependencies.env.plex)
-				}
-			}
-		}
-	}
 	createClient {
 		expectSuccess = false
 		install(Resources)
