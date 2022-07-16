@@ -60,7 +60,6 @@ kotlin {
 				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 				implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
-				implementation("io.ktor:ktor-client-core:$ktorVersion")
 				implementation("io.ktor:ktor-client-resources:$ktorVersion")
 				implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 			}
@@ -90,6 +89,7 @@ kotlin {
 				implementation("io.ktor:ktor-server-auth:$ktorVersion")
 				implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 				implementation("io.ktor:ktor-server-sessions:$ktorVersion")
+				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 
 				// Database
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -112,6 +112,7 @@ kotlin {
 				implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 				implementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
 				implementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.3")
+				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 			}
 		}
 
@@ -124,6 +125,7 @@ kotlin {
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.343")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-query:3.39.1-pre.343")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react-css:18.0.0-pre.331-kotlin-1.6.20")
+				implementation("io.ktor:ktor-client-core-js:$ktorVersion")
 
 				// NPM
 				implementation(npm("react-transition-state", "1.1.4"))
