@@ -56,6 +56,13 @@ kotlin {
 			dependencies {
 				implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 				implementation("io.arrow-kt:arrow-fx-coroutines:$arrowKtVersion")
+				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+				implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+				implementation("io.ktor:ktor-client-core:$ktorVersion")
+				implementation("io.ktor:ktor-client-resources:$ktorVersion")
+				implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 			}
 		}
 
@@ -70,6 +77,7 @@ kotlin {
 				implementation("ch.qos.logback:logback-classic:$logbackVersion")
 				implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
 				// Removing this breaks idea... who know why?
+				implementation("io.insert-koin:koin-ktor:$koinVersion")
 				// KTOR
 				implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
@@ -82,13 +90,6 @@ kotlin {
 				implementation("io.ktor:ktor-server-auth:$ktorVersion")
 				implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 				implementation("io.ktor:ktor-server-sessions:$ktorVersion")
-				implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-				implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:$serializationVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:$kotlinxDateTimeVersion")
-				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
 
 				// Database
 				implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -111,22 +112,11 @@ kotlin {
 				implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 				implementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
 				implementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.3")
-				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
-				implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
 			}
 		}
 
 		val jsMain by getting {
 			dependencies {
-				// KTOR
-				implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
-				implementation("io.ktor:ktor-serialization-kotlinx-json-js:$ktorVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-js:$serializationVersion")
-				implementation("org.jetbrains.kotlinx:kotlinx-datetime-js:$kotlinxDateTimeVersion")
-				implementation("io.ktor:ktor-client-core-js:$ktorVersion")
-				implementation("io.ktor:ktor-client-resources-js:$ktorVersion")
-				implementation("io.ktor:ktor-client-content-negotiation-js:$ktorVersion")
 
 				implementation("io.github.turansky.seskar:seskar-core:0.7.0")
 				implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion")
