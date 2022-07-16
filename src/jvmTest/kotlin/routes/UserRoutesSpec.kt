@@ -23,6 +23,16 @@ class UserRoutesSpec : StringSpec({
 		}
 	}
 
+	"Returns an error if invalid token is provided" {
+		withService {
+			val response = client.get(UserResource.Me()) {
+				header("Authorization", "Bearer bad-token")
+			}
+
+			response.status shouldBe HttpStatusCode.Unauthorized
+		}
+	}
+
 	"Returns the user object if authenticated" {
 		withService {
 			either {

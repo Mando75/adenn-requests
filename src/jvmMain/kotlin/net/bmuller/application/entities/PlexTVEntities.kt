@@ -30,11 +30,11 @@ data class PlexCodeResponse(
 
 
 data class PlexClientHeaders(
-	val clientId: String = "7909d93e-0876-42c8-99a8-ea5c1c3c3bd5",
-	val product: String = "Adenn Requests",
-	val device: String = "Web",
-	val version: String = "0.0.1",
-	val platform: String = "Web"
+	val clientId: String,
+	val product: String,
+	val device: String,
+	val version: String,
+	val platform: String
 )
 
 @kotlinx.serialization.Serializable

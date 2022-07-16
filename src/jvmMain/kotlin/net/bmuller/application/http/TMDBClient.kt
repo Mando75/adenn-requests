@@ -6,18 +6,10 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import net.bmuller.application.config.Env
 
-const val TMDB_HOST = "api.themoviedb.org"
 
 interface TMDBClient {
 	val client: HttpClient
 }
-
-data class TMDBClientConfig(
-	val apiKey: String,
-	val host: String,
-	val sessionToken: String,
-	val requestToken: String
-)
 
 fun tmdbClient(config: Env.TMDB, engine: HttpClientEngine) = object : TMDBClient {
 	private val apiKeyParam = "api_key"

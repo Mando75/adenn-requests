@@ -39,7 +39,7 @@ class AuthPinResources {
 	class V2(val parent: AuthPinResources = AuthPinResources()) {
 		@Resource("pins")
 		@kotlinx.serialization.Serializable
-		class Pins(val parent: V2 = V2()) {
+		class Pins(val parent: V2 = V2(), val strong: Boolean = true) {
 
 			@Resource("{id}")
 			@kotlinx.serialization.Serializable
@@ -54,7 +54,6 @@ fun plexAuthPinRepository(plex: PlexClient) = object : PlexAuthPinRepository {
 	override suspend fun getPin(clientHeaders: PlexClientHeaders): Either<DomainError, PlexCodeResponse> =
 		Either.catchUnknown {
 			val response = plex.client.post(AuthPinResources.V2.Pins()) {
-				parameter("strong", true)
 				headers(buildHeaders(clientHeaders))
 			}
 			response.body()
