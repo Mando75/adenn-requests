@@ -57,4 +57,13 @@ class AuthRoutesSpec : DescribeSpec({
 		}
 	}
 
+	describe("Plex auth callback") {
+		it("Should redirect to login on success") {
+			withService {
+				val response = client.get(AuthResource.Plex.Callback(pinId = "1"))
+
+				response.status shouldBe HttpStatusCode.Found
+			}
+		}
+	}
 })

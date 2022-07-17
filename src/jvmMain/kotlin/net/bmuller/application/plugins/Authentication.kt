@@ -14,6 +14,7 @@ import io.ktor.util.*
 import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.GenericErrorModel
 import net.bmuller.application.lib.Unauthorized
 import net.bmuller.application.lib.catchUnknown
 import net.bmuller.application.service.IUserAuthService
@@ -51,8 +52,11 @@ fun Application.configureAuthentication(env: Env, userAuthService: IUserAuthServ
 					}
 				}
 			}
-			challenge { _, realm ->
-				call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired for $realm")
+			challenge { challenge, realm ->
+				call.respond(
+					HttpStatusCode.Unauthorized,
+					GenericErrorModel("Token is not valid or has expired for $realm", challenge)
+				)
 			}
 		}
 	}

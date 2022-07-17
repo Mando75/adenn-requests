@@ -55,6 +55,7 @@ suspend fun withService(
 	application { testModule(dependencies) }
 	createClient {
 		expectSuccess = false
+		followRedirects = false
 		install(Resources)
 		install(ContentNegotiation) {
 			json(Json {

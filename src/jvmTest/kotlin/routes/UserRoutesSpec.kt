@@ -36,7 +36,7 @@ class UserRoutesSpec : StringSpec({
 	"Returns the user object if authenticated" {
 		withService {
 			either {
-				val token = createTestUserToken().bind()
+				val (token) = createTestUserToken().bind()
 
 				val response = client.get(UserResource.Me()) {
 					header("Authorization", "Bearer $token")
@@ -49,7 +49,7 @@ class UserRoutesSpec : StringSpec({
 
 					user.plexUsername shouldBe "testuser"
 					user.email shouldBe "test@bmuller.net"
-					user.authVersion shouldBe 1
+					user.authVersion shouldBe 0
 					user.plexId shouldBe 1
 					user.requestCount shouldBe 0
 					user.movieQuotaDays shouldBe 1
