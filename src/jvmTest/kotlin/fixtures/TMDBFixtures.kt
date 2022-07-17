@@ -50,7 +50,7 @@ val searchMultiResponse = """
     },
     {
       "adult": false,
-      "backdrop_path": null,
+      "backdrop_path": "",
       "genre_ids": [
         28,
         14,
@@ -62,7 +62,7 @@ val searchMultiResponse = """
       "original_title": "Attack on Titan",
       "overview": "A live-action adaptation of the popular eponymous Japanese franchise.",
       "popularity": 4.345,
-      "poster_path": null,
+      "poster_path": "",
       "title": "Attack on Titan",
       "video": false,
       "vote_average": 0,
@@ -275,7 +275,7 @@ val searchMovieResult = """
 	    },
 	    {
 	      "adult": false,
-	      "backdrop_path": null,
+	      "backdrop_path": "",
 	      "genre_ids": [
 	        28,
 	        14,
@@ -286,7 +286,7 @@ val searchMovieResult = """
 	      "original_title": "Attack on Titan",
 	      "overview": "A live-action adaptation of the popular eponymous Japanese franchise.",
 	      "popularity": 4.345,
-	      "poster_path": null,
+	      "poster_path": "",
 	      "title": "Attack on Titan",
 	      "video": false,
 	      "vote_average": 0,

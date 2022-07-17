@@ -52,7 +52,7 @@ class SearchRoutesSpec : DescribeSpec({
 					response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 					assertSoftly {
-						val result: List<SearchResult> = response.body()
+						val result: List<SearchResult.MovieResult> = response.body()
 
 						result.shouldHaveAtLeastSize(7)
 					}
@@ -74,7 +74,7 @@ class SearchRoutesSpec : DescribeSpec({
 					response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 					assertSoftly {
-						val result: List<SearchResult> = response.body()
+						val result: List<SearchResult.TVResult> = response.body()
 
 						result.shouldHaveAtLeastSize(3)
 					}

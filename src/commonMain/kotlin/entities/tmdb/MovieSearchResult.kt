@@ -4,12 +4,12 @@ import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
 data class MovieSearchResult(
-	@SerialName("backdrop_path") override val backdropPath: String?,
+	@SerialName("backdrop_path") override val backdropPath: String? = null,
 	@SerialName("genre_ids") val genreIds: List<Int>,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
-	@SerialName("poster_path") override val posterPath: String?,
-	@SerialName("release_date") override val releaseDate: String?,
+	@SerialName("poster_path") override val posterPath: String? = null,
+	@SerialName("release_date") override val releaseDate: String? = null,
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
 	override val adult: Boolean,

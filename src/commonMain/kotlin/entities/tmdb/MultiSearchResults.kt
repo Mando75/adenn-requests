@@ -39,7 +39,7 @@ sealed class MultiSearchEntity {
 		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.movie,
 		@SerialName("original_language") override val originalLanguage: String,
-		@SerialName("backdrop_path") override val backdropPath: String?,
+		@SerialName("backdrop_path") override val backdropPath: String? = null,
 		override val title: String,
 		override val popularity: Float,
 		@SerialName("vote_count") override val voteCount: Int,
@@ -53,7 +53,7 @@ sealed class MultiSearchEntity {
 		override val popularity: Float,
 		override val id: Int,
 		override val overview: String,
-		@SerialName("backdrop_path") override val backdropPath: String?,
+		@SerialName("backdrop_path") override val backdropPath: String? = null,
 		@SerialName("vote_average") override val voteAverage: Float,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.tv,
 		@SerialName("first_air_date") override val firstAirDate: String? = null,
@@ -67,7 +67,7 @@ sealed class MultiSearchEntity {
 
 	@kotlinx.serialization.Serializable
 	data class PersonResult(
-		@SerialName("profile_path") val profilePath: String?,
+		@SerialName("profile_path") val profilePath: String? = null,
 		val adult: Boolean,
 		override val id: Int,
 		@SerialName("media_type") override val mediaType: MediaType = MediaType.person,

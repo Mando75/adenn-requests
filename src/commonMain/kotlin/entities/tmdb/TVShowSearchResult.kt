@@ -10,7 +10,7 @@ data class TVShowSearchResult(
 	@SerialName("origin_country") override val originCountry: List<String>,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_name") override val originalTitle: String,
-	@SerialName("poster_path") override val posterPath: String?,
+	@SerialName("poster_path") override val posterPath: String? = null,
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
 	override val id: Int,
