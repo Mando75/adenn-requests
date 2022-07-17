@@ -4,9 +4,9 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("multiplatform") version "1.7.0"
+	kotlin("multiplatform") version "1.7.10"
 	application
-	kotlin("plugin.serialization") version "1.7.0"
+	kotlin("plugin.serialization") version "1.7.10"
 	id("io.github.turansky.seskar") version "0.7.0"
 }
 
@@ -14,7 +14,7 @@ group = "net.bmuller"
 version = "1.0-SNAPSHOT"
 
 val arrowKtVersion = "1.1.2"
-val ktorVersion = "2.0.2"
+val ktorVersion = "2.0.3"
 val logbackVersion = "1.2.11"
 val kotlinVersion = "1.7.0"
 val reactVersion = "18.1.0-pre.343"
@@ -110,10 +110,11 @@ kotlin {
 				implementation("io.kotest:kotest-framework-engine:$kotestVersion")
 				implementation("io.kotest:kotest-property:$kotestVersion")
 				implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+				implementation("io.kotest.extensions:kotest-assertions-ktor:1.0.3")
 				implementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
 				implementation("io.kotest.extensions:kotest-extensions-testcontainers:1.3.3")
-				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 				implementation("io.ktor:ktor-client-mock:$ktorVersion")
+				implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
 			}
 		}
 

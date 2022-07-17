@@ -13,6 +13,7 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import matchers.shouldHaveHttpStatus
 import withService
 import java.net.URLEncoder
 
@@ -25,7 +26,7 @@ class AuthRoutesSpec : DescribeSpec({
 				val response = client.get(AuthResource.Plex.LoginUrl(forwardHost = forwardHost))
 
 
-				response.status shouldBe HttpStatusCode.OK
+				response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 				assertSoftly {
 					val productParam = URLEncoder.encode(
@@ -65,7 +66,7 @@ class AuthRoutesSpec : DescribeSpec({
 			withService {
 				val response = client.get(AuthResource.Plex.Callback(pinId = "1"))
 
-				response.status shouldBe HttpStatusCode.Found
+				response.shouldHaveHttpStatus(HttpStatusCode.Found)
 			}
 		}
 	}
@@ -79,7 +80,7 @@ class AuthRoutesSpec : DescribeSpec({
 						header("Authorization", "Bearer $token")
 					}
 
-					response.status shouldBe HttpStatusCode.Found
+					response.shouldHaveHttpStatus(HttpStatusCode.Found)
 				}
 			}
 		}

@@ -11,6 +11,7 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import matchers.shouldHaveHttpStatus
 import withService
 
 class UserRoutesSpec : StringSpec({
@@ -19,7 +20,7 @@ class UserRoutesSpec : StringSpec({
 		withService {
 			val response = client.get(UserResource.Me())
 
-			response.status shouldBe HttpStatusCode.Unauthorized
+			response.shouldHaveHttpStatus(HttpStatusCode.Unauthorized)
 		}
 	}
 
@@ -29,7 +30,7 @@ class UserRoutesSpec : StringSpec({
 				header("Authorization", "Bearer bad-token")
 			}
 
-			response.status shouldBe HttpStatusCode.Unauthorized
+			response.shouldHaveHttpStatus(HttpStatusCode.Unauthorized)
 		}
 	}
 
@@ -42,7 +43,7 @@ class UserRoutesSpec : StringSpec({
 					header("Authorization", "Bearer $token")
 				}
 
-				response.status shouldBe HttpStatusCode.OK
+				response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 				assertSoftly {
 					val user: UserEntity = response.body()
