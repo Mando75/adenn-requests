@@ -1,6 +1,8 @@
 package routes
 
 import KotestProject
+import arrow.core.continuations.either
+import createTestUserToken
 import entities.LoginUrlResponse
 import http.AuthResource
 import io.kotest.assertions.assertSoftly
@@ -9,6 +11,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
+import io.ktor.client.request.*
 import io.ktor.http.*
 import withService
 import java.net.URLEncoder
@@ -63,6 +66,21 @@ class AuthRoutesSpec : DescribeSpec({
 				val response = client.get(AuthResource.Plex.Callback(pinId = "1"))
 
 				response.status shouldBe HttpStatusCode.Found
+			}
+		}
+	}
+
+	describe("Logout") {
+		it("Should clear the session cookie and redirect") {
+			withService {
+				either {
+					val (token) = createTestUserToken().bind()
+					val response = client.get(AuthResource.Logout()) {
+						header("Authorization", "Bearer $token")
+					}
+
+					response.status shouldBe HttpStatusCode.Found
+				}
 			}
 		}
 	}
