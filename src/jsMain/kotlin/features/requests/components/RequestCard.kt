@@ -21,6 +21,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 	// HOOKS
 	// STATE
 	val backdropPath = props.request.media.backdropPath?.value?.let { bg -> "url(${bg})".unsafeCast<BackgroundImage>() }
+
 	// EFFECTS
 
 	// RENDER
@@ -28,8 +29,17 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 		className = ClassName("w-full flex")
 
 		div {
-			css(ClassName("rounded bg-cover bg-no-repeat bg-center cursor-default outline-none shadow")) {
-				backgroundImage = backdropPath
+			val classes =
+				ClassName(
+					"""rounded bg-cover bg-no-repeat bg-center cursor-default outline-none shadow 
+					| ${if (backdropPath == null) "bg-gradient-to-r from-cyan-300 to-blue-700" else ""}""".trimMargin()
+				)
+
+			className = classes
+			backdropPath?.let {
+				css(classes) {
+					backgroundImage = backdropPath
+				}
 			}
 
 			div {

@@ -9,8 +9,10 @@ import entities.RequestStatus
 import features.search.hooks.useRequestStatusIcon
 import react.FC
 import react.PropsWithChildren
-import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.h3
+import react.dom.html.ReactHTML.p
+import react.dom.html.ReactHTML.span
 
 external interface PosterCardDetailProps : PropsWithChildren {
 	var title: String
@@ -33,12 +35,11 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 
 	// RENDER
 	div {
-		className =
-			ClassName(
-				"""absolute inset-0 left-0 right-0 flex flex-col justify-between p-2
+		className = ClassName(
+			"""absolute inset-0 left-0 right-0 flex flex-col justify-between p-2
 							| transition duration-100 ${if (props.showDetail) "bg-slate-600 bg-opacity-80" else ""}
 						""".trimMargin()
-			)
+		)
 		// Top row with media type and request status indicator
 		div {
 			className = ClassName("flex flex-row justify-between")
@@ -65,17 +66,19 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 
 
 				div {
-					ReactHTML.span {
+					span {
 						className = ClassName("text-white text-sm font-bold")
 						+year
 					}
-					ReactHTML.h3 {
+					h3 {
 						className = ClassName("text-white text-2xl font-bold")
+						title = props.title
 
 						+props.title
 					}
-					ReactHTML.p {
+					p {
 						className = ClassName("text-white line-clamp-3")
+						title = props.overview
 
 						+props.overview
 					}
