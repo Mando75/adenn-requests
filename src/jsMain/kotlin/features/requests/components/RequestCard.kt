@@ -3,7 +3,6 @@ package features.requests.components
 
 import csstype.ClassName
 import entities.RequestListItem
-import lib.ImageTools
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -49,7 +48,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 								| duration-300 hover:scale-105
 								""".trimMargin()
 						)
-					src = ImageTools.tmdbPosterPath(props.request.media.posterPath)
+					src = props.request.media.posterPath.value
 					alt = "Poster for ${props.request.title}"
 				}
 				div {

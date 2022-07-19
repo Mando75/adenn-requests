@@ -1,10 +1,12 @@
 package entities
 
+import lib.PosterPath
+
 @kotlinx.serialization.Serializable
 sealed class SearchResult {
 	abstract val id: Int
 	abstract val overview: String
-	abstract val posterPath: String
+	abstract val posterPath: PosterPath
 	abstract val releaseDate: String?
 	abstract val title: String
 	abstract val request: RequestData?
@@ -16,7 +18,7 @@ sealed class SearchResult {
 	data class TVResult(
 		override val id: Int,
 		override val overview: String,
-		override val posterPath: String,
+		override val posterPath: PosterPath,
 		override val releaseDate: String?,
 		override val title: String,
 		override val request: RequestData? = null
@@ -26,7 +28,7 @@ sealed class SearchResult {
 	data class MovieResult(
 		override val id: Int,
 		override val overview: String,
-		override val posterPath: String,
+		override val posterPath: PosterPath,
 		override val releaseDate: String?,
 		override val title: String,
 		override val request: RequestData? = null

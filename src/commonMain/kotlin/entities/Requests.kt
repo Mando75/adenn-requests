@@ -1,8 +1,6 @@
 package entities
 
-import entities.tmdb.BaseTMDBEntity
-import entities.tmdb.MovieDetail
-import entities.tmdb.TVShowDetail
+import lib.PosterPath
 
 @Suppress("unused")
 @kotlinx.serialization.Serializable
@@ -26,7 +24,7 @@ sealed class RequestListItem {
 	abstract val tmdbId: Int
 	abstract val title: String
 	abstract val status: RequestStatus
-	abstract val media: BaseTMDBEntity
+	abstract val media: RequestMedia
 
 	@kotlinx.serialization.Serializable
 	data class MovieRequest(
@@ -34,7 +32,7 @@ sealed class RequestListItem {
 		override val tmdbId: Int,
 		override val title: String,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
-		override val media: MovieDetail,
+		override val media: RequestMedia,
 	) : RequestListItem()
 
 	@kotlinx.serialization.Serializable
@@ -43,9 +41,19 @@ sealed class RequestListItem {
 		override val tmdbId: Int,
 		override val title: String,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
-		override val media: TVShowDetail,
+		override val media: RequestMedia,
 	) : RequestListItem()
 }
+
+@kotlinx.serialization.Serializable
+data class RequestMedia(
+	val backdropPath: String? = null,
+	val id: Int,
+	val overview: String? = null,
+	val posterPath: PosterPath,
+	val releaseDate: String? = null,
+	val title: String,
+)
 
 @kotlinx.serialization.Serializable
 enum class RequestFilterMediaType {

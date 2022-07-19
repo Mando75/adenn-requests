@@ -9,6 +9,7 @@ import entities.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import lib.ImageTools
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.lib.*
 import net.bmuller.application.repository.RequestListData
@@ -57,7 +58,13 @@ fun requestService(
 				tmdbId = request.tmdbId,
 				title = request.title,
 				status = request.status,
-				media = media
+				media = RequestMedia(
+					id = media.id,
+					overview = media.overview,
+					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
+					releaseDate = media.releaseDate,
+					title = media.title,
+				)
 			)
 		}
 
@@ -69,7 +76,14 @@ fun requestService(
 				tmdbId = request.tmdbId,
 				title = request.title,
 				status = request.status,
-				media = media
+				media = RequestMedia(
+					backdropPath = media.backdropPath,
+					id = media.id,
+					overview = media.overview,
+					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
+					releaseDate = media.firstAirDate,
+					title = media.title
+				)
 			)
 		}
 

@@ -11,11 +11,11 @@ import kotlinx.serialization.encoding.Encoder
 
 @kotlinx.serialization.Serializable
 data class MovieDetail(
-	@SerialName("backdrop_path") override val backdropPath: String?,
+	@SerialName("backdrop_path") override val backdropPath: String? = null,
 	@SerialName("imdb_id") val imdbId: String,
 	@SerialName("original_language") override val originalLanguage: String,
 	@SerialName("original_title") override val originalTitle: String,
-	@SerialName("poster_path") override val posterPath: String?,
+	@SerialName("poster_path") override val posterPath: String? = null,
 	@SerialName("production_companies") val productionCompanies: List<ProductionCompany> = emptyList(),
 	@SerialName("production_countries") val productionCountries: List<ProductionCountry> = emptyList(),
 	@SerialName("release_date") override val releaseDate: String?,

@@ -22,7 +22,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 
 	// RENDER
 	PosterCard {
-		posterUrl = props.searchResult.posterPath
+		posterUrl = props.searchResult.posterPath.value
 		posterAlt = "Poster for ${props.searchResult.title}"
 		detail = { showDetails ->
 			FC("PosterDetailWrapper") {
