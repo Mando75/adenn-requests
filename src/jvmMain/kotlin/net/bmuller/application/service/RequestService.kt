@@ -64,6 +64,7 @@ fun requestService(
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.releaseDate,
 					title = media.title,
+					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) }
 				)
 			)
 		}
@@ -77,7 +78,7 @@ fun requestService(
 				title = request.title,
 				status = request.status,
 				media = RequestMedia(
-					backdropPath = media.backdropPath,
+					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) },
 					id = media.id,
 					overview = media.overview,
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
