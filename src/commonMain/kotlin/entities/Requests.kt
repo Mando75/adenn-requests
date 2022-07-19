@@ -1,5 +1,6 @@
 package entities
 
+import lib.BackdropPath
 import lib.PosterPath
 
 @Suppress("unused")
@@ -47,7 +48,7 @@ sealed class RequestListItem {
 
 @kotlinx.serialization.Serializable
 data class RequestMedia(
-	val backdropPath: String? = null,
+	val backdropPath: BackdropPath? = null,
 	val id: Int,
 	val overview: String? = null,
 	val posterPath: PosterPath,

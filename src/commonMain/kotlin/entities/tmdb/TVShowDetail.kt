@@ -75,6 +75,6 @@ data class Season(
 	val id: Int,
 	val name: String,
 	val overview: String,
-	@SerialName("poster_path") val posterPath: String,
+	@SerialName("poster_path") val posterPath: String? = null,
 	@SerialName("season_number") val seasonNumber: Int,
 )
