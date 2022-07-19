@@ -1,6 +1,9 @@
 package components.posterCard
 
 
+import components.tag.BlueTag
+import components.tag.PurpleTag
+import components.tag.Tag
 import csstype.ClassName
 import entities.RequestStatus
 import features.search.hooks.useRequestStatusIcon
@@ -40,15 +43,12 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 		div {
 			className = ClassName("flex flex-row justify-between")
 
-			ReactHTML.span {
-				className = ClassName(
-					"""text-white text-sm font-medium rounded-full px-2 py-1
-								| ${if (props.isMovie) "bg-purple-500" else "bg-blue-500"}
-							""".trimMargin()
-				)
+			Tag {
+				style = if (props.isMovie) PurpleTag() else BlueTag()
 
 				+mediaType
 			}
+
 			requestStatusIcon?.let { requestIcon ->
 				div {
 

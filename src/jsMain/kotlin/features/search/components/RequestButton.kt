@@ -36,11 +36,11 @@ val RequestButton = FC<RequestButtonProps>("RequestButton") { props ->
 		}
 
 		DownloadIcon {
-			className = ClassName("text-white flex-shrink h-6 w-6")
+			className = ClassName("text-white shrink h-6 w-6")
 		}
 
 		span {
-			className = ClassName("flex-grow")
+			className = ClassName("grow")
 			+"Request"
 		}
 	}

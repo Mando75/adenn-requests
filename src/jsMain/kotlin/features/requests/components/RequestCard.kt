@@ -1,7 +1,9 @@
 package features.requests.components
 
 
+import csstype.BackgroundImage
 import csstype.ClassName
+import emotion.react.css
 import entities.RequestListItem
 import react.FC
 import react.Props
@@ -18,33 +20,30 @@ external interface RequestCardProps : Props {
 val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 	// HOOKS
 	// STATE
-
-
+	val backdropPath = props.request.media.backdropPath?.value?.let { bg -> "url(${bg})".unsafeCast<BackgroundImage>() }
 	// EFFECTS
 
 	// RENDER
 	li {
 		className = ClassName("w-full flex")
+
 		div {
-			className = ClassName(
-				"""
-				| rounded
-				| cursor-default bg-blue-900 bg-cover
-				| outline-none ring-1 shadow ring-blue-700
-			""".trimMargin()
-			)
+			css(ClassName("rounded bg-cover bg-no-repeat bg-center cursor-default outline-none shadow")) {
+				backgroundImage = backdropPath
+			}
 
 			div {
 				className = ClassName(
 					"""
-					| relative m-4 rounded flex w-full gap-4 p-2
+					| relative flex gap-4 p-4 w-full bg-gray-600/25
 				""".trimMargin()
 				)
 				img {
 					className =
 						ClassName(
-							"""z-10 flex-shrink-0 scale-100  max-w-md
-								| overflow-hidden rounded-md transition transform-gpu
+							""" 
+								| z-10 shrink scale-100 rounded-md
+								| overflow-hidden transition transform-gpu
 								| duration-300 hover:scale-105
 								""".trimMargin()
 						)
@@ -53,7 +52,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 				}
 				div {
 					className = ClassName(
-						"""flex flex-col flex-grow-1
+						"""flex flex-col grow
 						| text-white
 					""".trimMargin()
 					)
