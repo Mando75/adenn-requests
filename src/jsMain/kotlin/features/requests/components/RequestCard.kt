@@ -31,7 +31,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 		div {
 			val classes =
 				ClassName(
-					"""rounded bg-cover bg-no-repeat bg-center cursor-default outline-none shadow 
+					"""w-full rounded bg-cover bg-no-repeat bg-center cursor-default outline-none shadow
 					| ${if (backdropPath == null) "bg-gradient-to-r from-cyan-300 to-blue-700" else ""}""".trimMargin()
 				)
 
