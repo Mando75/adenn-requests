@@ -5,13 +5,16 @@ import csstype.BackgroundImage
 import csstype.ClassName
 import emotion.react.css
 import entities.RequestListItem
+import features.requests.hooks.useRequestDetailLineItems
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.dl
 import react.dom.html.ReactHTML.h4
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
+import react.dom.html.ReactHTML.span
 
 external interface RequestCardProps : Props {
 	var request: RequestListItem
@@ -19,8 +22,11 @@ external interface RequestCardProps : Props {
 
 val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 	// HOOKS
+	val requestDetailLineItems = useRequestDetailLineItems(props.request)
 	// STATE
 	val backdropPath = props.request.media.backdropPath?.value?.let { bg -> "url(${bg})".unsafeCast<BackgroundImage>() }
+	val year = props.request.media.releaseDate?.substring(0, 4) ?: "Unknown"
+	val overview = props.request.media.overview ?: ""
 
 	// EFFECTS
 
@@ -45,14 +51,14 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 			div {
 				className = ClassName(
 					"""
-					| relative flex gap-4 p-4 w-full bg-gray-600/25
+					| relative grid grid-cols-6 gap-4 p-4 w-full bg-gray-600/25
 				""".trimMargin()
 				)
 				img {
 					className =
 						ClassName(
 							""" 
-								| z-10 shrink scale-100 rounded-md
+								| col-span-1 z-10 shrink scale-100 rounded-md
 								| overflow-hidden transition transform-gpu
 								| duration-300 hover:scale-105
 								""".trimMargin()
@@ -62,17 +68,34 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 				}
 				div {
 					className = ClassName(
-						"""flex flex-col grow
+						"""col-span-2 flex flex-col grow 
 						| text-white
 					""".trimMargin()
 					)
+					span {
+						className = ClassName("text-large font-semibold")
+
+						+year
+					}
 					h4 {
-						className = ClassName("text-3xl font-semibold")
+						className = ClassName("text-3xl font-bold")
 						+props.request.title
 					}
 					p {
 						className = ClassName("text-base")
-						+(props.request.media.overview ?: "")
+						+overview
+					}
+				}
+				dl {
+					className = ClassName(
+						"""col-span-3 text-white gap-4 flex flex-col"""
+					)
+					requestDetailLineItems.map { detail ->
+						RequestDetailLineItem {
+							label = detail.label
+
+							+detail.child
+						}
 					}
 				}
 			}

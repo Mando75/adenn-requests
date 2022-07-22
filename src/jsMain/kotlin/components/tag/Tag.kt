@@ -21,6 +21,21 @@ data class BlueTag(
 	override val internalClasses: String = "bg-blue-500"
 ) : TagStyle()
 
+data class GreenTag(
+	override val classes: String = "",
+	override val internalClasses: String = "bg-green-500"
+) : TagStyle()
+
+data class RedTag(
+	override val internalClasses: String = "bg-red-500",
+	override val classes: String = ""
+) : TagStyle()
+
+data class CyanTag(
+	override val internalClasses: String = "bg-cyan-500",
+	override val classes: String = ""
+) : TagStyle()
+
 external interface TagProps : PropsWithChildren {
 	var style: TagStyle
 }
