@@ -27,11 +27,11 @@ data class RequestListData(
 	val status: RequestStatus,
 	val mediaType: MediaType,
 	val createdAt: Instant,
-	val modifiedAt: Instant
+	val modifiedAt: Instant,
+	val requester: Requester
 ) {
 	enum class MediaType {
-		MOVIE,
-		TV;
+		MOVIE, TV;
 
 		companion object {
 			fun fromTableMediaType(type: RequestTable.MediaType) = when (type) {
@@ -40,36 +40,29 @@ data class RequestListData(
 			}
 		}
 	}
+
+	data class Requester(val id: Int, val username: String)
 }
 
 interface RequestsRepository {
 	suspend fun createRequest(
-		title: String,
-		tmdbId: Int,
-		mediaType: RequestTable.MediaType,
-		requesterId: Int
+		title: String, tmdbId: Int, mediaType: RequestTable.MediaType, requesterId: Int
 	): Either<DomainError, CreatedRequestData>
 
 	suspend fun getQuotaUsage(
-		userId: Int,
-		timePeriod: Instant,
-		mediaType: RequestTable.MediaType
+		userId: Int, timePeriod: Instant, mediaType: RequestTable.MediaType
 	): Either<DomainError, Long>
 
 	suspend fun findByTmdbId(tmdbIds: List<Int>): Either<DomainError, Map<Int, RequestByTmdbIDData>>
 
 	suspend fun requests(
-		filters: RequestFilters,
-		pagination: Pagination
+		filters: RequestFilters, pagination: Pagination
 	): Either<DomainError, RequestList>
 }
 
 fun requestsRepository(exposed: Database) = object : RequestsRepository {
 	override suspend fun createRequest(
-		title: String,
-		tmdbId: Int,
-		mediaType: RequestTable.MediaType,
-		requesterId: Int
+		title: String, tmdbId: Int, mediaType: RequestTable.MediaType, requesterId: Int
 	): Either<DomainError, CreatedRequestData> = Either.catchUnknown {
 		newSuspendedTransaction(Dispatchers.IO, exposed) {
 			val id = RequestTable.insertAndGetId { request ->
@@ -90,39 +83,29 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 	}
 
 	override suspend fun getQuotaUsage(
-		userId: Int,
-		timePeriod: Instant,
-		mediaType: RequestTable.MediaType
-	): Either<DomainError, Long> =
-		Either.catchUnknown {
-			newSuspendedTransaction(Dispatchers.IO, exposed) {
-				return@newSuspendedTransaction RequestTable
-					.select { RequestTable.requesterId eq userId }
-					.andWhere { RequestTable.mediaType eq mediaType }
-					.andWhere { RequestTable.createdAt greaterEq timePeriod }
-					.count()
-			}
+		userId: Int, timePeriod: Instant, mediaType: RequestTable.MediaType
+	): Either<DomainError, Long> = Either.catchUnknown {
+		newSuspendedTransaction(Dispatchers.IO, exposed) {
+			return@newSuspendedTransaction RequestTable.select { RequestTable.requesterId eq userId }
+				.andWhere { RequestTable.mediaType eq mediaType }
+				.andWhere { RequestTable.createdAt greaterEq timePeriod }.count()
 		}
+	}
 
 	override suspend fun findByTmdbId(tmdbIds: List<Int>): Either<DomainError, Map<Int, RequestByTmdbIDData>> =
 		Either.catchUnknown {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
-				RequestTable
-					.innerJoin(UserTable)
-					.slice(RequestTable.id, RequestTable.status, RequestTable.tmdbId)
-					.select { RequestTable.tmdbId inList tmdbIds }
-					.associate { row ->
+				RequestTable.innerJoin(UserTable).slice(RequestTable.id, RequestTable.status, RequestTable.tmdbId)
+					.select { RequestTable.tmdbId inList tmdbIds }.associate { row ->
 						row[RequestTable.tmdbId] to RequestByTmdbIDData(
-							id = row[RequestTable.id].value,
-							status = row[RequestTable.status]
+							id = row[RequestTable.id].value, status = row[RequestTable.status]
 						)
 					}
 			}
 		}
 
 	override suspend fun requests(
-		filters: RequestFilters,
-		pagination: Pagination
+		filters: RequestFilters, pagination: Pagination
 	): Either<DomainError, RequestList> = Either.catchUnknown {
 		newSuspendedTransaction(Dispatchers.IO, exposed) {
 			val mediaType = when (filters.mediaType) {
@@ -132,18 +115,17 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 			}
 			val searchTerm = filters.searchTerm?.ifBlank { null } // don't pass empty strings
 
-			val query =
-				RequestTable
-					.slice(
-						RequestTable.id,
-						RequestTable.tmdbId,
-						RequestTable.title,
-						RequestTable.status,
-						RequestTable.mediaType,
-						RequestTable.createdAt,
-						RequestTable.modifiedAt
-					)
-					.selectAll()
+			val query = RequestTable.innerJoin(UserTable).slice(
+				RequestTable.id,
+				RequestTable.tmdbId,
+				RequestTable.title,
+				RequestTable.status,
+				RequestTable.mediaType,
+				RequestTable.createdAt,
+				RequestTable.modifiedAt,
+				UserTable.id,
+				UserTable.plexUsername,
+			).selectAll()
 
 			mediaType?.let { type -> { RequestTable.mediaType eq type } }
 			filters.status?.let { status -> query.andWhere { RequestTable.status inList status } }
@@ -151,8 +133,7 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 
 
 			val count = query.count()
-			val rows = query
-				.limit(pagination.limit, offset = pagination.offset)
+			val rows = query.limit(pagination.limit, offset = pagination.offset)
 
 			val requests = rows.mapNotNull { row ->
 				RequestListData(
@@ -162,7 +143,11 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 					status = row[RequestTable.status],
 					mediaType = RequestListData.MediaType.fromTableMediaType(row[RequestTable.mediaType]),
 					createdAt = row[RequestTable.createdAt],
-					modifiedAt = row[RequestTable.modifiedAt]
+					modifiedAt = row[RequestTable.modifiedAt],
+					requester = RequestListData.Requester(
+						id = row[UserTable.id].value,
+						username = row[UserTable.plexUsername]
+					)
 				)
 			}
 

@@ -29,6 +29,7 @@ sealed class RequestListItem {
 	abstract val media: RequestMedia
 	abstract val requestedAt: Instant
 	abstract val modifiedAt: Instant
+	abstract val requester: Requester
 
 	@kotlinx.serialization.Serializable
 	data class MovieRequest(
@@ -39,6 +40,7 @@ sealed class RequestListItem {
 		override val media: RequestMedia,
 		override val requestedAt: Instant,
 		override val modifiedAt: Instant,
+		override val requester: Requester
 	) : RequestListItem()
 
 	@kotlinx.serialization.Serializable
@@ -50,6 +52,7 @@ sealed class RequestListItem {
 		override val media: RequestMedia,
 		override val requestedAt: Instant,
 		override val modifiedAt: Instant,
+		override val requester: Requester
 	) : RequestListItem()
 }
 
@@ -61,6 +64,12 @@ data class RequestMedia(
 	val posterPath: PosterPath,
 	val releaseDate: String? = null,
 	val title: String,
+)
+
+@kotlinx.serialization.Serializable
+data class Requester(
+	val id: Int,
+	val username: String
 )
 
 @kotlinx.serialization.Serializable
