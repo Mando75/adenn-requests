@@ -45,16 +45,20 @@ private fun requested(request: RequestListItem): RequestDetailLineItem {
 	return RequestDetailLineItem(label = "Requested", child = div.create {
 		className = ClassName("flex items-center")
 
-		+"on $date by "
+		+"on $date"
+		span {
+			className = ClassName("hidden md:inline ml-1")
+			+" by"
+		}
 		request.requester.profilePicUrl?.let {
 			img {
-				className = ClassName("rounded-full w-12 ml-2")
+				className = ClassName("rounded-full w-12 ml-2 hidden md:block")
 				src = request.requester.profilePicUrl
 				alt = "${request.requester.username} profile picture"
 			}
 		}
 		span {
-			className = ClassName("font-bold font-lg ml-1")
+			className = ClassName("font-bold font-lg ml-1 hidden md:inline")
 			+request.requester.username
 		}
 	})

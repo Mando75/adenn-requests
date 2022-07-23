@@ -21,13 +21,13 @@ val RequestDetailLineItem = FC<RequestDetailLineItemProps>("RequestDetailLineIte
 
 	// RENDER
 	div {
-		className = ClassName("flex gap-1 items-center")
+		className = ClassName("flex md:flex-row gap-1 md:items-center")
 		dt {
-			className = ClassName("font-bold text-xl")
+			className = ClassName("font-bold text-sm md:text-xl")
 			+props.label
 		}
 		dd {
-			className = ClassName("mt-1")
+			className = ClassName("text-sm md:text-base")
 			+props.children
 		}
 	}

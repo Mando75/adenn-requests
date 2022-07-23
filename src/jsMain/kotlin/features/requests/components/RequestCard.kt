@@ -10,11 +10,8 @@ import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.dl
-import react.dom.html.ReactHTML.h4
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
-import react.dom.html.ReactHTML.p
-import react.dom.html.ReactHTML.span
 
 external interface RequestCardProps : Props {
 	var request: RequestListItem
@@ -25,8 +22,6 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 	val requestDetailLineItems = useRequestDetailLineItems(props.request)
 	// STATE
 	val backdropPath = props.request.media.backdropPath?.value?.let { bg -> "url(${bg})".unsafeCast<BackgroundImage>() }
-	val year = props.request.media.releaseDate?.substring(0, 4) ?: "Unknown"
-	val overview = props.request.media.overview ?: ""
 
 	// EFFECTS
 
@@ -54,7 +49,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					className =
 						ClassName(
 							""" 
-								| col-span-1 z-10 shrink scale-100 rounded-md
+								| hidden md:block md:col-span-1 z-10 shrink scale-100 rounded-md
 								| overflow-hidden transition transform-gpu
 								| duration-300 hover:scale-105
 								""".trimMargin()
@@ -62,24 +57,12 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					src = props.request.media.posterPath.value
 					alt = "Poster for ${props.request.title}"
 				}
-				div {
-					className = ClassName("col-span-2 flex flex-col grow justify-center text-white")
-					span {
-						className = ClassName("text-large font-semibold")
-
-						+year
-					}
-					h4 {
-						className = ClassName("text-3xl font-bold")
-						+props.request.title
-					}
-					p {
-						className = ClassName("text-base")
-						+overview
-					}
+				RequestCardOverview {
+					request = props.request
+					className = ClassName("md:col-span-2 row-span-2")
 				}
 				dl {
-					className = ClassName("col-span-3 text-white gap-4 flex flex-col justify-center")
+					className = ClassName("col-span-5 md:col-span-3 text-white gap-4 flex flex-col justify-center")
 					requestDetailLineItems.map { detail ->
 						RequestDetailLineItem {
 							label = detail.label
