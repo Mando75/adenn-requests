@@ -2,14 +2,14 @@ package features.search.components
 
 import components.posterCard.PosterCard
 import components.posterCard.PosterCardDetail
-import entities.SearchResult
+import entities.SearchResultEntity
 import features.search.api.useSubmitRequestMutation
 import lib.reactQuery.exec
 import react.FC
 import react.Props
 
 external interface SearchResultCardProps : Props {
-	var searchResult: SearchResult
+	var searchResult: SearchResultEntity
 }
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
@@ -29,7 +29,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 				PosterCardDetail {
 					title = props.searchResult.title
 					overview = props.searchResult.overview
-					isMovie = props.searchResult is SearchResult.MovieResult
+					isMovie = props.searchResult is SearchResultEntity.MovieResult
 					releaseDate = props.searchResult.releaseDate
 					requestStatus = props.searchResult.request?.status
 					showDetail = showDetails

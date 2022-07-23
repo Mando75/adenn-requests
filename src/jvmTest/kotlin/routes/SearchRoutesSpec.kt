@@ -2,7 +2,7 @@ package routes
 
 import arrow.core.continuations.either
 import createTestUserToken
-import entities.SearchResult
+import entities.SearchResultEntity
 import http.SearchResource
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
@@ -28,11 +28,11 @@ class SearchRoutesSpec : DescribeSpec({
 					response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 					assertSoftly {
-						val result: List<SearchResult> = response.body()
+						val result: List<SearchResultEntity> = response.body()
 
 						result.shouldHaveAtLeastSize(10)
-						result.filterIsInstance<SearchResult.MovieResult>().shouldHaveAtLeastSize(7)
-						result.filterIsInstance<SearchResult.TVResult>().shouldHaveAtLeastSize(3)
+						result.filterIsInstance<SearchResultEntity.MovieResult>().shouldHaveAtLeastSize(7)
+						result.filterIsInstance<SearchResultEntity.TVResult>().shouldHaveAtLeastSize(3)
 					}
 				}
 			}
@@ -52,7 +52,7 @@ class SearchRoutesSpec : DescribeSpec({
 					response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 					assertSoftly {
-						val result: List<SearchResult.MovieResult> = response.body()
+						val result: List<SearchResultEntity.MovieResult> = response.body()
 
 						result.shouldHaveAtLeastSize(7)
 					}
@@ -74,7 +74,7 @@ class SearchRoutesSpec : DescribeSpec({
 					response.shouldHaveHttpStatus(HttpStatusCode.OK)
 
 					assertSoftly {
-						val result: List<SearchResult.TVResult> = response.body()
+						val result: List<SearchResultEntity.TVResult> = response.body()
 
 						result.shouldHaveAtLeastSize(3)
 					}

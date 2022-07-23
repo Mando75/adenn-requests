@@ -24,7 +24,7 @@ interface IRequestService {
 		filters: RequestFilters, page: Long
 	): Either<DomainError, PaginatedResponse<RequestListItem>>
 
-	suspend fun submitRequest(result: SearchResult, session: UserSession): Either<DomainError, CreatedRequest>
+	suspend fun submitRequest(result: SearchResultEntity, session: UserSession): Either<DomainError, CreatedRequest>
 }
 
 fun requestService(
@@ -58,6 +58,8 @@ fun requestService(
 				tmdbId = request.tmdbId,
 				title = request.title,
 				status = request.status,
+				requestedAt = request.createdAt.toKotlinInstant(),
+				modifiedAt = request.modifiedAt.toKotlinInstant(),
 				media = RequestMedia(
 					id = media.id,
 					overview = media.overview,
@@ -65,7 +67,7 @@ fun requestService(
 					releaseDate = media.releaseDate,
 					title = media.title,
 					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) }
-				)
+				),
 			)
 		}
 
@@ -77,6 +79,8 @@ fun requestService(
 				tmdbId = request.tmdbId,
 				title = request.title,
 				status = request.status,
+				requestedAt = request.createdAt.toKotlinInstant(),
+				modifiedAt = request.modifiedAt.toKotlinInstant(),
 				media = RequestMedia(
 					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) },
 					id = media.id,
@@ -90,14 +94,14 @@ fun requestService(
 
 
 	override suspend fun submitRequest(
-		result: SearchResult, session: UserSession
+		result: SearchResultEntity, session: UserSession
 	): Either<DomainError, CreatedRequest> = either {
 		val user = getUser(session.id).bind()
-		checkRequestQuota(user, result is SearchResult.MovieResult).bind()
+		checkRequestQuota(user, result is SearchResultEntity.MovieResult).bind()
 
 		val mediaType = when (result) {
-			is SearchResult.MovieResult -> RequestTable.MediaType.MOVIE
-			is SearchResult.TVResult -> RequestTable.MediaType.TV
+			is SearchResultEntity.MovieResult -> RequestTable.MediaType.MOVIE
+			is SearchResultEntity.TVResult -> RequestTable.MediaType.TV
 		}
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 

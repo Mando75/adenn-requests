@@ -3,7 +3,7 @@ package entities
 import lib.PosterPath
 
 @kotlinx.serialization.Serializable
-sealed class SearchResult {
+sealed class SearchResultEntity {
 	abstract val id: Int
 	abstract val overview: String
 	abstract val posterPath: PosterPath
@@ -22,7 +22,7 @@ sealed class SearchResult {
 		override val releaseDate: String?,
 		override val title: String,
 		override val request: RequestData? = null
-	) : SearchResult()
+	) : SearchResultEntity()
 
 	@kotlinx.serialization.Serializable
 	data class MovieResult(
@@ -32,5 +32,5 @@ sealed class SearchResult {
 		override val releaseDate: String?,
 		override val title: String,
 		override val request: RequestData? = null
-	) : SearchResult()
+	) : SearchResultEntity()
 }

@@ -2,14 +2,14 @@ package features.search.components
 
 
 import csstype.ClassName
-import entities.SearchResult
+import entities.SearchResultEntity
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.ul
 
 external interface SearchResultListProps : Props {
-	var items: List<SearchResult>
+	var items: List<SearchResultEntity>
 	var isLoading: Boolean
 }
 

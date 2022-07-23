@@ -25,7 +25,9 @@ data class RequestListData(
 	val tmdbId: Int,
 	val title: String,
 	val status: RequestStatus,
-	val mediaType: MediaType
+	val mediaType: MediaType,
+	val createdAt: Instant,
+	val modifiedAt: Instant
 ) {
 	enum class MediaType {
 		MOVIE,
@@ -137,7 +139,9 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 						RequestTable.tmdbId,
 						RequestTable.title,
 						RequestTable.status,
-						RequestTable.mediaType
+						RequestTable.mediaType,
+						RequestTable.createdAt,
+						RequestTable.modifiedAt
 					)
 					.selectAll()
 
@@ -156,7 +160,9 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 					tmdbId = row[RequestTable.tmdbId],
 					title = row[RequestTable.title],
 					status = row[RequestTable.status],
-					mediaType = RequestListData.MediaType.fromTableMediaType(row[RequestTable.mediaType])
+					mediaType = RequestListData.MediaType.fromTableMediaType(row[RequestTable.mediaType]),
+					createdAt = row[RequestTable.createdAt],
+					modifiedAt = row[RequestTable.modifiedAt]
 				)
 			}
 

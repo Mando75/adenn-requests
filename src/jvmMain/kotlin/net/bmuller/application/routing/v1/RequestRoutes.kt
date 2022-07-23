@@ -2,7 +2,7 @@ package net.bmuller.application.routing.v1
 
 import arrow.core.continuations.either
 import entities.RequestFilters
-import entities.SearchResult
+import entities.SearchResultEntity
 import http.RequestResource
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,7 +19,7 @@ fun Route.requests(requestService: IRequestService) {
 	post<RequestResource> {
 		either {
 			val session = call.parseUserAuth().bind()
-			val searchResult = receiveCatching<SearchResult>().bind()
+			val searchResult = receiveCatching<SearchResultEntity>().bind()
 			requestService.submitRequest(searchResult, session).bind()
 		}.respond(HttpStatusCode.Created)
 	}

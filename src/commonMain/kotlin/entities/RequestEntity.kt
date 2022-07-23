@@ -1,5 +1,6 @@
 package entities
 
+import kotlinx.datetime.Instant
 import lib.BackdropPath
 import lib.PosterPath
 
@@ -26,6 +27,8 @@ sealed class RequestListItem {
 	abstract val title: String
 	abstract val status: RequestStatus
 	abstract val media: RequestMedia
+	abstract val requestedAt: Instant
+	abstract val modifiedAt: Instant
 
 	@kotlinx.serialization.Serializable
 	data class MovieRequest(
@@ -34,6 +37,8 @@ sealed class RequestListItem {
 		override val title: String,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
 		override val media: RequestMedia,
+		override val requestedAt: Instant,
+		override val modifiedAt: Instant,
 	) : RequestListItem()
 
 	@kotlinx.serialization.Serializable
@@ -43,6 +48,8 @@ sealed class RequestListItem {
 		override val title: String,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
 		override val media: RequestMedia,
+		override val requestedAt: Instant,
+		override val modifiedAt: Instant,
 	) : RequestListItem()
 }
 
