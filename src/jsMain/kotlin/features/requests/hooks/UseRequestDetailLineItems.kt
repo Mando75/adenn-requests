@@ -5,7 +5,6 @@ import entities.RequestListItem
 import entities.RequestStatus
 import react.ReactNode
 import react.create
-import react.dom.html.ReactHTML.span
 import utils.dateFormatter
 
 data class RequestDetailLineItem(
@@ -16,7 +15,7 @@ data class RequestDetailLineItem(
 fun useRequestDetailLineItems(request: RequestListItem): List<RequestDetailLineItem> {
 	val status = createStatus(request)
 	val requested = requested(request)
-	val updated = RequestDetailLineItem(label = "Last Updated: ", span.create { +dateFormatter(request.modifiedAt) })
+	val updated = updated(request)
 
 	return listOf(status, requested, updated)
 }
@@ -42,7 +41,10 @@ private fun createStatus(request: RequestListItem): RequestDetailLineItem {
 
 private fun requested(request: RequestListItem) = RequestDetailLineItem(
 	label = "Requested: ",
-	child = span.create {
-		+dateFormatter(request.requestedAt)
-	}
+	child = ReactNode(dateFormatter(request.requestedAt))
+)
+
+private fun updated(request: RequestListItem) = RequestDetailLineItem(
+	label = "Last Updated: ",
+	child = ReactNode(dateFormatter(request.modifiedAt))
 )

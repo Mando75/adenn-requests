@@ -49,11 +49,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 			}
 
 			div {
-				className = ClassName(
-					"""
-					| relative grid grid-cols-6 gap-4 p-4 w-full bg-gray-600/50
-				""".trimMargin()
-				)
+				className = ClassName("relative grid grid-cols-6 gap-4 p-4 w-full bg-gray-700/50")
 				img {
 					className =
 						ClassName(
@@ -67,11 +63,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					alt = "Poster for ${props.request.title}"
 				}
 				div {
-					className = ClassName(
-						"""col-span-2 flex flex-col grow justify-center
-						| text-white
-					""".trimMargin()
-					)
+					className = ClassName("col-span-2 flex flex-col grow justify-center text-white")
 					span {
 						className = ClassName("text-large font-semibold")
 
@@ -87,9 +79,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					}
 				}
 				dl {
-					className = ClassName(
-						"""col-span-3 text-white gap-4 flex flex-col justify-center"""
-					)
+					className = ClassName("col-span-3 text-white gap-4 flex flex-col justify-center")
 					requestDetailLineItems.map { detail ->
 						RequestDetailLineItem {
 							label = detail.label

@@ -27,6 +27,7 @@ val RequestDetailLineItem = FC<RequestDetailLineItemProps>("RequestDetailLineIte
 			+props.label
 		}
 		dd {
+			className = ClassName("mt-1")
 			+props.children
 		}
 	}
