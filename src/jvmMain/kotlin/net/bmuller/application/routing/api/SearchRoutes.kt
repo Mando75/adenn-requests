@@ -1,4 +1,4 @@
-package net.bmuller.application.routing.v1
+package net.bmuller.application.routing.api
 
 import http.SearchResource
 import io.ktor.server.resources.*

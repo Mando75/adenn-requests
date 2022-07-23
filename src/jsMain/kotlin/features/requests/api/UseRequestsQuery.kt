@@ -24,7 +24,14 @@ private val requestsQuery: QueryFunction<RequestsQueryResponse, RequestsQueryKey
 	MainScope().promise {
 		val (_, page, filters) = parseTripleQueryKey<String, Long, RequestFilters>(context.queryKey)
 
-		val result = apiClient.get(RequestResource(filters = filters, page = page))
+		val result = apiClient.get(
+			RequestResource(
+				searchTerm = filters.searchTerm,
+				mediaType = filters.mediaType,
+				status = filters.status,
+				page = page
+			)
+		)
 
 		return@promise result.body()
 	}

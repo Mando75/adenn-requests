@@ -19,7 +19,7 @@ import net.bmuller.application.plugins.configureAuthentication
 import net.bmuller.application.plugins.configureContentNegotiation
 import net.bmuller.application.plugins.configureLogging
 import net.bmuller.application.plugins.configureResources
-import net.bmuller.application.routing.v1.api
+import net.bmuller.application.routing.api.api
 
 interface ServiceTest {
 	val client: HttpClient

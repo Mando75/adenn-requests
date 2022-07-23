@@ -1,7 +1,6 @@
-package net.bmuller.application.routing.v1
+package net.bmuller.application.routing.api
 
 import arrow.core.continuations.either
-import entities.RequestFilters
 import entities.SearchResultEntity
 import http.RequestResource
 import io.ktor.http.*
@@ -25,8 +24,9 @@ fun Route.requests(requestService: IRequestService) {
 	}
 
 	get<RequestResource> { context ->
-		val filters = context.filters ?: RequestFilters()
+		val filters = context.toRequestFilters()
 		val page = context.page ?: 0
+
 		requestService.getRequests(filters, page).respond()
 	}
 }

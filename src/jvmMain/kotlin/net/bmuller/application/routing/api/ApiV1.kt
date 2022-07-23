@@ -1,4 +1,4 @@
-package net.bmuller.application.routing.v1
+package net.bmuller.application.routing.api
 
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
