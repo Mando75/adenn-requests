@@ -68,7 +68,11 @@ fun requestService(
 					title = media.title,
 					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) }
 				),
-				requester = Requester(id = request.requester.id, username = request.requester.username),
+				requester = Requester(
+					id = request.requester.id,
+					username = request.requester.username,
+					profilePicUrl = request.requester.profilePicUrl
+				),
 			)
 		}
 
@@ -90,7 +94,11 @@ fun requestService(
 					releaseDate = media.firstAirDate,
 					title = media.title
 				),
-				requester = Requester(id = request.requester.id, username = request.requester.username),
+				requester = Requester(
+					id = request.requester.id,
+					username = request.requester.username,
+					profilePicUrl = request.requester.profilePicUrl
+				),
 			)
 		}
 

@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
-@Suppress("unused")
 object RequestTable : IntIdTable("requests") {
 
 	enum class MediaType {

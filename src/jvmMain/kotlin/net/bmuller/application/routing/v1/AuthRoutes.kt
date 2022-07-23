@@ -24,7 +24,7 @@ fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthSe
 	get<AuthResource.Plex.LoginUrl> { context ->
 		either {
 			val clientDetails =
-				PlexClientDetails(forwardUrl = "${context.forwardHost}/api/v1/auth/plex/callback")
+				PlexClientDetails(forwardUrl = "${context.forwardHost}/api/auth/plex/callback")
 			plexOAuthService.requestHostedLoginURL(clientDetails).bind()
 		}.respond()
 	}
@@ -36,7 +36,7 @@ fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthSe
 			val user = userAuthService.signInFlow(authToken).bind()
 
 			call.sessions.set(UserSession(user.id, user.plexUsername, user.authVersion))
-		}.respondRedirect("/?login=success")
+		}.respondRedirect("/")
 	}
 
 	get<AuthResource.Logout> {

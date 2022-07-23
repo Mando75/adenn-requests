@@ -41,7 +41,7 @@ data class RequestListData(
 		}
 	}
 
-	data class Requester(val id: Int, val username: String)
+	data class Requester(val id: Int, val username: String, val profilePicUrl: String?)
 }
 
 interface RequestsRepository {
@@ -125,6 +125,7 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 				RequestTable.modifiedAt,
 				UserTable.id,
 				UserTable.plexUsername,
+				UserTable.plexProfilePicUrl,
 			).selectAll()
 
 			mediaType?.let { type -> { RequestTable.mediaType eq type } }
@@ -146,7 +147,8 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 					modifiedAt = row[RequestTable.modifiedAt],
 					requester = RequestListData.Requester(
 						id = row[UserTable.id].value,
-						username = row[UserTable.plexUsername]
+						username = row[UserTable.plexUsername],
+						profilePicUrl = row[UserTable.plexProfilePicUrl]
 					)
 				)
 			}

@@ -11,12 +11,12 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
-@Suppress("unused")
 object UserTable : IntIdTable("users") {
 	// User metadata
 	val plexUsername: Column<String> = text("plex_username").uniqueIndex()
 	val plexId: Column<Int> = integer("plex_id").uniqueIndex()
 	val plexToken: Column<String> = text("plex_token").uniqueIndex()
+	val plexProfilePicUrl: Column<String?> = text("plex_profile_picture_url").nullable()
 	val email: Column<String> = text("email").uniqueIndex()
 	val userType: Column<UserType> = postgresEnumeration("user_type", "User_Type_Enum")
 
@@ -38,6 +38,7 @@ fun ResultRow.toUserEntity(): UserEntity {
 		id = get(UserTable.id).value,
 		plexUsername = get(UserTable.plexUsername),
 		plexId = get(UserTable.plexId),
+		profilePicUrl = get(UserTable.plexProfilePicUrl),
 		email = get(UserTable.email),
 		userType = get(UserTable.userType),
 		requestCount = get(UserTable.requestCount),
@@ -57,6 +58,7 @@ fun ResultRow.toAdminUser(): AdminUser {
 		plexUsername = get(UserTable.plexUsername),
 		plexId = get(UserTable.plexId),
 		plexToken = get(UserTable.plexToken),
+		profilePicUrl = get(UserTable.plexProfilePicUrl),
 		email = get(UserTable.email),
 		userType = get(UserTable.userType),
 		requestCount = get(UserTable.requestCount),

@@ -10,6 +10,7 @@ data class AdminUser(
 	val plexUsername: String,
 	val plexId: Int,
 	val plexToken: String,
+	val profilePicUrl: String?,
 	val email: String,
 	val userType: UserType = UserType.DEFAULT,
 	val requestCount: Int = 0,

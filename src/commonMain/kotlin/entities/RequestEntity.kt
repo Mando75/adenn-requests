@@ -69,7 +69,8 @@ data class RequestMedia(
 @kotlinx.serialization.Serializable
 data class Requester(
 	val id: Int,
-	val username: String
+	val username: String,
+	val profilePicUrl: String?
 )
 
 @kotlinx.serialization.Serializable

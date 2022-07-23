@@ -38,7 +38,8 @@ fun userAuthService(
 	override suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity> = either {
 		val plexUser = getPlexUser(authToken).flatMap { user -> validateUserAccess(user) }.bind()
 
-		return@either getExistingUser(plexUser.id).bind() ?: registerNewUser(plexUser).bind()
+		return@either getExistingUser(plexUser.id, plexUser.username, authToken, plexUser.email, plexUser.thumb).bind()
+			?: registerNewUser(plexUser).bind()
 	}
 
 	override fun createJwtToken(user: UserSession): Either<DomainError, AuthTokenResponse> = Either.catchUnknown {
@@ -62,8 +63,20 @@ fun userAuthService(
 	/**
 	 * Use PlexId to check for an existing user account
 	 */
-	private suspend fun getExistingUser(plexUserId: Int): Either<DomainError, UserEntity?> {
-		return when (val userResult = userRepository.getUserByPlexId(plexUserId)) {
+	private suspend fun getExistingUser(
+		plexUserId: Int,
+		plexUsername: String,
+		authToken: String,
+		email: String,
+		profilePicUrl: String?
+	): Either<DomainError, UserEntity?> {
+		return when (val userResult = userRepository.getAndUpdateUserByPlexId(
+			plexUserId = plexUserId,
+			plexUsername = plexUsername,
+			plexToken = authToken,
+			email = email,
+			plexProfilePicUrl = profilePicUrl
+		)) {
 			is Either.Right -> userResult.value.right()
 			is Either.Left -> when (userResult.value) {
 				// If entity was not found, return null, so we can fall back
@@ -80,7 +93,7 @@ fun userAuthService(
 	 */
 	private suspend fun registerNewUser(plexUser: PlexUser): Either<DomainError, UserEntity> = either {
 		val (username, id, token, email) = plexUser
-		userRepository.createAndReturnUser(username, id, token, email).bind()
+		userRepository.createAndReturnUser(username, id, token, email, plexUser.thumb).bind()
 	}.mapLeft { e -> Unknown("Could not register new user", e.error) }
 
 	/**

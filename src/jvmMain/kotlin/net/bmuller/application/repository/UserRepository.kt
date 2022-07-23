@@ -21,7 +21,8 @@ interface UserRepository {
 		plexUsername: String,
 		plexId: Int,
 		plexToken: String,
-		email: String
+		email: String,
+		plexProfilePicUrl: String?,
 	): Either<Unknown, UserEntity>
 
 	suspend fun getAdminUser(): Either<DomainError, AdminUser>
@@ -31,7 +32,14 @@ interface UserRepository {
 	suspend fun getUserPlexToken(userId: Int): Either<DomainError, String?>
 
 	suspend fun getUserAuthVersion(userId: Int): Either<DomainError, Int?>
-	suspend fun updatePlexToken(userId: Int, plexToken: String): Either<DomainError, Int>
+
+	suspend fun getAndUpdateUserByPlexId(
+		plexUserId: Int,
+		plexUsername: String,
+		plexToken: String,
+		email: String,
+		plexProfilePicUrl: String?
+	): Either<DomainError, UserEntity?>
 
 }
 
@@ -40,6 +48,7 @@ fun userRepository(exposed: Database) = object : UserRepository {
 		UserTable.id,
 		UserTable.plexUsername,
 		UserTable.plexId,
+		UserTable.plexProfilePicUrl,
 		UserTable.email,
 		UserTable.userType,
 		UserTable.requestCount,
@@ -56,7 +65,8 @@ fun userRepository(exposed: Database) = object : UserRepository {
 		plexUsername: String,
 		plexId: Int,
 		plexToken: String,
-		email: String
+		email: String,
+		plexProfilePicUrl: String?
 	): Either<Unknown, UserEntity> =
 		Either.catchUnknown {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
@@ -66,6 +76,7 @@ fun userRepository(exposed: Database) = object : UserRepository {
 					user[this.plexUsername] = plexUsername
 					user[this.plexId] = plexId
 					user[this.plexToken] = plexToken
+					user[this.plexProfilePicUrl] = plexProfilePicUrl
 					user[this.email] = email
 					user[this.userType] = userType
 				}
@@ -115,13 +126,27 @@ fun userRepository(exposed: Database) = object : UserRepository {
 		result?.get(UserTable.authVersion)
 	}
 
-
-	override suspend fun updatePlexToken(userId: Int, plexToken: String): Either<DomainError, Int> =
+	override suspend fun getAndUpdateUserByPlexId(
+		plexUserId: Int,
+		plexUsername: String,
+		plexToken: String,
+		email: String,
+		plexProfilePicUrl: String?
+	): Either<DomainError, UserEntity?> =
 		Either.catchUnknown {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
-				UserTable.update({ UserTable.id eq userId }) { row ->
+				UserTable.update({ UserTable.plexId eq plexUserId }) { row ->
+					row[UserTable.plexUsername] = plexUsername
 					row[UserTable.plexToken] = plexToken
-				}
+					row[UserTable.email] = email
+					row[UserTable.plexProfilePicUrl] = plexProfilePicUrl
+				}.let { count -> if (count < 1) return@newSuspendedTransaction null }
+
+				return@newSuspendedTransaction UserTable
+					.slice(defaultUserSlice)
+					.select { UserTable.plexId eq plexUserId }
+					.singleOrNull()
+					?.toUserEntity()
 			}
 		}
 }

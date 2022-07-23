@@ -4,9 +4,10 @@ import components.tag.*
 import csstype.ClassName
 import entities.RequestListItem
 import entities.RequestStatus
-import react.Fragment
 import react.ReactNode
 import react.create
+import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.span
 import utils.dateFormatter
 
@@ -41,10 +42,19 @@ private fun createStatus(request: RequestListItem): RequestDetailLineItem {
 private fun requested(request: RequestListItem): RequestDetailLineItem {
 	val date = dateFormatter(request.requestedAt)
 
-	return RequestDetailLineItem(label = "Requested", child = Fragment.create {
+	return RequestDetailLineItem(label = "Requested", child = div.create {
+		className = ClassName("flex items-center")
+
 		+"on $date by "
+		request.requester.profilePicUrl?.let {
+			img {
+				className = ClassName("rounded-full w-12 ml-2")
+				src = request.requester.profilePicUrl
+				alt = "${request.requester.username} profile picture"
+			}
+		}
 		span {
-			className = ClassName("font-bold font-lg")
+			className = ClassName("font-bold font-lg ml-1")
 			+request.requester.username
 		}
 	})
