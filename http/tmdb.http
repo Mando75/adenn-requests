@@ -1,14 +1,14 @@
-###
-GET {{host}}/tmdb/search/movies?searchTerm=Star
-Authorization: Bearer {{token}}
+### Search Multi
+https://api.themoviedb.org/3/search/multi?api_key={{tmdbApiKey}}&query="Attack on Titan"
 Content-Type: application/json
+Accept: application/json
 
-###
-GET {{host}}/tmdb/search/tv?searchTerm="Community"
-Authorization: Bearer {{token}}
+### Search Movie
+https://api.themoviedb.org/3/search/movie?api_key={{tmdbApiKey}}&query="Attack on Titan"
 Content-Type: application/json
+Accept: application/json
 
-###
-GET {{host}}/tmdb/search/multi?searchTerm="Star Wars"
-Authorization: Bearer {{token}}
+### Search TV
+https://api.themoviedb.org/3/search/tv?api_key={{tmdbApiKey}}&query="Attack on Titan"
 Content-Type: application/json
+Accept: application/json

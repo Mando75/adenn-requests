@@ -2,18 +2,29 @@ package net.bmuller.application.service
 
 import arrow.core.Either
 import arrow.core.continuations.either
-import entities.RequestEntity
-import entities.SearchResult
-import lib.PlaceholderImageUrl
-import net.bmuller.application.entities.BaseMovieResult
-import net.bmuller.application.entities.BaseTVShowResult
-import net.bmuller.application.entities.MultiSearchEntity
+import entities.SearchResultEntity
+import entities.tmdb.BaseMovieEntity
+import entities.tmdb.BaseTVShowEntity
+import entities.tmdb.MultiSearchEntity
+import lib.ImageTools
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.repository.RequestByTmdbIDData
+import net.bmuller.application.repository.RequestsRepository
+import net.bmuller.application.repository.TMDBRepository
 
-class SearchService : BaseService() {
+interface ISearchService {
+	suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResultEntity>>
 
-	suspend fun searchMulti(searchTerm: String): Either<Throwable, List<SearchResult>> = either {
+	suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResultEntity.MovieResult>>
+
+	suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResultEntity.TVResult>>
+}
+
+fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRepository) = object : ISearchService {
+	override suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResultEntity>> = either {
 		val tmdbResults = tmdbRepository.searchMulti(searchTerm).bind()
-		val matchingRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
+		val matchingRequests =
+			requestsRepository.findByTmdbId(tmdbResults.results.map { result -> result.id }).bind()
 		return@either tmdbResults.results.mapNotNull { result ->
 			when (result) {
 				is MultiSearchEntity.PersonResult -> null
@@ -23,41 +34,44 @@ class SearchService : BaseService() {
 		}
 	}
 
-	suspend fun searchMovie(searchTerm: String): Either<Throwable, List<SearchResult.MovieResult>> = either {
-		val tmdbResults = tmdbRepository.searchMovies(searchTerm).bind()
-		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
-		return@either tmdbResults.results.map { tmdbMovie -> transformMovie(tmdbMovie, matchedRequests[tmdbMovie.id]) }
-	}
+	override suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResultEntity.MovieResult>> =
+		either {
+			val tmdbResults = tmdbRepository.searchMovies(searchTerm).bind()
+			val matchedRequests =
+				requestsRepository.findByTmdbId(tmdbResults.results.map { result -> result.id }).bind()
+			return@either tmdbResults.results.map { tmdbMovie ->
+				transformMovie(
+					tmdbMovie,
+					matchedRequests[tmdbMovie.id]
+				)
+			}
+		}
 
-	suspend fun searchTV(searchTerm: String): Either<Throwable, List<SearchResult.TVResult>> = either {
+	override suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResultEntity.TVResult>> = either {
 		val tmdbResults = tmdbRepository.searchTVShows(searchTerm).bind()
-		val matchedRequests = requestsRepository.requestsByTMDBId(tmdbResults.results.map { result -> result.id })
+		val matchedRequests =
+			requestsRepository.findByTmdbId(tmdbResults.results.map { result -> result.id }).bind()
 		return@either tmdbResults.results.map { tmdbTv -> transformTV(tmdbTv, matchedRequests[tmdbTv.id]) }
 	}
 
 
-	private fun transformTV(result: BaseTVShowResult, matchedRequest: RequestEntity?): SearchResult.TVResult =
-		SearchResult.TVResult(
+	private fun transformTV(result: BaseTVShowEntity, request: RequestByTmdbIDData?): SearchResultEntity.TVResult =
+		SearchResultEntity.TVResult(
 			id = result.id,
-			overview = result.overview,
-			posterPath = createPosterPath(result.posterPath),
+			overview = result.overview ?: "",
+			posterPath = ImageTools.tmdbPosterPath(result.posterPath),
 			releaseDate = result.firstAirDate,
 			title = result.title,
-			request = matchedRequest
+			request = request?.let { SearchResultEntity.RequestData(request.id, request.status) }
 		)
 
-	private fun transformMovie(result: BaseMovieResult, matchedRequest: RequestEntity?): SearchResult.MovieResult =
-		SearchResult.MovieResult(
+	private fun transformMovie(result: BaseMovieEntity, request: RequestByTmdbIDData?): SearchResultEntity.MovieResult =
+		SearchResultEntity.MovieResult(
 			id = result.id,
-			overview = result.overview,
-			posterPath = createPosterPath(result.posterPath),
+			overview = result.overview ?: "",
+			posterPath = ImageTools.tmdbPosterPath(result.posterPath),
 			title = result.title,
 			releaseDate = result.releaseDate,
-			request = matchedRequest
+			request = request?.let { SearchResultEntity.RequestData(request.id, request.status) }
 		)
-
-	private fun createPosterPath(path: String?): String =
-		path?.let { "https://image.tmdb.org/t/p/w300_and_h450_face$path" }
-			?: PlaceholderImageUrl
 }
-

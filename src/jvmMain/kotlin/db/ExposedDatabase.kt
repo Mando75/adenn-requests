@@ -1,27 +1,17 @@
 package db
 
-import db.util.dataSource
-import net.bmuller.application.config.EnvironmentValues
+import arrow.fx.coroutines.Resource
+import arrow.fx.coroutines.continuations.resource
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.koin.java.KoinJavaComponent.inject
+import javax.sql.DataSource
 
-class ExposedDatabase {
-	private val env by inject<EnvironmentValues>(EnvironmentValues::class.java)
 
-	fun createDatabase(): Database {
-		val host = env.postgresHost
-		val port = env.postgresPort
-		val database = env.postgresDatabase
-		val user = env.postgresUser
-		val password = env.postgresPassword
-
-		val url = "jdbc:postgresql://$host:$port/$database"
-		val cleanDB = false
-
-		return Database.connect(
-			dataSource(url, user, password)
-		).apply {
-			migrate(cleanDB, url, user, password)
+fun exposed(hikari: DataSource, flyway: Flyway, cleanDB: Boolean = false): Resource<Database> = resource {
+	Database.connect(hikari).apply {
+		if (cleanDB) {
+			flyway.clean()
 		}
+		flyway.migrate()
 	}
 }

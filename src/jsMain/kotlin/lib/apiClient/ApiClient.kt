@@ -6,7 +6,6 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import lib.JsonSchemaDiscriminator
 
@@ -23,7 +22,7 @@ val apiClient = HttpClient {
 	}
 	install(DefaultRequest) {
 		url {
-			host = "${window.location.host}/api/v1"
+			path("/api/")
 		}
 		contentType(ContentType.Application.Json)
 	}

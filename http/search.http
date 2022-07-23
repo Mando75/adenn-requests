@@ -3,12 +3,12 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/search/tv?searchTerm="The Office"
+GET {{host}}/search/tv?searchTerm="Attack on Titan"
 Accept: application/json
 Authorization: Bearer {{token}}
 
 
 ###
-GET {{host}}/search/movie?searchTerm="Morbius"
+GET {{host}}/search/movie?searchTerm="Attack on Titan"
 Accept: application/json
 Authorization: Bearer {{token}}

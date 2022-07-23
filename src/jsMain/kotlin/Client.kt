@@ -31,5 +31,5 @@ fun main() {
 	document.body!!.appendChild(container)
 
 	val root = createRoot(container)
-	root.render(StrictMode.create() { App() })
+	root.render(StrictMode.create { App() })
 }

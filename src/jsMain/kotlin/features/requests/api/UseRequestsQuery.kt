@@ -1,8 +1,8 @@
 package features.requests.api
 
 import entities.PaginatedResponse
-import entities.RequestEntity
 import entities.RequestFilters
+import entities.RequestListItem
 import hooks.UsePagination
 import hooks.usePagination
 import http.RequestResource
@@ -18,21 +18,30 @@ import react.query.*
 import utils.IJsTriple
 
 private interface RequestsQueryKey : QueryKey, IJsTriple<String, Long, RequestFilters>
-private typealias RequestsQueryResponse = PaginatedResponse<RequestEntity>
+private typealias RequestsQueryResponse = PaginatedResponse<RequestListItem>
 
 private val requestsQuery: QueryFunction<RequestsQueryResponse, RequestsQueryKey> = { context ->
 	MainScope().promise {
 		val (_, page, filters) = parseTripleQueryKey<String, Long, RequestFilters>(context.queryKey)
 
-		val result = apiClient.get(RequestResource(filters = filters, page = page))
+		val result = apiClient.get(
+			RequestResource(
+				searchTerm = filters.searchTerm,
+				mediaType = filters.mediaType,
+				status = filters.status,
+				page = page
+			)
+		)
 
 		return@promise result.body()
 	}
 }
 
+const val RequestsQueryKeyPrefix = "requests-query"
+
 fun useRequestsQuery(filters: RequestFilters): Pair<UseQueryResult<RequestsQueryResponse, Error>, UsePagination> {
 	val pagination = usePagination()
-	val queryKey = createQueryKey<RequestsQueryKey>("requests-query", pagination.queryPage, filters)
+	val queryKey = createQueryKey<RequestsQueryKey>(RequestsQueryKeyPrefix, pagination.queryPage, filters)
 
 	val options: UseQueryOptions<RequestsQueryResponse, Error, RequestsQueryResponse, RequestsQueryKey> = jso {
 		keepPreviousData = true

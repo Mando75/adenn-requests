@@ -27,11 +27,16 @@ sealed class RequestFiltersAction {
 
 private val requestFiltersReducer: Reducer<RequestFilters, RequestFiltersAction> = { state, action ->
 	when (action) {
-		is RequestFiltersAction.SetStatus -> state.copy(status = action.status)
+		is RequestFiltersAction.SetStatus -> state.takeIf { state.status == action.status }
+			?: state.copy(status = action.status)
 		is RequestFiltersAction.ClearStatus -> state.copy(status = null)
 		is RequestFiltersAction.ClearMediaType -> state.copy(mediaType = RequestFilterMediaType.ALL)
-		is RequestFiltersAction.SetMediaType -> state.copy(mediaType = action.mediaType)
-		is RequestFiltersAction.SetSearchTerm -> state.copy(searchTerm = action.searchTerm)
+		is RequestFiltersAction.SetMediaType -> state.takeIf { state.mediaType == action.mediaType } ?: state.copy(
+			mediaType = action.mediaType
+		)
+		is RequestFiltersAction.SetSearchTerm -> state.takeIf { state.searchTerm == action.searchTerm } ?: state.copy(
+			searchTerm = action.searchTerm
+		)
 	}
 }
 
@@ -43,10 +48,10 @@ data class UseRequestFilters(
 
 fun useRequestFilters(): UseRequestFilters {
 	val (searchTerm, debouncedSearchTerm, changeHandler) = useDebouncedInput()
-	val (requestFilter, dispatch) = useReducer(requestFiltersReducer, RequestFilters())
+	val (requestFilter, dispatch) = useReducer(requestFiltersReducer, RequestFilters(searchTerm = debouncedSearchTerm))
 
 	useEffect(debouncedSearchTerm, dispatch, requestFilter) {
-		if (debouncedSearchTerm != requestFilter.searchTerm) {
+		if (debouncedSearchTerm !== requestFilter.searchTerm) {
 			dispatch(RequestFiltersAction.SetSearchTerm(debouncedSearchTerm))
 		}
 	}

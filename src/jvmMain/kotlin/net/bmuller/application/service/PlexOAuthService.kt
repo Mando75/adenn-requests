@@ -6,33 +6,38 @@ import arrow.core.left
 import entities.LoginUrlResponse
 import io.ktor.http.*
 import io.ktor.server.util.*
+import net.bmuller.application.config.Env
 import net.bmuller.application.entities.PlexClientHeaders
-import net.bmuller.application.repository.PollForAuthTokenError
+import net.bmuller.application.lib.DomainError
+import net.bmuller.application.lib.MissingOrInvalidParam
+import net.bmuller.application.repository.PlexAuthPinRepository
+
+interface IPlexOAuthService {
+	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<DomainError, LoginUrlResponse>
+
+	suspend fun checkForAuthToken(
+		pinId: Long?
+	): Either<DomainError, String>
+}
+
+data class PlexClientDetails(
+	val forwardUrl: String,
+)
 
 /**
- * Class for implementing Plex OAuth Flow
  * For reference: https://forums.plex.tv/t/authenticating-with-plex/609370
  */
-class PlexOAuthService : BaseService() {
-
-	companion object {
-		private const val PLEX_AUTH_HOST = "app.plex.tv"
-		private const val PLEX_AUTH_PATH = "auth"
-		private val plexApiUrl = url {
-			protocol = URLProtocol.HTTPS
-			host = PLEX_AUTH_HOST
-			path(PLEX_AUTH_PATH)
-		}
+fun plexOAuthService(plexAuthPinRepository: PlexAuthPinRepository, env: Env.Plex) = object : IPlexOAuthService {
+	private val plexApiUrl = url {
+		protocol = URLProtocol.HTTPS
+		host = env.authHost
+		path(env.authPath)
 	}
 
-	data class PlexClientDetails(
-		val headers: PlexClientHeaders = PlexClientHeaders(),
-		val forwardUrl: String,
-	)
-
-	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<Throwable, LoginUrlResponse> =
+	override suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<DomainError, LoginUrlResponse> =
 		either {
-			val pin = plexAuthPinRepository.getPin(clientInfo.headers).bind()
+			val headers = headers()
+			val pin = plexAuthPinRepository.getPin(headers).bind()
 
 			val forwardUrlParams: Parameters = Parameters.build {
 				append("pinId", pin.id.toString())
@@ -43,8 +48,8 @@ class PlexOAuthService : BaseService() {
 
 			val loginParameters: Parameters = Parameters.build {
 				append("code", pin.code)
-				append("context[device][product]", clientInfo.headers.product)
-				append("context[device][device]", clientInfo.headers.device)
+				append("context[device][product]", headers.product)
+				append("context[device][device]", headers.device)
 				append("clientID", pin.clientIdentifier)
 				append("forwardUrl", forwardUrl)
 			}
@@ -53,28 +58,22 @@ class PlexOAuthService : BaseService() {
 			// Plex uses the anchor tag to indicate it should parse the url params
 			val loginUrl = "$plexApiUrl#!?${loginParameters.formUrlEncode()}"
 
-
-			return@either LoginUrlResponse(loginUrl, pin.id)
+			LoginUrlResponse(loginUrl, pin.id)
 		}
 
-	sealed class CheckForAuthTokenError {
-		object TimedOutWaitingForToken : CheckForAuthTokenError()
-		object MissingPinId : CheckForAuthTokenError()
-		data class Unknown(val message: String?) : CheckForAuthTokenError()
+	override suspend fun checkForAuthToken(
+		pinId: Long?
+	): Either<DomainError, String> {
+		return pinId?.let { pin -> plexAuthPinRepository.pollForAuthToken(pin, headers()) }
+			?: MissingOrInvalidParam("pinId is missing or not of type Long").left()
 	}
 
-	suspend fun checkForAuthToken(
-		pinId: Long?, clientInfo: PlexClientHeaders = PlexClientHeaders()
-	): Either<CheckForAuthTokenError, String> {
-		if (pinId == null || pinId == 0L) {
-			return CheckForAuthTokenError.MissingPinId.left()
-		}
-		return plexAuthPinRepository.pollForAuthToken(pinId, clientInfo)
-			.mapLeft { error ->
-				when (error) {
-					is PollForAuthTokenError.TimedOut -> CheckForAuthTokenError.TimedOutWaitingForToken
-					is PollForAuthTokenError.Unknown -> CheckForAuthTokenError.Unknown(error.message)
-				}
-			}
-	}
+	private fun headers() = PlexClientHeaders(
+		clientId = env.clientId,
+		product = env.product,
+		device = env.device,
+		version = env.version,
+		platform = env.platform
+	)
 }
+

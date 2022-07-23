@@ -28,8 +28,10 @@ private val meQuery: QueryFunction<UserEntity?, MeQueryKey> = {
 	}
 }
 
+const val MeQueryKeyPrefix = "me-query"
+
 fun useMeQuery(): UseQueryResult<UserEntity?, Error> {
-	val queryKey = createQueryKey<MeQueryKey>("me-query")
+	val queryKey = createQueryKey<MeQueryKey>(MeQueryKeyPrefix)
 	val options: UseQueryOptions<UserEntity?, Error, UserEntity?, MeQueryKey> = jso {
 		retry = { _, _ -> false }
 	}

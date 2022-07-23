@@ -1,6 +1,6 @@
 package features.search.api
 
-import entities.SearchResult
+import entities.SearchResultEntity
 import http.SearchResource
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
@@ -14,7 +14,7 @@ import react.query.*
 
 
 private interface MultiSearchQueryKey : QueryKey, List<String>
-private typealias MultiSearchQueryResult = List<SearchResult>
+private typealias MultiSearchQueryResult = List<SearchResultEntity>
 
 private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQueryKey> = { context ->
 	MainScope().promise {
@@ -27,8 +27,9 @@ private val searchMultiQuery: QueryFunction<MultiSearchQueryResult, MultiSearchQ
 	}
 }
 
+const val MultiSearchQueryKeyPrefix = "multi-search"
 fun useMultiSearchQuery(searchTerm: String): UseQueryResult<MultiSearchQueryResult, Error> {
-	val queryKey = createQueryKey<MultiSearchQueryKey>("multi-search", searchTerm.trim())
+	val queryKey = createQueryKey<MultiSearchQueryKey>(MultiSearchQueryKeyPrefix, searchTerm.trim())
 
 	val options: UseQueryOptions<MultiSearchQueryResult, Error, MultiSearchQueryResult, MultiSearchQueryKey> = jso {
 		enabled = searchTerm.isNotBlank()

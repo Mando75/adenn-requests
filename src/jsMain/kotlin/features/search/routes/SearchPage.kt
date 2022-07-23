@@ -1,9 +1,9 @@
 package features.search.routes
 
-import components.listView.ListView
 import csstype.ClassName
 import features.search.api.useMultiSearchQuery
 import features.search.components.SearchInput
+import features.search.components.SearchResultList
 import hooks.useDebouncedInput
 import react.FC
 import react.Props
@@ -26,7 +26,7 @@ val SearchPage = FC<Props>("SearchPage") {
 
 		if (searchResultsQuery.isIdle) div { +"Start typing to search" }
 		else {
-			ListView {
+			SearchResultList {
 				isLoading = searchResultsQuery.isLoading
 				items = searchResultsQuery.data ?: emptyList()
 			}

@@ -1,34 +1,19 @@
 package net.bmuller.application.http
 
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import lib.JsonSchemaDiscriminator
+import net.bmuller.application.config.Env
 
 interface PlexClient {
 	val client: HttpClient
 }
 
-const val PLEX_PIN_HOST = "plex.tv"
 
-
-class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(), PlexClient {
-	data class PlexClientConfig(
-		val host: String,
-	)
-
-
-	private val config: PlexClientConfig
-
-	init {
-		config = customConfig ?: defaultConfig()
-	}
-
-	private fun defaultConfig() = PlexClientConfig(
-		host = PLEX_PIN_HOST,
-	)
-
+fun plexClient(config: Env.Plex, engine: HttpClientEngine) = object : PlexClient {
 	private val jsonBuilder = Json {
 		encodeDefaults = true
 		ignoreUnknownKeys = true
@@ -37,7 +22,7 @@ class PlexClientImpl(customConfig: PlexClientConfig? = null) : BaseHttpClient(),
 		classDiscriminator = JsonSchemaDiscriminator
 	}
 
-	override val client = createClient(jsonBuilder) {
+	override val client = createClient(engine, jsonBuilder) {
 		url {
 			host = config.host
 			protocol = URLProtocol.HTTPS

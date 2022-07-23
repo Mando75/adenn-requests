@@ -1,7 +1,8 @@
 package entities
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import lib.BackdropPath
+import lib.PosterPath
 
 @Suppress("unused")
 @kotlinx.serialization.Serializable
@@ -14,75 +15,63 @@ enum class RequestStatus {
 	DOWNLOADING
 }
 
+@kotlinx.serialization.Serializable
+data class CreatedRequest(val id: Int)
+
+typealias RequestList = PaginatedResponse<RequestListItem>
 
 @kotlinx.serialization.Serializable
-sealed class RequestEntity {
+sealed class RequestListItem {
 	abstract val id: Int
 	abstract val tmdbId: Int
 	abstract val title: String
-	abstract val posterPath: String
-	abstract val releaseDate: String?
 	abstract val status: RequestStatus
-	abstract val requester: UserEntity?
-	abstract val rejectionReason: String?
-	abstract val dateFulfilled: Instant?
-	abstract val dateRejected: Instant?
-	abstract val createdAt: Instant
+	abstract val media: RequestMedia
+	abstract val requestedAt: Instant
 	abstract val modifiedAt: Instant
-
-	companion object {
-		fun fromSearchResult(searchResult: SearchResult, requester: UserEntity? = null): RequestEntity {
-			return when (searchResult) {
-				is SearchResult.MovieResult -> MovieRequest(
-					tmdbId = searchResult.id,
-					title = searchResult.title,
-					posterPath = searchResult.posterPath,
-					releaseDate = searchResult.releaseDate,
-					requester = requester,
-				)
-				is SearchResult.TVResult -> TVShowRequest(
-					tmdbId = searchResult.id,
-					title = searchResult.title,
-					posterPath = searchResult.posterPath,
-					releaseDate = searchResult.releaseDate,
-					requester = requester,
-				)
-			}
-		}
-	}
+	abstract val requester: Requester
 
 	@kotlinx.serialization.Serializable
 	data class MovieRequest(
 		override val id: Int = 0,
 		override val tmdbId: Int,
 		override val title: String,
-		override val posterPath: String,
-		override val releaseDate: String? = null,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
-		override val requester: UserEntity?,
-		override val rejectionReason: String? = null,
-		override val dateFulfilled: Instant? = null,
-		override val dateRejected: Instant? = null,
-		override val createdAt: Instant = Clock.System.now(),
-		override val modifiedAt: Instant = Clock.System.now()
-	) : RequestEntity()
+		override val media: RequestMedia,
+		override val requestedAt: Instant,
+		override val modifiedAt: Instant,
+		override val requester: Requester
+	) : RequestListItem()
 
 	@kotlinx.serialization.Serializable
 	data class TVShowRequest(
 		override val id: Int = 0,
 		override val tmdbId: Int,
 		override val title: String,
-		override val posterPath: String,
-		override val releaseDate: String? = null,
 		override val status: RequestStatus = RequestStatus.REQUESTED,
-		override val requester: UserEntity?,
-		override val rejectionReason: String? = null,
-		override val dateFulfilled: Instant? = null,
-		override val dateRejected: Instant? = null,
-		override val createdAt: Instant = Clock.System.now(),
-		override val modifiedAt: Instant = Clock.System.now()
-	) : RequestEntity()
+		override val media: RequestMedia,
+		override val requestedAt: Instant,
+		override val modifiedAt: Instant,
+		override val requester: Requester
+	) : RequestListItem()
 }
+
+@kotlinx.serialization.Serializable
+data class RequestMedia(
+	val backdropPath: BackdropPath? = null,
+	val id: Int,
+	val overview: String? = null,
+	val posterPath: PosterPath,
+	val releaseDate: String? = null,
+	val title: String,
+)
+
+@kotlinx.serialization.Serializable
+data class Requester(
+	val id: Int,
+	val username: String,
+	val profilePicUrl: String?
+)
 
 @kotlinx.serialization.Serializable
 enum class RequestFilterMediaType {

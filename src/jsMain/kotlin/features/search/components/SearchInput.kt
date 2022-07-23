@@ -18,6 +18,7 @@ external interface SearchInputProps : PropsWithChildren {
 	var value: String
 	var onChange: ChangeEventHandler<HTMLInputElement>?
 	var onClick: MouseEventHandler<*>?
+	var placeholder: String?
 }
 
 val SearchInput = FC<SearchInputProps> { props ->
@@ -31,7 +32,7 @@ val SearchInput = FC<SearchInputProps> { props ->
 					value = props.value
 					onChange = props.onChange
 					type = InputType.search
-					placeholder = "Search for Content"
+					placeholder = props.placeholder ?: "Search for Content"
 					ariaLabel = "Search"
 					ariaDescribedBy = "button-trigger-search"
 					className = ClassName(

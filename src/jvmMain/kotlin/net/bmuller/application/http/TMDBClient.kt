@@ -1,44 +1,21 @@
 package net.bmuller.application.http
 
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import net.bmuller.application.config.EnvironmentValues
-import org.koin.java.KoinJavaComponent.inject
+import net.bmuller.application.config.Env
 
-const val TMDB_HOST = "api.themoviedb.org"
 
 interface TMDBClient {
 	val client: HttpClient
 }
 
-class TMDBClientImpl(customConfig: TMDBClientConfig? = null) : TMDBClient, BaseHttpClient() {
-
-	data class TMDBClientConfig(
-		val apiKey: String,
-		val host: String,
-		val sessionToken: String,
-		val requestToken: String
-	)
-
-	private val config: TMDBClientConfig
+fun tmdbClient(config: Env.TMDB, engine: HttpClientEngine) = object : TMDBClient {
 	private val apiKeyParam = "api_key"
 	private val sessionIdParam = "session_id"
 
-	init {
-		config = customConfig ?: defaultConfig()
-	}
-
-	private fun defaultConfig(): TMDBClientConfig {
-		val env: EnvironmentValues by inject(EnvironmentValues::class.java)
-		val apiKey = env.tmdbApiKey
-		val host = TMDB_HOST
-		val sessionToken = env.tmdbSessionToken
-		val requestToken = env.tmdbRequestToken
-		return TMDBClientConfig(apiKey, host, sessionToken, requestToken)
-	}
-
-	override val client = createClient {
+	override val client = createClient(engine) {
 		url {
 			host = config.host
 			protocol = URLProtocol.HTTPS
@@ -49,4 +26,3 @@ class TMDBClientImpl(customConfig: TMDBClientConfig? = null) : TMDBClient, BaseH
 		accept(ContentType.Application.Json)
 	}
 }
-
