@@ -29,21 +29,20 @@ interface PlexAuthPinRepository {
 	}
 }
 
-@Suppress("unused")
 @Resource("/api")
 @kotlinx.serialization.Serializable
 class AuthPinResources {
 
 	@Resource("v2")
 	@kotlinx.serialization.Serializable
-	class V2(val parent: AuthPinResources = AuthPinResources()) {
+	class V2(@Suppress("unused") val parent: AuthPinResources = AuthPinResources()) {
 		@Resource("pins")
 		@kotlinx.serialization.Serializable
-		class Pins(val parent: V2 = V2(), val strong: Boolean = true) {
+		class Pins(@Suppress("unused") val parent: V2 = V2(), @Suppress("unused") val strong: Boolean = true) {
 
 			@Resource("{id}")
 			@kotlinx.serialization.Serializable
-			class ID(val parent: Pins = Pins(), val id: Long)
+			class ID(@Suppress("unused") val parent: Pins = Pins(), val id: Long)
 		}
 	}
 }

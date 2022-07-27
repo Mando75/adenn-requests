@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
-import db.tables.RequestTable
 import entities.*
 import entities.tmdb.WatchProvider
 import entities.tmdb.WatchProviderWrapper
@@ -42,8 +41,8 @@ fun requestService(
 			val requestsWithMedia = requests.map { request ->
 				async {
 					when (request.mediaType) {
-						RequestListData.MediaType.MOVIE -> constructMovieRequest(request).bind()
-						RequestListData.MediaType.TV -> constructTVRequest(request).bind()
+						MediaType.MOVIE -> constructMovieRequest(request).bind()
+						MediaType.TV -> constructTVRequest(request).bind()
 					}
 				}
 			}.awaitAll()
@@ -135,8 +134,8 @@ fun requestService(
 		checkRequestQuota(user, result is SearchResultEntity.MovieResult).bind()
 
 		val mediaType = when (result) {
-			is SearchResultEntity.MovieResult -> RequestTable.MediaType.MOVIE
-			is SearchResultEntity.TVResult -> RequestTable.MediaType.TV
+			is SearchResultEntity.MovieResult -> MediaType.MOVIE
+			is SearchResultEntity.TVResult -> MediaType.TV
 		}
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 
@@ -148,7 +147,7 @@ fun requestService(
 	): Either<DomainError, Unit> = either {
 		val limit = if (isMovie) user.movieQuotaLimit else user.tvQuotaLimit
 		val days = if (isMovie) user.movieQuotaDays else user.tvQuotaDays
-		val mediaType = if (isMovie) RequestTable.MediaType.MOVIE else RequestTable.MediaType.TV
+		val mediaType = if (isMovie) MediaType.MOVIE else MediaType.TV
 
 		val timePeriod: Instant = Instant.now().minusSeconds(days.days.inWholeSeconds)
 

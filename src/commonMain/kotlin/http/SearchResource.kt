@@ -2,21 +2,20 @@ package http
 
 import io.ktor.resources.*
 
-@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/search")
 class SearchResource {
 
 	@kotlinx.serialization.Serializable
 	@Resource("multi")
-	class Multi(val parent: SearchResource = SearchResource(), val searchTerm: String)
+	class Multi(@Suppress("unused") val parent: SearchResource = SearchResource(), val searchTerm: String)
 
 	@kotlinx.serialization.Serializable
 	@Resource("movie")
-	class Movie(val parent: SearchResource = SearchResource(), val searchTerm: String)
+	class Movie(@Suppress("unused") val parent: SearchResource = SearchResource(), val searchTerm: String)
 
 	@kotlinx.serialization.Serializable
 	@Resource("tv")
-	class TV(val parent: SearchResource = SearchResource(), val searchTerm: String)
+	class TV(@Suppress("unused") val parent: SearchResource = SearchResource(), val searchTerm: String)
 
 }
