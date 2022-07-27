@@ -3,6 +3,7 @@ package net.bmuller.application.routing.api
 import arrow.core.Either
 import arrow.core.continuations.either
 import http.AuthResource
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.*
@@ -50,7 +51,7 @@ fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthSe
 			either {
 				val user = principalCatching<UserSession>().bind()
 				userAuthService.createJwtToken(user).bind()
-			}.respond()
+			}.respond(HttpStatusCode.Created)
 		}
 	}
 
