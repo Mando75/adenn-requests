@@ -47,7 +47,16 @@ private class TMDBAPIResource {
 			val id: Int,
 			@SerialName("append_to_response") val appendToResponse: String = "watch/providers",
 			@SerialName("watch_region") val watchRegion: String = "US"
-		)
+		) {
+
+			@kotlinx.serialization.Serializable
+			@Resource("watch")
+			class Watch(val parent: Id) {
+				@kotlinx.serialization.Serializable
+				@Resource("providers")
+				class Providers(val parent: Watch)
+			}
+		}
 	}
 
 	@kotlinx.serialization.Serializable
@@ -60,7 +69,15 @@ private class TMDBAPIResource {
 			val id: Int,
 			@SerialName("append_to_response") val appendToResponse: String = "watch/providers",
 			@SerialName("watch_region") val watchRegion: String = "US"
-		)
+		) {
+			@kotlinx.serialization.Serializable
+			@Resource("watch")
+			class Watch(val parent: Id) {
+				@kotlinx.serialization.Serializable
+				@Resource("providers")
+				class Providers(val parent: Watch)
+			}
+		}
 	}
 }
 
@@ -74,6 +91,10 @@ interface TMDBRepository {
 	suspend fun movieDetail(id: Int): Either<Unknown, MovieDetail>
 
 	suspend fun tvDetail(id: Int): Either<Unknown, TVShowDetail>
+
+	suspend fun movieProviders(id: Int): Either<Unknown, WatchProviderWrapper>
+
+	suspend fun tvProviders(id: Int): Either<Unknown, WatchProviderWrapper>
 }
 
 fun tmdbRepository(tmdb: TMDBClient) = object : TMDBRepository {
@@ -104,6 +125,18 @@ fun tmdbRepository(tmdb: TMDBClient) = object : TMDBRepository {
 
 	override suspend fun tvDetail(id: Int): Either<Unknown, TVShowDetail> = Either.catchUnknown {
 		val response = tmdb.client.get(resource = TMDBAPIResource.TV.Id(id = id))
+		response.body()
+	}
+
+	override suspend fun movieProviders(id: Int): Either<Unknown, WatchProviderWrapper> = Either.catchUnknown {
+		val idRoute = TMDBAPIResource.Movie.Id.Watch(TMDBAPIResource.Movie.Id(id = id))
+		val response = tmdb.client.get(resource = TMDBAPIResource.Movie.Id.Watch.Providers(idRoute))
+		response.body()
+	}
+
+	override suspend fun tvProviders(id: Int): Either<Unknown, WatchProviderWrapper> = Either.catchUnknown {
+		val idRoute = TMDBAPIResource.TV.Id.Watch(TMDBAPIResource.TV.Id(id = id))
+		val response = tmdb.client.get(resource = TMDBAPIResource.TV.Id.Watch.Providers(idRoute))
 		response.body()
 	}
 }

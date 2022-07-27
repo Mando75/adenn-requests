@@ -1,6 +1,7 @@
 package db.tables
 
 import db.util.postgresEnumeration
+import entities.MediaType
 import entities.RequestStatus
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
@@ -8,11 +9,6 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
 object RequestTable : IntIdTable("requests") {
-
-	enum class MediaType {
-		MOVIE,
-		TV
-	}
 
 	val tmdbId: Column<Int> = integer("tmdb_id")
 	val title: Column<String> = text("title").index()

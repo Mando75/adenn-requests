@@ -8,7 +8,7 @@ import entities.tmdb.BaseTVShowEntity
 import entities.tmdb.MultiSearchEntity
 import lib.ImageTools
 import net.bmuller.application.lib.DomainError
-import net.bmuller.application.repository.RequestByTmdbIDData
+import net.bmuller.application.repository.RequestByTmdbIdData
 import net.bmuller.application.repository.RequestsRepository
 import net.bmuller.application.repository.TMDBRepository
 
@@ -55,7 +55,7 @@ fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRe
 	}
 
 
-	private fun transformTV(result: BaseTVShowEntity, request: RequestByTmdbIDData?): SearchResultEntity.TVResult =
+	private fun transformTV(result: BaseTVShowEntity, request: RequestByTmdbIdData?): SearchResultEntity.TVResult =
 		SearchResultEntity.TVResult(
 			id = result.id,
 			overview = result.overview ?: "",
@@ -65,7 +65,7 @@ fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRe
 			request = request?.let { SearchResultEntity.RequestData(request.id, request.status) }
 		)
 
-	private fun transformMovie(result: BaseMovieEntity, request: RequestByTmdbIDData?): SearchResultEntity.MovieResult =
+	private fun transformMovie(result: BaseMovieEntity, request: RequestByTmdbIdData?): SearchResultEntity.MovieResult =
 		SearchResultEntity.MovieResult(
 			id = result.id,
 			overview = result.overview ?: "",
