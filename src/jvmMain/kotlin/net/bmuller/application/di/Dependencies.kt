@@ -39,7 +39,7 @@ fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = r
 
 	// Services
 	val plexOAuthService = plexOAuthService(plexAuthPinRepo, env.plex)
-	val requestsService = requestService(requestsRepo, tmdbRepo, userRepo)
+	val requestsService = requestService(requestsRepo, tmdbRepo, userRepo, env)
 	val searchService = searchService(tmdbRepo, requestsRepo)
 	val userAuthService = userAuthService(env, userRepo, plexTVRepo)
 	val userService = userService(userRepo)

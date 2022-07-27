@@ -5,6 +5,7 @@ import entities.tmdb.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.resources.*
+import kotlinx.serialization.SerialName
 import net.bmuller.application.http.TMDBClient
 import net.bmuller.application.lib.Unknown
 import net.bmuller.application.lib.catchUnknown
@@ -41,7 +42,12 @@ private class TMDBAPIResource {
 	class TV(val parent: TMDBAPIResource = TMDBAPIResource()) {
 		@kotlinx.serialization.Serializable
 		@Resource("{id}")
-		class Id(val parent: TV = TV(), val id: Int)
+		class Id(
+			val parent: TV = TV(),
+			val id: Int,
+			@SerialName("append_to_response") val appendToResponse: String = "watch/providers",
+			@SerialName("watch_region") val watchRegion: String = "US"
+		)
 	}
 
 	@kotlinx.serialization.Serializable
@@ -49,7 +55,12 @@ private class TMDBAPIResource {
 	class Movie(val parent: TMDBAPIResource = TMDBAPIResource()) {
 		@kotlinx.serialization.Serializable
 		@Resource("{id}")
-		class Id(val parent: Movie = Movie(), val id: Int)
+		class Id(
+			val parent: Movie = Movie(),
+			val id: Int,
+			@SerialName("append_to_response") val appendToResponse: String = "watch/providers",
+			@SerialName("watch_region") val watchRegion: String = "US"
+		)
 	}
 }
 

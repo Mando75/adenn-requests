@@ -6,10 +6,13 @@ import arrow.core.left
 import arrow.core.right
 import db.tables.RequestTable
 import entities.*
+import entities.tmdb.WatchProvider
+import entities.tmdb.WatchProviderWrapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import lib.ImageTools
+import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.lib.*
 import net.bmuller.application.repository.RequestListData
@@ -28,7 +31,7 @@ interface IRequestService {
 }
 
 fun requestService(
-	requestsRepository: RequestsRepository, tmdbRepository: TMDBRepository, userRepository: UserRepository
+	requestsRepository: RequestsRepository, tmdbRepository: TMDBRepository, userRepository: UserRepository, env: Env
 ) = object : IRequestService {
 	override suspend fun getRequests(
 		filters: RequestFilters, page: Long
@@ -66,7 +69,8 @@ fun requestService(
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.releaseDate,
 					title = media.title,
-					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) }
+					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) },
+					providers = extractProviders(media.watchProviders, env.tmdb.movieProviders)
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -92,7 +96,8 @@ fun requestService(
 					overview = media.overview,
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.firstAirDate,
-					title = media.title
+					title = media.title,
+					providers = extractProviders(media.watchProviders, env.tmdb.tvProviders)
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -101,6 +106,26 @@ fun requestService(
 				),
 			)
 		}
+
+	private fun extractProviders(
+		tmdbProviders: WatchProviderWrapper,
+		allowedProviders: List<Pair<Int, String>>
+	): List<Provider> {
+		val providerIds = allowedProviders.map { it.first }.toSet()
+		val predicate: (provider: WatchProvider) -> Boolean = { provider -> providerIds.contains(provider.providerId) }
+		val ads = tmdbProviders.results.us?.ads?.filter(predicate) ?: emptyList()
+		val flatrate = tmdbProviders.results.us?.flatrate?.filter(predicate) ?: emptyList()
+		val free = tmdbProviders.results.us?.free?.filter(predicate) ?: emptyList()
+		val combined = ads + flatrate + free
+
+		return combined.map { provider ->
+			Provider(
+				id = provider.providerId,
+				name = provider.providerName,
+				logoPath = provider.logoPath
+			)
+		}
+	}
 
 
 	override suspend fun submitRequest(

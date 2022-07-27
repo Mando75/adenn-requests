@@ -12,3 +12,18 @@ Accept: application/json
 https://api.themoviedb.org/3/search/tv?api_key={{tmdbApiKey}}&query="Attack on Titan"
 Content-Type: application/json
 Accept: application/json
+
+### Providers
+https://api.themoviedb.org/3/watch/providers/tv?api_key={{tmdbApiKey}}&watch_region=US
+Content-Type: application/json
+Accept: application/json
+
+### Movie
+https://api.themoviedb.org/3/movie/330081?api_key={{tmdbApiKey}}&append_to_response=watch/providers&watch_region=US
+Content-Type: application/json
+Accept: application/json
+
+### TV
+https://api.themoviedb.org/3/tv/1429?api_key={{tmdbApiKey}}&append_to_response=watch/providers&watch_region=US&watch_providers=8
+Content-Type: application/json
+Accept: application/json
