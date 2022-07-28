@@ -16,7 +16,6 @@ val SessionProvider = FC<PropsWithChildren>("SessionManager") { props ->
 	val query = useMeQuery()
 	val sessionStateInstance = useState(SessionState(null, query.isLoading))
 	val (_, setSessionState) = sessionStateInstance
-	query.refetch
 
 	useEffect(query.isLoading, query.isError) {
 		if (!query.isError) {

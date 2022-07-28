@@ -2,8 +2,10 @@ package features.search.routes
 
 import csstype.ClassName
 import features.search.api.useMultiSearchQuery
+import features.search.components.RequestModal
 import features.search.components.SearchInput
 import features.search.components.SearchResultList
+import features.search.providers.RequestModalProvider
 import hooks.useDebouncedInput
 import react.FC
 import react.Props
@@ -17,19 +19,22 @@ val SearchPage = FC<Props>("SearchPage") {
 
 
 	// RENDER
-	section {
-		className = ClassName("mt-4")
-		SearchInput {
-			value = searchTerm
-			onChange = changeEventHandler
-		}
+	RequestModalProvider {
+		section {
+			className = ClassName("mt-4")
+			SearchInput {
+				value = searchTerm
+				onChange = changeEventHandler
+			}
 
-		if (searchResultsQuery.isIdle) div { +"Start typing to search" }
-		else {
-			SearchResultList {
-				isLoading = searchResultsQuery.isLoading
-				items = searchResultsQuery.data ?: emptyList()
+			if (searchResultsQuery.isIdle) div { +"Start typing to search" }
+			else {
+				SearchResultList {
+					isLoading = searchResultsQuery.isLoading
+					items = searchResultsQuery.data ?: emptyList()
+				}
 			}
 		}
+		RequestModal()
 	}
 }

@@ -3,10 +3,10 @@ package features.search.components
 import components.posterCard.PosterCard
 import components.posterCard.PosterCardDetail
 import entities.SearchResultEntity
-import features.search.api.useSubmitRequestMutation
-import lib.reactQuery.exec
+import features.search.providers.RequestModalContext
 import react.FC
 import react.Props
+import react.useContext
 
 external interface SearchResultCardProps : Props {
 	var searchResult: SearchResultEntity
@@ -14,7 +14,7 @@ external interface SearchResultCardProps : Props {
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	// HOOKS
-	val submitRequestMutation = useSubmitRequestMutation()
+	val (_, setShowRequestModal) = useContext(RequestModalContext)
 
 	// STATE
 
@@ -39,7 +39,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 							status = request.status
 						}
 					} ?: RequestButton {
-						onClick = { submitRequestMutation.exec(props.searchResult) }
+						onClick = { setShowRequestModal(true) }
 					}
 				}
 			}

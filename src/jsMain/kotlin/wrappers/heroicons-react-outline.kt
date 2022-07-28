@@ -1,6 +1,6 @@
 @file:JsModule("@heroicons/react/outline")
 @file:JsNonModule
-
+@file:Suppress("unused")
 package wrappers
 
 import org.w3c.dom.svg.SVGSVGElement
@@ -13,3 +13,4 @@ external val ClockIcon: FC<SVGAttributes<SVGSVGElement>>
 external val CloudDownloadIcon: FC<SVGAttributes<SVGSVGElement>>
 external val DownloadIcon: FC<SVGAttributes<SVGSVGElement>>
 external val ExclamationIcon: FC<SVGAttributes<SVGSVGElement>>
+external val XIcon: FC<SVGAttributes<SVGSVGElement>>

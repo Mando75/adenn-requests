@@ -6,7 +6,6 @@ import react.FC
 import react.Props
 import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.span
-import wrappers.DownloadIcon
 
 external interface RequestButtonProps : Props {
 	var onClick: () -> Unit
@@ -31,17 +30,12 @@ val RequestButton = FC<RequestButtonProps>("RequestButton") { props ->
 		""".trimMargin()
 		)
 		onClick = {
-			it.stopPropagation()
-			props.onClick.invoke()
-		}
-
-		DownloadIcon {
-			className = ClassName("text-white shrink h-6 w-6")
+			props.onClick()
 		}
 
 		span {
 			className = ClassName("grow")
-			+"Request"
+			+"Details"
 		}
 	}
 }
