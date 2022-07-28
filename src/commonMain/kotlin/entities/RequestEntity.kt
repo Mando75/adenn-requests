@@ -64,14 +64,6 @@ data class RequestMedia(
 	val posterPath: PosterPath,
 	val releaseDate: String? = null,
 	val title: String,
-	val providers: List<Provider> = emptyList()
-)
-
-@kotlinx.serialization.Serializable
-data class Provider(
-	val logoPath: String,
-	val id: Int,
-	val name: String
 )
 
 @kotlinx.serialization.Serializable

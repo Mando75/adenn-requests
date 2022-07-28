@@ -5,13 +5,10 @@ import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
 import entities.*
-import entities.tmdb.WatchProvider
-import entities.tmdb.WatchProviderWrapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import lib.ImageTools
-import net.bmuller.application.config.Env
 import net.bmuller.application.entities.UserSession
 import net.bmuller.application.lib.*
 import net.bmuller.application.repository.RequestListData
@@ -21,7 +18,7 @@ import net.bmuller.application.repository.UserRepository
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 
-interface IRequestService {
+interface RequestService {
 	suspend fun getRequests(
 		filters: RequestFilters, page: Long
 	): Either<DomainError, PaginatedResponse<RequestListItem>>
@@ -30,8 +27,8 @@ interface IRequestService {
 }
 
 fun requestService(
-	requestsRepository: RequestsRepository, tmdbRepository: TMDBRepository, userRepository: UserRepository, env: Env
-) = object : IRequestService {
+	requestsRepository: RequestsRepository, tmdbRepository: TMDBRepository, userRepository: UserRepository
+) = object : RequestService {
 	override suspend fun getRequests(
 		filters: RequestFilters, page: Long
 	): Either<DomainError, RequestList> = coroutineScope {
@@ -69,7 +66,6 @@ fun requestService(
 					releaseDate = media.releaseDate,
 					title = media.title,
 					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) },
-					providers = extractProviders(media.watchProviders, env.tmdb.movieProviders)
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -96,7 +92,6 @@ fun requestService(
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.firstAirDate,
 					title = media.title,
-					providers = extractProviders(media.watchProviders, env.tmdb.tvProviders)
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -105,27 +100,6 @@ fun requestService(
 				),
 			)
 		}
-
-	private fun extractProviders(
-		tmdbProviders: WatchProviderWrapper,
-		allowedProviders: List<Pair<Int, String>>
-	): List<Provider> {
-		val providerIds = allowedProviders.map { it.first }.toSet()
-		val predicate: (provider: WatchProvider) -> Boolean = { provider -> providerIds.contains(provider.providerId) }
-		val ads = tmdbProviders.results.us?.ads?.filter(predicate) ?: emptyList()
-		val flatrate = tmdbProviders.results.us?.flatrate?.filter(predicate) ?: emptyList()
-		val free = tmdbProviders.results.us?.free?.filter(predicate) ?: emptyList()
-		val combined = ads + flatrate + free
-
-		return combined.map { provider ->
-			Provider(
-				id = provider.providerId,
-				name = provider.providerName,
-				logoPath = provider.logoPath
-			)
-		}
-	}
-
 
 	override suspend fun submitRequest(
 		result: SearchResultEntity, session: UserSession
@@ -157,7 +131,7 @@ fun requestService(
 	}
 
 	private suspend fun getUser(userId: Int): Either<Forbidden, UserEntity> =
-		userRepository.getUserById(userId).mapLeft { _ -> Forbidden("User $userId not found") }
+		userRepository.getUserById(userId).mapLeft { Forbidden("User $userId not found") }
 
 	@Suppress("unused")
 	private fun submitRequestToJobQueue(request: RequestListItem) {

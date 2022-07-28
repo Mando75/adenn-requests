@@ -22,12 +22,13 @@ sealed interface BaseTMDBEntity {
 	val voteCount: Int
 }
 
-interface BaseMovieEntity : BaseTMDBEntity {
+sealed interface DetailEntity
+interface BaseMovieEntity : BaseTMDBEntity, DetailEntity {
 	val releaseDate: String?
 	val adult: Boolean
 }
 
-interface BaseTVShowEntity : BaseTMDBEntity {
+interface BaseTVShowEntity : BaseTMDBEntity, DetailEntity {
 	val firstAirDate: String?
 	val originCountry: List<String>
 }

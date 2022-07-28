@@ -4,9 +4,9 @@ import http.SearchResource
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import net.bmuller.application.lib.respond
-import net.bmuller.application.service.ISearchService
+import net.bmuller.application.service.SearchService
 
-fun Route.search(searchService: ISearchService) {
+fun Route.search(searchService: SearchService) {
 	get<SearchResource.Multi> { context ->
 		searchService.searchMulti(context.searchTerm).respond()
 	}

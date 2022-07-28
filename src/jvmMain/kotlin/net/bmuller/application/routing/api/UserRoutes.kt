@@ -7,9 +7,9 @@ import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import net.bmuller.application.lib.respond
 import net.bmuller.application.plugins.parseUserAuth
-import net.bmuller.application.service.IUserService
+import net.bmuller.application.service.UserService
 
-fun Route.users(userService: IUserService) {
+fun Route.users(userService: UserService) {
 
 	get<UserResource.Me> {
 		either {

@@ -17,10 +17,10 @@ import net.bmuller.application.lib.DomainError
 import net.bmuller.application.lib.GenericErrorModel
 import net.bmuller.application.lib.Unauthorized
 import net.bmuller.application.lib.catchUnknown
-import net.bmuller.application.service.IUserAuthService
+import net.bmuller.application.service.UserAuthService
 
 
-fun Application.configureAuthentication(env: Env, userAuthService: IUserAuthService) {
+fun Application.configureAuthentication(env: Env, userAuthService: UserAuthService) {
 
 	install(Authentication) {
 		session<UserSession>("user_session") {

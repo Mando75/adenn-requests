@@ -15,12 +15,12 @@ import net.bmuller.application.lib.catchUnknown
 import net.bmuller.application.lib.principalCatching
 import net.bmuller.application.lib.respond
 import net.bmuller.application.lib.respondRedirect
-import net.bmuller.application.service.IPlexOAuthService
-import net.bmuller.application.service.IUserAuthService
+import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthService
 import net.bmuller.application.service.PlexClientDetails
 
 
-fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthService) {
+fun Route.auth(plexOAuthService: PlexOAuthService, userAuthService: UserAuthService) {
 
 	get<AuthResource.Plex.LoginUrl> { context ->
 		either {

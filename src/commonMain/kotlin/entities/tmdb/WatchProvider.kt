@@ -1,5 +1,7 @@
 package entities.tmdb
 
+import entities.Provider
+import http.MediaResource
 import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
@@ -23,3 +25,22 @@ data class WatchProvider(
 	@SerialName("provider_id") val providerId: Int,
 	@SerialName("provider_name") val providerName: String,
 )
+
+fun WatchProviderWrapper.unwrapToProviders(allowedProviders: List<Pair<Int, String>>): List<Provider> {
+	val tmdbProviders = this.results.us
+	val providerIds = allowedProviders.map { it.first }.toSet()
+	val predicate: (provider: WatchProvider) -> Boolean = { provider -> providerIds.contains(provider.providerId) }
+
+	val ads = tmdbProviders?.ads?.filter(predicate) ?: emptyList()
+	val flatrate = tmdbProviders?.flatrate?.filter(predicate) ?: emptyList()
+	val free = tmdbProviders?.free?.filter(predicate) ?: emptyList()
+	val combined = ads + flatrate + free
+
+	return combined.map { provider ->
+		Provider(
+			id = provider.providerId,
+			name = provider.providerName,
+			logoPath = provider.logoPath
+		)
+	}
+}

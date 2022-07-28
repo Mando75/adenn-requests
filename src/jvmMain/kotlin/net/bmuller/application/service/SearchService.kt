@@ -12,7 +12,7 @@ import net.bmuller.application.repository.RequestByTmdbIdData
 import net.bmuller.application.repository.RequestsRepository
 import net.bmuller.application.repository.TMDBRepository
 
-interface ISearchService {
+interface SearchService {
 	suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResultEntity>>
 
 	suspend fun searchMovie(searchTerm: String): Either<DomainError, List<SearchResultEntity.MovieResult>>
@@ -20,7 +20,7 @@ interface ISearchService {
 	suspend fun searchTV(searchTerm: String): Either<DomainError, List<SearchResultEntity.TVResult>>
 }
 
-fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRepository) = object : ISearchService {
+fun searchService(tmdbRepository: TMDBRepository, requestsRepository: RequestsRepository) = object : SearchService {
 	override suspend fun searchMulti(searchTerm: String): Either<DomainError, List<SearchResultEntity>> = either {
 		val tmdbResults = tmdbRepository.searchMulti(searchTerm).bind()
 		val matchingRequests =
