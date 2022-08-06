@@ -4,24 +4,33 @@ package features.search.providers
 import entities.MediaType
 import react.*
 
+sealed class RequestModalAction {
+	object OpenModal : RequestModalAction()
+
+	object CloseModal : RequestModalAction()
+	data class SetMedia(val tmdbId: Int, val mediaType: MediaType) : RequestModalAction()
+}
+
 data class RequestModalState(
 	val open: Boolean,
-	val setOpen: StateSetter<Boolean>,
-	val mediaId: Int? = null,
-	val setMediaId: StateSetter<Int?>,
+	val tmdbId: Int? = null,
 	val mediaType: MediaType? = null,
-	val setMediaType: StateSetter<MediaType?>
 )
 
-val RequestModalContext = createContext<RequestModalState>()
+private val requestModalReducer: Reducer<RequestModalState, RequestModalAction> = { state, action ->
+	when (action) {
+		is RequestModalAction.OpenModal -> state.takeIf { state.open } ?: state.copy(open = true)
+		is RequestModalAction.CloseModal -> state.takeIf { !state.open } ?: state.copy(open = false)
+		is RequestModalAction.SetMedia -> state.takeIf { state.tmdbId == action.tmdbId && state.mediaType == action.mediaType }
+			?: state.copy(tmdbId = action.tmdbId, mediaType = action.mediaType)
+	}
+}
+
+val RequestModalContext = createContext<ReducerInstance<RequestModalState, RequestModalAction>>()
 
 val RequestModalProvider = FC<PropsWithChildren>("RequestModalProvider") { props ->
 	// STATE
-	val (open, setOpen) = useState(false)
-	val (mediaId, setMediaId) = useState<Int?>(null)
-	val (mediaType, setMediaType) = useState<MediaType?>(null)
-
-	val modalStateInstance = RequestModalState(open, setOpen, mediaId, setMediaId, mediaType, setMediaType)
+	val reducer = useReducer(requestModalReducer, RequestModalState(false))
 
 	// HOOKS
 
@@ -29,7 +38,7 @@ val RequestModalProvider = FC<PropsWithChildren>("RequestModalProvider") { props
 
 	// RENDER
 
-	RequestModalContext.Provider(modalStateInstance) {
+	RequestModalContext.Provider(reducer) {
 		+props.children
 	}
 }

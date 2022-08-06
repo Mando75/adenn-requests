@@ -2,6 +2,7 @@ package features.search.components
 
 
 import components.modal.Modal
+import features.search.providers.RequestModalAction
 import features.search.providers.RequestModalContext
 import react.FC
 import react.Props
@@ -14,7 +15,7 @@ external interface IRequestModalProps : Props {
 
 val RequestModal = FC<IRequestModalProps>("RequestModal") { props ->
 	// STATE
-	val modalState = useContext(RequestModalContext)
+	val (modalState, dispatchModal) = useContext(RequestModalContext)
 
 	// HOOKS
 
@@ -23,7 +24,7 @@ val RequestModal = FC<IRequestModalProps>("RequestModal") { props ->
 	// RENDER
 	Modal {
 		show = modalState.open
-		close = { modalState.setOpen(false) }
+		close = { dispatchModal(RequestModalAction.CloseModal) }
 		title = "Details"
 
 		+"Request Modal Body"

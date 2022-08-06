@@ -3,6 +3,7 @@ package features.search.components
 import components.posterCard.PosterCard
 import components.posterCard.PosterCardDetail
 import entities.SearchResultEntity
+import features.search.providers.RequestModalAction
 import features.search.providers.RequestModalContext
 import react.FC
 import react.Props
@@ -14,7 +15,7 @@ external interface SearchResultCardProps : Props {
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	// HOOKS
-	val modalState = useContext(RequestModalContext)
+	val (_, dispatchModal) = useContext(RequestModalContext)
 
 	// STATE
 
@@ -39,7 +40,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 							status = request.status
 						}
 					} ?: RequestButton {
-						onClick = { modalState.setOpen(true) }
+						onClick = { dispatchModal(RequestModalAction.OpenModal) }
 					}
 				}
 			}
