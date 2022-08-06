@@ -14,7 +14,7 @@ external interface IRequestModalProps : Props {
 
 val RequestModal = FC<IRequestModalProps>("RequestModal") { props ->
 	// STATE
-	val (showModal, setShowModal) = useContext(RequestModalContext)
+	val modalState = useContext(RequestModalContext)
 
 	// HOOKS
 
@@ -22,8 +22,8 @@ val RequestModal = FC<IRequestModalProps>("RequestModal") { props ->
 
 	// RENDER
 	Modal {
-		show = showModal
-		close = { setShowModal(false) }
+		show = modalState.open
+		close = { modalState.setOpen(false) }
 		title = "Details"
 
 		+"Request Modal Body"

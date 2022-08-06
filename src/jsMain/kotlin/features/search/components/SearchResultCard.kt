@@ -14,7 +14,7 @@ external interface SearchResultCardProps : Props {
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	// HOOKS
-	val (_, setShowRequestModal) = useContext(RequestModalContext)
+	val modalState = useContext(RequestModalContext)
 
 	// STATE
 
@@ -39,7 +39,7 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 							status = request.status
 						}
 					} ?: RequestButton {
-						onClick = { setShowRequestModal(true) }
+						onClick = { modalState.setOpen(true) }
 					}
 				}
 			}
