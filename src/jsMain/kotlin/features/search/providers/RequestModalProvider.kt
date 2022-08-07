@@ -5,24 +5,27 @@ import entities.MediaType
 import react.*
 
 sealed class RequestModalAction {
-	object OpenModal : RequestModalAction()
-
 	object CloseModal : RequestModalAction()
-	data class SetMedia(val tmdbId: Int, val mediaType: MediaType) : RequestModalAction()
+
+	data class OpenModalWithMedia(val tmdbId: Int, val mediaType: MediaType, val title: String) : RequestModalAction()
 }
 
 data class RequestModalState(
 	val open: Boolean,
 	val tmdbId: Int? = null,
 	val mediaType: MediaType? = null,
+	val title: String? = null
 )
 
 private val requestModalReducer: Reducer<RequestModalState, RequestModalAction> = { state, action ->
 	when (action) {
-		is RequestModalAction.OpenModal -> state.takeIf { state.open } ?: state.copy(open = true)
 		is RequestModalAction.CloseModal -> state.takeIf { !state.open } ?: state.copy(open = false)
-		is RequestModalAction.SetMedia -> state.takeIf { state.tmdbId == action.tmdbId && state.mediaType == action.mediaType }
-			?: state.copy(tmdbId = action.tmdbId, mediaType = action.mediaType)
+		is RequestModalAction.OpenModalWithMedia -> RequestModalState(
+			open = true,
+			tmdbId = action.tmdbId,
+			mediaType = action.mediaType,
+			title = action.title
+		)
 	}
 }
 

@@ -41,13 +41,7 @@ external interface TagProps : PropsWithChildren {
 }
 
 val Tag = FC<TagProps>("Tag") { props ->
-	// STATE
-
-	// HOOKS
-
-	// EFFECTS
-
-	// RENDER
+	/// RENDER
 	span {
 		className =
 			ClassName("text-white text-sm font-medium rounded-full px-2 py-1 ${props.style.internalClasses} ${props.style.classes}")

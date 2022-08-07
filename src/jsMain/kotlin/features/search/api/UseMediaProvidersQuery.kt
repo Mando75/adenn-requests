@@ -30,7 +30,7 @@ private val mediaProvidersQuery: QueryFunction<MediaProvidersQueryResponse, Medi
 
 const val MediaProvidersQueryKeyPrefix = "media-providers"
 
-fun useMediaProviders(id: Int?, mediaType: MediaType?): UseQueryResult<MediaProvidersQueryResponse, Error> {
+fun useMediaProvidersQuery(id: Int?, mediaType: MediaType?): UseQueryResult<MediaProvidersQueryResponse, Error> {
 	val queryKey =
 		createQueryKey<MediaProvidersQueryKey>(MediaProvidersQueryKeyPrefix, id ?: 0, mediaType ?: MediaType.MOVIE)
 

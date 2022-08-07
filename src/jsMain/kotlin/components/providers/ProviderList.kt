@@ -2,9 +2,9 @@ package components.providers
 
 
 import csstype.ClassName
+import entities.Provider
 import react.FC
 import react.Props
-import entities.Provider
 import react.dom.html.ReactHTML.div
 
 external interface IProviderListProps : Props {
@@ -20,8 +20,8 @@ val ProviderList = FC<IProviderListProps>("ProviderList") { props ->
 
 	// RENDER
 	div {
-		className = ClassName("flex flex-row")
+		className = ClassName("flex flex-row flex-wrap")
 
-		props.providers.map { p -> ProviderIcon { provider = p} }
+		props.providers.map { p -> ProviderIcon { provider = p } }
 	}
 }

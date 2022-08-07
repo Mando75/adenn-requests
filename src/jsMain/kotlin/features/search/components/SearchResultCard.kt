@@ -3,6 +3,7 @@ package features.search.components
 import components.posterCard.PosterCard
 import components.posterCard.PosterCardDetail
 import entities.SearchResultEntity
+import entities.toMediaType
 import features.search.providers.RequestModalAction
 import features.search.providers.RequestModalContext
 import react.FC
@@ -14,14 +15,16 @@ external interface SearchResultCardProps : Props {
 }
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
-	// HOOKS
+	/// HOOKS
 	val (_, dispatchModal) = useContext(RequestModalContext)
 
-	// STATE
+	/// STATE
+	val tmdbId = props.searchResult.id
+	val mediaType = props.searchResult.toMediaType()
 
-	// EFFECTS
+	/// EFFECTS
 
-	// RENDER
+	/// RENDER
 	PosterCard {
 		posterUrl = props.searchResult.posterPath.value
 		posterAlt = "Poster for ${props.searchResult.title}"
@@ -39,8 +42,16 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 						RequestInfoLink {
 							status = request.status
 						}
-					} ?: RequestButton {
-						onClick = { dispatchModal(RequestModalAction.OpenModal) }
+					} ?: SearchResultDetailButton {
+						onClick = {
+							dispatchModal(
+								RequestModalAction.OpenModalWithMedia(
+									tmdbId = tmdbId,
+									mediaType = mediaType,
+									title = props.searchResult.title
+								)
+							)
+						}
 					}
 				}
 			}

@@ -20,10 +20,10 @@ val ProviderIcon = FC<IProviderProps>("ProviderIcon") { props ->
 
 	// RENDER
 	img {
-		src = props.provider.logoPath
+		src = props.provider.logoPath.value
 		alt = props.provider.name
 		title = props.provider.name
 
-		className = ClassName("rounded")
+		className = ClassName("rounded w-12 h-12")
 	}
 }

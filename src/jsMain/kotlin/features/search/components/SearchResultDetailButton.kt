@@ -1,32 +1,25 @@
 package features.search.components
 
 
+import components.button.Button
 import csstype.ClassName
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.span
 
 external interface RequestButtonProps : Props {
 	var onClick: () -> Unit
 }
 
-val RequestButton = FC<RequestButtonProps>("RequestButton") { props ->
-	// STATE
+val SearchResultDetailButton = FC<RequestButtonProps>("RequestButton") { props ->
 
-	// HOOKS
-
-	// EFFECTS
-
-	// RENDER
-	button {
+	/// RENDER
+	Button {
 		className = ClassName(
 			"""
-			| bg-green-500 flex justify-around align-center px-6 py-2 rounded 
-			| font-medium leading-tight uppercase text-white
+			| bg-green-500 
 			| hover:bg-green-600
 			| focus:ring-1 focus:ring-green-700 focus:bg-green-600
-			| transition duration-150 ease-in-out
 		""".trimMargin()
 		)
 		onClick = {

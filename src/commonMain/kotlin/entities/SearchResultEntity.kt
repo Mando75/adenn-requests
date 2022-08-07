@@ -34,3 +34,8 @@ sealed class SearchResultEntity {
 		override val request: RequestData? = null
 	) : SearchResultEntity()
 }
+
+fun SearchResultEntity.toMediaType() = when (this) {
+	is SearchResultEntity.TVResult -> MediaType.TV
+	is SearchResultEntity.MovieResult -> MediaType.MOVIE
+}

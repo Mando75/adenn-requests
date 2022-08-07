@@ -7,13 +7,14 @@ import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.ul
+import react.memo
 
 external interface SearchResultListProps : Props {
 	var items: List<SearchResultEntity>
 	var isLoading: Boolean
 }
 
-val SearchResultList = FC<SearchResultListProps>("SearchResultList") { props ->
+val SearchResultList = memo(FC<SearchResultListProps>("SearchResultList") { props ->
 	// STATE
 	val isEmpty = !props.isLoading && props.items.isEmpty()
 
@@ -30,4 +31,4 @@ val SearchResultList = FC<SearchResultListProps>("SearchResultList") { props ->
 			props.items.map { result -> SearchResultCard { searchResult = result } }
 		}
 	}
-}
+})

@@ -5,16 +5,17 @@ import features.search.api.useMultiSearchQuery
 import features.search.components.RequestModal
 import features.search.components.SearchInput
 import features.search.components.SearchResultList
+import features.search.hooks.useSearchTerm
 import features.search.providers.RequestModalProvider
-import hooks.useDebouncedInput
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.section
 
+
 val SearchPage = FC<Props>("SearchPage") {
 	// STATE
-	val (searchTerm, debouncedSearchTerm, changeEventHandler) = useDebouncedInput()
+	val (searchTerm, debouncedSearchTerm, changeEventHandler) = useSearchTerm()
 	val searchResultsQuery = useMultiSearchQuery(debouncedSearchTerm)
 
 

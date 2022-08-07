@@ -107,10 +107,7 @@ fun requestService(
 		val user = getUser(session.id).bind()
 		checkRequestQuota(user, result is SearchResultEntity.MovieResult).bind()
 
-		val mediaType = when (result) {
-			is SearchResultEntity.MovieResult -> MediaType.MOVIE
-			is SearchResultEntity.TVResult -> MediaType.TV
-		}
+		val mediaType = result.toMediaType()
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 
 		CreatedRequest(id)

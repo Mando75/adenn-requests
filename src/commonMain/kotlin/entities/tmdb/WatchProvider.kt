@@ -1,8 +1,8 @@
 package entities.tmdb
 
 import entities.Provider
-import http.MediaResource
 import kotlinx.serialization.SerialName
+import lib.ImageTools
 
 @kotlinx.serialization.Serializable
 data class WatchProviderWrapper(val results: WatchRegionWrapper)
@@ -40,7 +40,7 @@ fun WatchProviderWrapper.unwrapToProviders(allowedProviders: List<Pair<Int, Stri
 		Provider(
 			id = provider.providerId,
 			name = provider.providerName,
-			logoPath = provider.logoPath
+			logoPath = ImageTools.providerLogoPath(provider.logoPath)
 		)
 	}
 }
