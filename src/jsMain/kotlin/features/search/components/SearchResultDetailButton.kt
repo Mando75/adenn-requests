@@ -18,8 +18,8 @@ val SearchResultDetailButton = FC<RequestButtonProps>("RequestButton") { props -
 		className = ClassName(
 			"""
 			| bg-green-500 
-			| hover:bg-green-600
-			| focus:ring-1 focus:ring-green-700 focus:bg-green-600
+			| hover:bg-green-600 
+			| focus:ring-1 focus:ring-green-700 focus:bg-green-600 
 		""".trimMargin()
 		)
 		onClick = {

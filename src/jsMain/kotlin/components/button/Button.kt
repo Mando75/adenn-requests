@@ -9,7 +9,6 @@ import react.dom.html.ButtonHTMLAttributes
 import react.dom.html.ReactHTML.button
 
 external interface IButtonProps : PropsWithChildren, ButtonHTMLAttributes<HTMLButtonElement> {
-
 }
 
 val Button = FC<IButtonProps>("Button") { props ->
@@ -19,9 +18,8 @@ val Button = FC<IButtonProps>("Button") { props ->
 		+props
 		className = ClassName(
 			"""inline-block px-6 py-2 rounded bg-blue-600 
-			| text-white font-medium text-xs leading-tight uppercase
-			| hover:bg-blue-700
-			| focus:ring-1 focus:ring-blue-800 focus:bg-blue-700
+			| text-white font-medium text-xs leading-tight uppercase 
+			| focus:ring-1 focus:ring-blue-800 focus:bg-blue-700 hover:bg-blue-700 
 			| transition duration-150 ease-in-out
 			|${props.className}""".trimMargin()
 		)

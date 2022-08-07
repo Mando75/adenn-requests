@@ -1,30 +1,27 @@
 package features.search.providers
 
 
-import entities.MediaType
+import entities.SearchResultEntity
 import react.*
 
 sealed class RequestModalAction {
 	object CloseModal : RequestModalAction()
 
-	data class OpenModalWithMedia(val tmdbId: Int, val mediaType: MediaType, val title: String) : RequestModalAction()
+	data class OpenModalWithMedia(val searchResult: SearchResultEntity) : RequestModalAction()
 }
 
 data class RequestModalState(
-	val open: Boolean,
-	val tmdbId: Int? = null,
-	val mediaType: MediaType? = null,
-	val title: String? = null
+	val open: Boolean, val searchResult: SearchResultEntity? = null
 )
 
 private val requestModalReducer: Reducer<RequestModalState, RequestModalAction> = { state, action ->
 	when (action) {
-		is RequestModalAction.CloseModal -> state.takeIf { !state.open } ?: state.copy(open = false)
+		is RequestModalAction.CloseModal -> state.takeIf { !state.open } ?: RequestModalState(
+			open = false, searchResult = null
+		)
+
 		is RequestModalAction.OpenModalWithMedia -> RequestModalState(
-			open = true,
-			tmdbId = action.tmdbId,
-			mediaType = action.mediaType,
-			title = action.title
+			open = true, searchResult = action.searchResult
 		)
 	}
 }
