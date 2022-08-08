@@ -38,8 +38,6 @@ val RequestModal = FC<IRequestModalProps>("RequestModal") { _ ->
 
 	val modalTitle = if (mediaProvidersQuery.isLoading) {
 		"Checking Providers..."
-	} else if (isEmpty) {
-		"Submitting Request"
 	} else {
 		"Available Providers"
 	}
@@ -69,7 +67,7 @@ val RequestModal = FC<IRequestModalProps>("RequestModal") { _ ->
 				}
 			}
 			if (isEmpty) {
-				p { +"No Providers" }
+				p { +"No Providers were found" }
 			} else {
 				p {
 					className = ClassName("mb-4")
