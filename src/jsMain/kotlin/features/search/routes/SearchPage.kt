@@ -9,13 +9,12 @@ import features.search.hooks.useSearchTerm
 import features.search.providers.RequestModalProvider
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.section
 
 
 val SearchPage = FC<Props>("SearchPage") {
 	// STATE
-	val (searchTerm, debouncedSearchTerm, changeEventHandler) = useSearchTerm()
+	val (searchTerm, debouncedSearchTerm, changeEventHandler, clearEventHandler) = useSearchTerm()
 	val searchResultsQuery = useMultiSearchQuery(debouncedSearchTerm)
 
 
@@ -26,14 +25,13 @@ val SearchPage = FC<Props>("SearchPage") {
 			SearchInput {
 				value = searchTerm
 				onChange = changeEventHandler
+				onClear = { clearEventHandler() }
 			}
 
-			if (searchResultsQuery.isIdle) div { +"Start typing to search" }
-			else {
-				SearchResultList {
-					isLoading = searchResultsQuery.isLoading
-					items = searchResultsQuery.data ?: emptyList()
-				}
+			SearchResultList {
+				isIdle = searchResultsQuery.isIdle
+				isLoading = searchResultsQuery.isLoading
+				items = searchResultsQuery.data ?: emptyList()
 			}
 		}
 		RequestModal()

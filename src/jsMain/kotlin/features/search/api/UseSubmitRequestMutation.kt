@@ -29,6 +29,7 @@ fun useSubmitRequestMutation(): UseMutationResult<RequestListItem, Error, Search
 	val options: UseMutationOptions<RequestListItem, Error, SearchResultEntity, *> = jso {
 		onSuccess = { _, _, _ ->
 			queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix))
+			queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(MultiSearchQueryKeyPrefix))
 		}
 	}
 

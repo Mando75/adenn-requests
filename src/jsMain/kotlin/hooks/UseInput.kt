@@ -9,21 +9,29 @@ import react.useState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-fun useInput(defaultValue: String = ""): Pair<String, ChangeEventHandler<HTMLInputElement>> {
+data class UseInput(
+	val input: String,
+	val changeHandler: ChangeEventHandler<HTMLInputElement>,
+	val clearHandler: () -> Unit
+)
+
+fun useInput(defaultValue: String = ""): UseInput {
 	val (input, setInput) = useState(defaultValue)
 	val changeHandler: ChangeEventHandler<HTMLInputElement> = { e -> setInput(e.target.value) }
+	val clearHandler = { setInput("") }
 
-	return Pair(input, changeHandler)
+	return UseInput(input, changeHandler, clearHandler)
 }
 
 data class UseDebounceInput(
 	val input: String,
 	val debouncedInput: String,
 	val changeEventHandler: ChangeEventHandler<HTMLInputElement>,
+	val clearHandler: () -> Unit
 )
 
 fun useDebouncedInput(defaultValue: String = "", delay: Duration = 300.milliseconds): UseDebounceInput {
-	val (input, changeHandler) = useInput(defaultValue)
+	val (input, changeHandler, clearHandler) = useInput(defaultValue)
 	val (debouncedTerm, setDebouncedTerm) = useState(input)
 
 	useEffect(input, delay) {
@@ -36,5 +44,5 @@ fun useDebouncedInput(defaultValue: String = "", delay: Duration = 300.milliseco
 		}
 	}
 
-	return UseDebounceInput(input, debouncedTerm, changeHandler)
+	return UseDebounceInput(input, debouncedTerm, changeHandler, clearHandler)
 }
