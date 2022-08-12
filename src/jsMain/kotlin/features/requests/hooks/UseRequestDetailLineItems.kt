@@ -2,7 +2,7 @@ package features.requests.hooks
 
 import components.tag.*
 import csstype.ClassName
-import entities.RequestListItem
+import entities.RequestEntity
 import entities.RequestStatus
 import react.ReactNode
 import react.create
@@ -15,7 +15,7 @@ data class RequestDetailLineItem(
 	val label: String, val child: ReactNode
 )
 
-fun useRequestDetailLineItems(request: RequestListItem): List<RequestDetailLineItem> {
+fun useRequestDetailLineItems(request: RequestEntity): List<RequestDetailLineItem> {
 	val status = createStatus(request)
 	val requested = requested(request)
 	val updated = updated(request)
@@ -23,7 +23,7 @@ fun useRequestDetailLineItems(request: RequestListItem): List<RequestDetailLineI
 	return listOf(status, requested, updated)
 }
 
-private fun createStatus(request: RequestListItem): RequestDetailLineItem {
+private fun createStatus(request: RequestEntity): RequestDetailLineItem {
 	val tagStyle = when (request.status) {
 		RequestStatus.REQUESTED -> BlueTag()
 		RequestStatus.FULFILLED -> GreenTag()
@@ -39,7 +39,7 @@ private fun createStatus(request: RequestListItem): RequestDetailLineItem {
 	})
 }
 
-private fun requested(request: RequestListItem): RequestDetailLineItem {
+private fun requested(request: RequestEntity): RequestDetailLineItem {
 	val date = dateFormatter(request.requestedAt)
 
 	return RequestDetailLineItem(label = "Requested", child = div.create {
@@ -64,6 +64,6 @@ private fun requested(request: RequestListItem): RequestDetailLineItem {
 	})
 }
 
-private fun updated(request: RequestListItem) = RequestDetailLineItem(
+private fun updated(request: RequestEntity) = RequestDetailLineItem(
 	label = "Last Updated", child = ReactNode("on ${dateFormatter(request.modifiedAt)}")
 )

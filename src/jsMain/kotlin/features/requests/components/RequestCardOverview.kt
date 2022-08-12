@@ -2,7 +2,7 @@ package features.requests.components
 
 
 import csstype.ClassName
-import entities.RequestListItem
+import entities.RequestEntity
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
@@ -11,7 +11,7 @@ import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.span
 
 external interface RequestCardOverviewProps : Props {
-	var request: RequestListItem
+	var request: RequestEntity
 	var className: ClassName?
 }
 

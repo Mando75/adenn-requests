@@ -1,11 +1,12 @@
 package entities
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 import lib.BackdropPath
 import lib.PosterPath
 
 @Suppress("unused")
-@kotlinx.serialization.Serializable
+@Serializable
 enum class RequestStatus {
 	REQUESTED,
 	FULFILLED,
@@ -15,13 +16,13 @@ enum class RequestStatus {
 	DOWNLOADING
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class CreatedRequest(val id: Int)
 
-typealias RequestList = PaginatedResponse<RequestListItem>
+typealias RequestList = PaginatedResponse<RequestEntity>
 
-@kotlinx.serialization.Serializable
-sealed class RequestListItem {
+@Serializable
+sealed class RequestEntity {
 	abstract val id: Int
 	abstract val tmdbId: Int
 	abstract val title: String
@@ -31,7 +32,7 @@ sealed class RequestListItem {
 	abstract val modifiedAt: Instant
 	abstract val requester: Requester
 
-	@kotlinx.serialization.Serializable
+	@Serializable
 	data class MovieRequest(
 		override val id: Int = 0,
 		override val tmdbId: Int,
@@ -41,9 +42,9 @@ sealed class RequestListItem {
 		override val requestedAt: Instant,
 		override val modifiedAt: Instant,
 		override val requester: Requester
-	) : RequestListItem()
+	) : RequestEntity()
 
-	@kotlinx.serialization.Serializable
+	@Serializable
 	data class TVShowRequest(
 		override val id: Int = 0,
 		override val tmdbId: Int,
@@ -53,10 +54,10 @@ sealed class RequestListItem {
 		override val requestedAt: Instant,
 		override val modifiedAt: Instant,
 		override val requester: Requester
-	) : RequestListItem()
+	) : RequestEntity()
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class RequestMedia(
 	val backdropPath: BackdropPath? = null,
 	val id: Int,
@@ -66,21 +67,21 @@ data class RequestMedia(
 	val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Requester(
 	val id: Int,
 	val username: String,
 	val profilePicUrl: String?
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 enum class RequestFilterMediaType {
 	MOVIE,
 	TV,
 	ALL
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class RequestFilters(
 	val status: List<RequestStatus>? = null,
 	val searchTerm: String? = null,

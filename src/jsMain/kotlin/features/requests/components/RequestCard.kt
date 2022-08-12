@@ -4,7 +4,7 @@ package features.requests.components
 import csstype.BackgroundImage
 import csstype.ClassName
 import emotion.react.css
-import entities.RequestListItem
+import entities.RequestEntity
 import features.requests.hooks.useRequestDetailLineItems
 import react.FC
 import react.Props
@@ -14,7 +14,7 @@ import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.li
 
 external interface RequestCardProps : Props {
-	var request: RequestListItem
+	var request: RequestEntity
 }
 
 val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
@@ -44,7 +44,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 			}
 
 			div {
-				className = ClassName("relative grid grid-cols-6 gap-4 p-4 w-full bg-gray-700/50")
+				className = ClassName("relative grid grid-cols-7 gap-4 p-4 w-full bg-gray-700/50")
 				img {
 					className =
 						ClassName(
@@ -62,7 +62,7 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 					className = ClassName("md:col-span-2 row-span-2")
 				}
 				dl {
-					className = ClassName("col-span-5 md:col-span-3 text-white gap-4 flex flex-col justify-center")
+					className = ClassName("col-span-2 md:col-span-2 text-white gap-4 flex flex-col justify-center")
 					requestDetailLineItems.map { detail ->
 						RequestDetailLineItem {
 							label = detail.label
@@ -70,6 +70,10 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 							+detail.child
 						}
 					}
+				}
+				div {
+					className = ClassName("col-span-2 md:col-span-2")
+					RequestActions()
 				}
 			}
 		}

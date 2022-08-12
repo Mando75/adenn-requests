@@ -33,3 +33,9 @@ val SessionProvider = FC<PropsWithChildren>("SessionManager") { props ->
 fun useSession(): StateInstance<SessionState> {
 	return useContext(SessionContext)
 }
+
+fun useSessionUser(): UserEntity? {
+	val (session) = useSession()
+
+	return session.user
+}

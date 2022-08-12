@@ -1,7 +1,7 @@
 package features.search.api
 
 import entities.CreatedRequest
-import entities.RequestListItem
+import entities.RequestEntity
 import entities.SearchResultEntity
 import features.requests.api.RequestsQueryKeyPrefix
 import http.RequestResource
@@ -24,9 +24,9 @@ private val submitRequestMutation: MutationFunction<CreatedRequest, SearchResult
 	}
 }
 
-fun useSubmitRequestMutation(): UseMutationResult<RequestListItem, Error, SearchResultEntity, *> {
+fun useSubmitRequestMutation(): UseMutationResult<RequestEntity, Error, SearchResultEntity, *> {
 	val queryClient = useQueryClient()
-	val options: UseMutationOptions<RequestListItem, Error, SearchResultEntity, *> = jso {
+	val options: UseMutationOptions<RequestEntity, Error, SearchResultEntity, *> = jso {
 		onSuccess = { _, _, _ ->
 			queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix))
 			queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(MultiSearchQueryKeyPrefix))
