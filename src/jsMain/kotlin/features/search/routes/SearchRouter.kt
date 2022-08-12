@@ -7,7 +7,7 @@ import react.router.Route
 import react.router.Routes
 
 
-val SearchRoutes = FC<Props>("SearchRoutes") {
+val SearchRouter = FC<Props>("SearchRoutes") {
 	Routes {
 		Route {
 			index = true

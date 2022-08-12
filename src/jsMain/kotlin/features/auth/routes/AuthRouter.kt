@@ -6,7 +6,7 @@ import react.create
 import react.router.Route
 import react.router.Routes
 
-val AuthRoutes = FC<Props>("AuthRoutes") {
+val AuthRouter = FC<Props>("AuthRoutes") {
 	Routes {
 		Route {
 			path = "login"

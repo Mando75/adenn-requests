@@ -7,7 +7,7 @@ import react.create
 import react.router.Route
 import react.router.Routes
 
-val RequestsRoutes = FC<Props>("RequestsRoutes") {
+val RequestsRouter = FC<Props>("RequestsRoutes") {
 	// STATE
 
 	// HOOKS

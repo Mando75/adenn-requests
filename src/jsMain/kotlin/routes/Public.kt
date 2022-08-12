@@ -1,7 +1,7 @@
 package routes
 
 import components.layouts.DefaultLayout
-import features.auth.routes.AuthRoutes
+import features.auth.routes.AuthRouter
 import kotlinx.js.jso
 import react.FC
 import react.Props
@@ -21,6 +21,6 @@ val PublicRoutes = listOf<RouteObject>(jso {
 	element = PublicApp.create()
 	children = arrayOf(jso {
 		path = "/auth/*"
-		element = AuthRoutes.create()
+		element = AuthRouter.create()
 	})
 })
