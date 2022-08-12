@@ -1,5 +1,6 @@
 package features.search.components
 
+import components.attribution.Attribution
 import components.button.Button
 import csstype.ClassName
 import org.w3c.dom.HTMLInputElement
@@ -27,7 +28,7 @@ val SearchInput = FC<SearchInputProps>("SearchInput") { props ->
 	div {
 		className = ClassName("flex justify-center")
 		div {
-			className = ClassName("mb-3 w-4/5")
+			className = ClassName("mb-3 w-4/5 flex flex-col")
 			div {
 				className = ClassName("input-group relative flex items-stretch w-full mb-4")
 				input {
@@ -57,9 +58,9 @@ val SearchInput = FC<SearchInputProps>("SearchInput") { props ->
 					className =
 						ClassName(
 							"""py-1 px-1 w-10 flex justify-center rounded-none bg-white 
-							| text-gray-400 border border-y-gray-300 border-x-white 
+							| border border-y-gray-300 border-x-white text-gray-700  
 							| hover:bg-white focus:bg-white focus:border-blue-600 focus:ring-0 
-							| peer-focus:border-y-blue-600 """.trimMargin()
+							| peer-focus:border-y-blue-600""".trimMargin()
 						)
 
 					XIcon()
@@ -74,6 +75,7 @@ val SearchInput = FC<SearchInputProps>("SearchInput") { props ->
 					+"Search"
 				}
 			}
+			Attribution()
 		}
 	}
 }

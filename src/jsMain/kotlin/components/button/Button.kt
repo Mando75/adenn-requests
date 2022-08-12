@@ -21,7 +21,7 @@ val Button = FC<IButtonProps>("Button") { props ->
 			| text-white font-medium text-xs leading-tight uppercase 
 			| focus:ring-1 focus:ring-blue-800 focus:bg-blue-700 hover:bg-blue-700 
 			| transition duration-150 ease-in-out
-			|${props.className}""".trimMargin()
+			| ${props.className}""".trimMargin()
 		)
 	}
 }
