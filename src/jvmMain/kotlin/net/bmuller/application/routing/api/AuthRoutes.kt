@@ -3,6 +3,7 @@ package net.bmuller.application.routing.api
 import arrow.core.Either
 import arrow.core.continuations.either
 import http.AuthResource
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.*
@@ -14,12 +15,12 @@ import net.bmuller.application.lib.catchUnknown
 import net.bmuller.application.lib.principalCatching
 import net.bmuller.application.lib.respond
 import net.bmuller.application.lib.respondRedirect
-import net.bmuller.application.service.IPlexOAuthService
-import net.bmuller.application.service.IUserAuthService
+import net.bmuller.application.service.PlexOAuthService
+import net.bmuller.application.service.UserAuthService
 import net.bmuller.application.service.PlexClientDetails
 
 
-fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthService) {
+fun Route.auth(plexOAuthService: PlexOAuthService, userAuthService: UserAuthService) {
 
 	get<AuthResource.Plex.LoginUrl> { context ->
 		either {
@@ -50,7 +51,7 @@ fun Route.auth(plexOAuthService: IPlexOAuthService, userAuthService: IUserAuthSe
 			either {
 				val user = principalCatching<UserSession>().bind()
 				userAuthService.createJwtToken(user).bind()
-			}.respond()
+			}.respond(HttpStatusCode.Created)
 		}
 	}
 

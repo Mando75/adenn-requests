@@ -1,5 +1,5 @@
 ###
-GET {{host}}/auth/plex/login-url
+GET {{host}}/auth/plex/login-url?forwardHost=http://localhost:8080
 Content-Type: application/json
 
 ###

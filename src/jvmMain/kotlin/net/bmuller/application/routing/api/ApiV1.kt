@@ -11,6 +11,7 @@ fun Routing.api(module: Dependencies) {
 			users(module.userService)
 			search(module.searchService)
 			requests(module.requestService)
+			media(module.mediaService)
 		}
 	}
 }

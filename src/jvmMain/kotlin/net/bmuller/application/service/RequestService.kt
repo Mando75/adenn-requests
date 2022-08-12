@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
-import db.tables.RequestTable
 import entities.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -19,7 +18,7 @@ import net.bmuller.application.repository.UserRepository
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 
-interface IRequestService {
+interface RequestService {
 	suspend fun getRequests(
 		filters: RequestFilters, page: Long
 	): Either<DomainError, PaginatedResponse<RequestListItem>>
@@ -29,7 +28,7 @@ interface IRequestService {
 
 fun requestService(
 	requestsRepository: RequestsRepository, tmdbRepository: TMDBRepository, userRepository: UserRepository
-) = object : IRequestService {
+) = object : RequestService {
 	override suspend fun getRequests(
 		filters: RequestFilters, page: Long
 	): Either<DomainError, RequestList> = coroutineScope {
@@ -39,8 +38,8 @@ fun requestService(
 			val requestsWithMedia = requests.map { request ->
 				async {
 					when (request.mediaType) {
-						RequestListData.MediaType.MOVIE -> constructMovieRequest(request).bind()
-						RequestListData.MediaType.TV -> constructTVRequest(request).bind()
+						MediaType.MOVIE -> constructMovieRequest(request).bind()
+						MediaType.TV -> constructTVRequest(request).bind()
 					}
 				}
 			}.awaitAll()
@@ -66,7 +65,7 @@ fun requestService(
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.releaseDate,
 					title = media.title,
-					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) }
+					backdropPath = media.backdropPath?.let { ImageTools.tmdbBackdropPath(media.backdropPath) },
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -92,7 +91,7 @@ fun requestService(
 					overview = media.overview,
 					posterPath = ImageTools.tmdbPosterPath(media.posterPath),
 					releaseDate = media.firstAirDate,
-					title = media.title
+					title = media.title,
 				),
 				requester = Requester(
 					id = request.requester.id,
@@ -102,17 +101,13 @@ fun requestService(
 			)
 		}
 
-
 	override suspend fun submitRequest(
 		result: SearchResultEntity, session: UserSession
 	): Either<DomainError, CreatedRequest> = either {
 		val user = getUser(session.id).bind()
 		checkRequestQuota(user, result is SearchResultEntity.MovieResult).bind()
 
-		val mediaType = when (result) {
-			is SearchResultEntity.MovieResult -> RequestTable.MediaType.MOVIE
-			is SearchResultEntity.TVResult -> RequestTable.MediaType.TV
-		}
+		val mediaType = result.toMediaType()
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 
 		CreatedRequest(id)
@@ -123,7 +118,7 @@ fun requestService(
 	): Either<DomainError, Unit> = either {
 		val limit = if (isMovie) user.movieQuotaLimit else user.tvQuotaLimit
 		val days = if (isMovie) user.movieQuotaDays else user.tvQuotaDays
-		val mediaType = if (isMovie) RequestTable.MediaType.MOVIE else RequestTable.MediaType.TV
+		val mediaType = if (isMovie) MediaType.MOVIE else MediaType.TV
 
 		val timePeriod: Instant = Instant.now().minusSeconds(days.days.inWholeSeconds)
 
@@ -133,7 +128,7 @@ fun requestService(
 	}
 
 	private suspend fun getUser(userId: Int): Either<Forbidden, UserEntity> =
-		userRepository.getUserById(userId).mapLeft { _ -> Forbidden("User $userId not found") }
+		userRepository.getUserById(userId).mapLeft { Forbidden("User $userId not found") }
 
 	@Suppress("unused")
 	private fun submitRequestToJobQueue(request: RequestListItem) {

@@ -2,30 +2,25 @@ package http
 
 import io.ktor.resources.*
 
-@Suppress("unused")
 @kotlinx.serialization.Serializable
 @Resource("/auth")
 class AuthResource {
 	@kotlinx.serialization.Serializable
 	@Resource("plex")
-	class Plex(val parent: AuthResource = AuthResource()) {
+	class Plex(@Suppress("unused") val parent: AuthResource = AuthResource()) {
 
 		@kotlinx.serialization.Serializable
 		@Resource("login-url")
-		class LoginUrl(val parent: Plex = Plex(), val forwardHost: String)
-
-		@kotlinx.serialization.Serializable
-		@Resource("pin")
-		class Pin(val parent: Plex = Plex(), val pinId: String)
+		class LoginUrl(@Suppress("unused") val parent: Plex = Plex(), val forwardHost: String)
 
 		@kotlinx.serialization.Serializable
 		@Resource("callback")
-		class Callback(val parent: Plex = Plex(), val pinId: String)
+		class Callback(@Suppress("unused") val parent: Plex = Plex(), val pinId: String)
 	}
 
 	@kotlinx.serialization.Serializable
 	@Resource("logout")
-	class Logout(val parent: AuthResource = AuthResource())
+	class Logout(@Suppress("unused") val parent: AuthResource = AuthResource())
 
 	@kotlinx.serialization.Serializable
 	@Resource("token")

@@ -12,7 +12,7 @@ import net.bmuller.application.lib.DomainError
 import net.bmuller.application.lib.MissingOrInvalidParam
 import net.bmuller.application.repository.PlexAuthPinRepository
 
-interface IPlexOAuthService {
+interface PlexOAuthService {
 	suspend fun requestHostedLoginURL(clientInfo: PlexClientDetails): Either<DomainError, LoginUrlResponse>
 
 	suspend fun checkForAuthToken(
@@ -27,7 +27,7 @@ data class PlexClientDetails(
 /**
  * For reference: https://forums.plex.tv/t/authenticating-with-plex/609370
  */
-fun plexOAuthService(plexAuthPinRepository: PlexAuthPinRepository, env: Env.Plex) = object : IPlexOAuthService {
+fun plexOAuthService(plexAuthPinRepository: PlexAuthPinRepository, env: Env.Plex) = object : PlexOAuthService {
 	private val plexApiUrl = url {
 		protocol = URLProtocol.HTTPS
 		host = env.authHost

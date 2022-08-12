@@ -24,6 +24,7 @@ data class TVShowDetail(
 	@SerialName("spoken_languages") val spokenLanguages: List<SpokenLanguage> = emptyList(),
 	@SerialName("vote_average") override val voteAverage: Float,
 	@SerialName("vote_count") override val voteCount: Int,
+	@SerialName("watch/providers") val watchProviders: WatchProviderWrapper,
 	override val id: Int,
 	override val overview: String?,
 	override val popularity: Float,

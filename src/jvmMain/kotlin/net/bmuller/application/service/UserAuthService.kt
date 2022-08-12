@@ -15,7 +15,7 @@ import net.bmuller.application.repository.PlexTVRepository
 import net.bmuller.application.repository.UserRepository
 import java.util.*
 
-interface IUserAuthService {
+interface UserAuthService {
 	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit>
 
 	suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity>
@@ -25,7 +25,7 @@ interface IUserAuthService {
 
 fun userAuthService(
 	env: Env, userRepository: UserRepository, plexTVRepository: PlexTVRepository
-) = object : IUserAuthService {
+) = object : UserAuthService {
 	override suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit> = either {
 		userRepository
 			.getUserAuthVersion(userId).bind()

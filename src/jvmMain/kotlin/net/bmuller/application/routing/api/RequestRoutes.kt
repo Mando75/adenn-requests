@@ -11,9 +11,9 @@ import io.ktor.server.routing.*
 import net.bmuller.application.lib.receiveCatching
 import net.bmuller.application.lib.respond
 import net.bmuller.application.plugins.parseUserAuth
-import net.bmuller.application.service.IRequestService
+import net.bmuller.application.service.RequestService
 
-fun Route.requests(requestService: IRequestService) {
+fun Route.requests(requestService: RequestService) {
 
 	post<RequestResource> {
 		either {

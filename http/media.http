@@ -1,0 +1,9 @@
+### Get Media Detail
+GET {{host}}/media/MOVIE/332567
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### GET Media Providers
+GET {{host}}/media/MOVIE/332567/providers
+Content-Type: application/json
+Authorization: Bearer {{token}}

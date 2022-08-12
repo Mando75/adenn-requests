@@ -12,11 +12,12 @@ import net.bmuller.application.repository.*
 import net.bmuller.application.service.*
 
 class Dependencies(
-	val plexOAuthService: IPlexOAuthService,
-	val userAuthService: IUserAuthService,
-	val userService: IUserService,
-	val searchService: ISearchService,
-	val requestService: IRequestService,
+	val plexOAuthService: PlexOAuthService,
+	val userAuthService: UserAuthService,
+	val userService: UserService,
+	val searchService: SearchService,
+	val requestService: RequestService,
+	val mediaService: MediaService,
 	val env: Env,
 )
 
@@ -38,10 +39,12 @@ fun dependencies(env: Env, cleanDB: Boolean = false): Resource<Dependencies> = r
 	val userRepo = userRepository(exposed)
 
 	// Services
-	val plexOAuthService = plexOAuthService(plexAuthPinRepo, env.plex)
-	val requestsService = requestService(requestsRepo, tmdbRepo, userRepo)
-	val searchService = searchService(tmdbRepo, requestsRepo)
-	val userAuthService = userAuthService(env, userRepo, plexTVRepo)
-	val userService = userService(userRepo)
-	Dependencies(plexOAuthService, userAuthService, userService, searchService, requestsService, env)
+	val plexOAuthService = plexOAuthService(plexAuthPinRepository = plexAuthPinRepo, env = env.plex)
+	val requestsService =
+		requestService(requestsRepository = requestsRepo, tmdbRepository = tmdbRepo, userRepository = userRepo)
+	val searchService = searchService(tmdbRepository = tmdbRepo, requestsRepository = requestsRepo)
+	val userAuthService = userAuthService(userRepository = userRepo, plexTVRepository = plexTVRepo, env = env)
+	val userService = userService(userRepository = userRepo)
+	val mediaService = mediaService(tmdbRepository = tmdbRepo, env = env.tmdb)
+	Dependencies(plexOAuthService, userAuthService, userService, searchService, requestsService,  mediaService, env)
 }

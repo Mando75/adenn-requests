@@ -3,24 +3,21 @@ package features.search.components
 import components.posterCard.PosterCard
 import components.posterCard.PosterCardDetail
 import entities.SearchResultEntity
-import features.search.api.useSubmitRequestMutation
-import lib.reactQuery.exec
+import features.search.providers.RequestModalAction
+import features.search.providers.RequestModalContext
 import react.FC
 import react.Props
+import react.useContext
 
 external interface SearchResultCardProps : Props {
 	var searchResult: SearchResultEntity
 }
 
 val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
-	// HOOKS
-	val submitRequestMutation = useSubmitRequestMutation()
+	/// HOOKS
+	val (_, dispatchModal) = useContext(RequestModalContext)
 
-	// STATE
-
-	// EFFECTS
-
-	// RENDER
+	/// RENDER
 	PosterCard {
 		posterUrl = props.searchResult.posterPath.value
 		posterAlt = "Poster for ${props.searchResult.title}"
@@ -38,8 +35,12 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 						RequestInfoLink {
 							status = request.status
 						}
-					} ?: RequestButton {
-						onClick = { submitRequestMutation.exec(props.searchResult) }
+					} ?: SearchResultDetailButton {
+						onClick = {
+							dispatchModal(
+								RequestModalAction.OpenModalWithMedia(searchResult = props.searchResult)
+							)
+						}
 					}
 				}
 			}

@@ -13,15 +13,22 @@ import react.dom.svg.ReactSVG.svg
 external interface BarsScaleMiddleProps : Props {
 	var width: Double?
 	var height: Double?
+	var viewBoxWidth: Double?
+	var viewBoxHeight: Double?
 	var className: ClassName?
 }
 
 
 val BarsScaleMiddle = FC<BarsScaleMiddleProps>("BarsScaleMiddle") { props ->
+	val safeWidth = props.width ?: 24.0
+	val safeHeight = props.height ?: 24.0
+	val safeViewBoxWidth = props.viewBoxWidth ?: 24.0
+	val safeViewBoxHeight = props.viewBoxHeight ?: 24.0
+
 	svg {
-		width = props.width ?: 24.0
-		height = props.height ?: 24.0
-		viewBox = "0 0 ${props.width} ${props.height}"
+		width = safeWidth
+		height = safeHeight
+		viewBox = "0 0 $safeViewBoxWidth $safeViewBoxHeight"
 		xmlns = "http://www.w3.org/2000/svg"
 		className = props.className
 
