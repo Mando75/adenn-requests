@@ -15,9 +15,9 @@ import net.bmuller.application.lib.catchUnknown
 import net.bmuller.application.lib.principalCatching
 import net.bmuller.application.lib.respond
 import net.bmuller.application.lib.respondRedirect
+import net.bmuller.application.service.PlexClientDetails
 import net.bmuller.application.service.PlexOAuthService
 import net.bmuller.application.service.UserAuthService
-import net.bmuller.application.service.PlexClientDetails
 
 
 fun Route.auth(plexOAuthService: PlexOAuthService, userAuthService: UserAuthService) {
@@ -36,7 +36,7 @@ fun Route.auth(plexOAuthService: PlexOAuthService, userAuthService: UserAuthServ
 			val authToken = plexOAuthService.checkForAuthToken(pinId).bind()
 			val user = userAuthService.signInFlow(authToken).bind()
 
-			call.sessions.set(UserSession(user.id, user.plexUsername, user.authVersion))
+			call.sessions.set(UserSession(user.id, user.plexUsername, user.authVersion, user.userType))
 		}.respondRedirect("/")
 	}
 

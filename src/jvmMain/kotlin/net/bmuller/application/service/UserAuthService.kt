@@ -49,6 +49,7 @@ fun userAuthService(
 			.withClaim("userId", user.id)
 			.withClaim("plexUsername", user.plexUsername)
 			.withClaim("version", user.version)
+			.withClaim("role", user.role.toClaim())
 			.withExpiresAt(Date(System.currentTimeMillis() + env.auth.jwtTokenLifetime))
 			.sign(Algorithm.HMAC256(env.auth.jwtTokenSecret))
 		AuthTokenResponse(token)
