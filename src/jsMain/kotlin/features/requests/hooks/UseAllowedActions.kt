@@ -3,8 +3,11 @@ package features.requests.hooks
 import entities.RequestStatus
 import entities.UserType
 import providers.useSessionUser
+import utils.toColor
 
-data class RequestAction(val label: String, val value: RequestStatus)
+class RequestAction(val label: String, val value: RequestStatus) {
+	fun color() = value.toColor()
+}
 
 private val REQUESTED = RequestAction("Set as Requested", RequestStatus.REQUESTED)
 private val FULFILLED = RequestAction("Set as Fulfilled", RequestStatus.FULFILLED)

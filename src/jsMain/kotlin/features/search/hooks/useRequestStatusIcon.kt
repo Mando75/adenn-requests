@@ -5,6 +5,7 @@ import entities.RequestStatus
 import org.w3c.dom.svg.SVGSVGElement
 import react.FC
 import react.dom.svg.SVGAttributes
+import utils.toColor
 import wrappers.CheckCircleIcon
 import wrappers.ClockIcon
 import wrappers.CloudDownloadIcon
@@ -22,14 +23,8 @@ fun useRequestStatusIcon(status: RequestStatus?): RequestStatusIcon? = status?.l
 		RequestStatus.DOWNLOADING -> CloudDownloadIcon
 	}
 	val baseStyle = "h-6 w-6 text-white p-1 rounded-full"
-	val className = when (status) {
-		RequestStatus.REQUESTED -> ClassName("bg-blue-500 $baseStyle")
-		RequestStatus.FULFILLED -> ClassName("bg-green-500 $baseStyle")
-		RequestStatus.REJECTED -> ClassName("bg-red-500 $baseStyle")
-		RequestStatus.WAITING -> ClassName("bg-purple-500 $baseStyle")
-		RequestStatus.IMPORTED -> ClassName("bg-blue-500 $baseStyle")
-		RequestStatus.DOWNLOADING -> ClassName("bg-cyan-500 $baseStyle")
-	}
+	val requestStatusColor = status.toColor()
+	val className = ClassName("${requestStatusColor.bgColor} $baseStyle")
 
 	return RequestStatusIcon(icon, className)
 }

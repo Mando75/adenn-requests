@@ -1,15 +1,15 @@
 package features.requests.hooks
 
-import components.tag.*
+import components.tag.Tag
 import csstype.ClassName
 import entities.RequestEntity
-import entities.RequestStatus
 import react.ReactNode
 import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.span
 import utils.dateFormatter
+import utils.toColor
 
 data class RequestDetailLineItem(
 	val label: String, val child: ReactNode
@@ -24,17 +24,8 @@ fun useRequestDetailLineItems(request: RequestEntity): List<RequestDetailLineIte
 }
 
 private fun createStatus(request: RequestEntity): RequestDetailLineItem {
-	val tagStyle = when (request.status) {
-		RequestStatus.REQUESTED -> BlueTag()
-		RequestStatus.FULFILLED -> GreenTag()
-		RequestStatus.REJECTED -> RedTag()
-		RequestStatus.WAITING -> PurpleTag()
-		RequestStatus.IMPORTED -> BlueTag()
-		RequestStatus.DOWNLOADING -> CyanTag()
-	}
-
 	return RequestDetailLineItem(label = "Status ", child = Tag.create {
-		style = tagStyle
+		className = request.status.toColor().bgClassName()
 		+request.status.name
 	})
 }

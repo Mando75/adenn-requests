@@ -28,6 +28,7 @@ val RequestActions = FC<IRequestActionsProps>("RequestActions") { props ->
 				className = ClassName("mt-2")
 
 				Button {
+					className = ClassName("w-full ${action.color().allClassName()}")
 					onClick = { println(action.value) }
 					+action.label
 				}
