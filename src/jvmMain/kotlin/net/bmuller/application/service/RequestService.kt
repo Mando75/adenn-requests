@@ -26,7 +26,7 @@ interface RequestService {
 	suspend fun submitRequest(result: SearchResultEntity, session: UserSession): Either<DomainError, CreatedRequest>
 	suspend fun updateRequestStatus(
 		requestId: Int, status: UpdateRequestStatus, session: UserSession
-	): Either<DomainError, Int>
+	): Either<DomainError, UpdateRequestStatusResponse>
 }
 
 fun requestService(
@@ -113,13 +113,35 @@ fun requestService(
 		val mediaType = result.toMediaType()
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 
-		CreatedRequest(id)
+		return@either CreatedRequest(id)
 	}
 
 	override suspend fun updateRequestStatus(
 		requestId: Int, status: UpdateRequestStatus, session: UserSession
-	): Either<DomainError, Int> =
-		requestsRepository.updateRequestStatus(requestId, status.status, status.rejectionReason)
+	): Either<DomainError, UpdateRequestStatusResponse> = either {
+		requestsRepository.updateRequestStatus(requestId, status.status, status.rejectionReason).bind()
+			.let { count ->
+				if (count == 0) EntityNotFound(
+					requestId.toString(),
+					"Request not found"
+				).left() else Unit.right()
+			}.bind()
+
+		return@either requestsRepository.findById(requestId)
+			.map { request ->
+				UpdateRequestStatusResponse(
+					id = request.id,
+					tmdbId = request.tmdbId,
+					title = request.title,
+					status = request.status,
+					mediaType = request.mediaType,
+					createdAt = request.createdAt.toKotlinInstant(),
+					modifiedAt = request.modifiedAt.toKotlinInstant(),
+					requesterId = request.requesterId,
+					rejectionReason = request.rejectionReason
+				)
+			}.bind()
+	}
 
 	private suspend fun checkRequestQuota(
 		user: UserEntity, isMovie: Boolean

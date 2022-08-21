@@ -93,3 +93,16 @@ data class UpdateRequestStatus(
 	val status: RequestStatus,
 	val rejectionReason: String?
 )
+
+@Serializable
+data class UpdateRequestStatusResponse(
+	val id: Int,
+	val tmdbId: Int,
+	val title: String,
+	val status: RequestStatus,
+	val mediaType: MediaType,
+	val createdAt: Instant,
+	val modifiedAt: Instant,
+	val requesterId: Int,
+	val rejectionReason: String?
+)
