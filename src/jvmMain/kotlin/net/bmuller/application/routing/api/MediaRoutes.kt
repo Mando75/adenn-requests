@@ -1,14 +1,14 @@
 package net.bmuller.application.routing.api
 
 import http.MediaResource
+import io.ktor.server.resources.*
 import io.ktor.server.routing.*
-import io.ktor.server.resources.get
 import net.bmuller.application.lib.respond
 import net.bmuller.application.service.MediaService
 
 fun Route.media(mediaService: MediaService) {
 	get<MediaResource> { context ->
-			mediaService.getMediaDetail(id = context.id, type = context.type).respond()
+		mediaService.getMediaDetail(id = context.id, type = context.type).respond()
 	}
 
 	get<MediaResource.Providers> { context ->
