@@ -30,6 +30,18 @@ data class RequestListData(
 	data class Requester(val id: Int, val username: String, val profilePicUrl: String?)
 }
 
+data class RequestByIdData(
+	val id: Int,
+	val tmdbId: Int,
+	val title: String,
+	val status: RequestStatus,
+	val mediaType: MediaType,
+	val createdAt: Instant,
+	val modifiedAt: Instant,
+	val requesterId: Int,
+	val rejectionReason: String?
+)
+
 interface RequestsRepository {
 	suspend fun createRequest(
 		title: String, tmdbId: Int, mediaType: MediaType, requesterId: Int
@@ -41,9 +53,17 @@ interface RequestsRepository {
 
 	suspend fun findByTmdbId(tmdbIds: List<Int>): Either<DomainError, Map<Int, RequestByTmdbIdData>>
 
+	suspend fun findById(requestId: Int): Either<DomainError, RequestByIdData>
+
 	suspend fun requests(
 		filters: RequestFilters, pagination: Pagination
 	): Either<DomainError, RequestList>
+
+	suspend fun updateRequestStatus(
+		requestId: Int,
+		status: RequestStatus,
+		rejectionReason: String?
+	): Either<DomainError, Int>
 }
 
 fun requestsRepository(exposed: Database) = object : RequestsRepository {
@@ -75,6 +95,37 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 			return@newSuspendedTransaction RequestTable.select { RequestTable.requesterId eq userId }
 				.andWhere { RequestTable.mediaType eq mediaType }
 				.andWhere { RequestTable.createdAt greaterEq timePeriod }.count()
+		}
+	}
+
+	override suspend fun findById(requestId: Int): Either<DomainError, RequestByIdData> = Either.catchUnknown {
+		newSuspendedTransaction(Dispatchers.IO, exposed) {
+			val row = RequestTable
+				.slice(
+					RequestTable.id,
+					RequestTable.tmdbId,
+					RequestTable.title,
+					RequestTable.status,
+					RequestTable.mediaType,
+					RequestTable.createdAt,
+					RequestTable.modifiedAt,
+					RequestTable.requesterId,
+					RequestTable.rejectionReason
+				)
+				.select { RequestTable.id eq requestId }
+				.first()
+
+			return@newSuspendedTransaction RequestByIdData(
+				id = row[RequestTable.id].value,
+				tmdbId = row[RequestTable.tmdbId],
+				title = row[RequestTable.title],
+				status = row[RequestTable.status],
+				mediaType = row[RequestTable.mediaType],
+				createdAt = row[RequestTable.createdAt],
+				modifiedAt = row[RequestTable.modifiedAt],
+				requesterId = row[RequestTable.requesterId],
+				rejectionReason = row[RequestTable.rejectionReason]
+			)
 		}
 	}
 
@@ -140,6 +191,19 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 			}
 
 			return@newSuspendedTransaction RequestList(requests, count)
+		}
+	}
+
+	override suspend fun updateRequestStatus(
+		requestId: Int,
+		status: RequestStatus,
+		rejectionReason: String?
+	): Either<DomainError, Int> = Either.catchUnknown {
+		newSuspendedTransaction(Dispatchers.IO, exposed) {
+			RequestTable.update({ RequestTable.id eq requestId }) { table ->
+				table[RequestTable.status] = status
+				table[RequestTable.rejectionReason] = rejectionReason
+			}
 		}
 	}
 }

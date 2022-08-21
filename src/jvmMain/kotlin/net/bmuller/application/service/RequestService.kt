@@ -24,6 +24,9 @@ interface RequestService {
 	): Either<DomainError, PaginatedResponse<RequestEntity>>
 
 	suspend fun submitRequest(result: SearchResultEntity, session: UserSession): Either<DomainError, CreatedRequest>
+	suspend fun updateRequestStatus(
+		requestId: Int, status: UpdateRequestStatus, session: UserSession
+	): Either<DomainError, Int>
 }
 
 fun requestService(
@@ -112,6 +115,11 @@ fun requestService(
 
 		CreatedRequest(id)
 	}
+
+	override suspend fun updateRequestStatus(
+		requestId: Int, status: UpdateRequestStatus, session: UserSession
+	): Either<DomainError, Int> =
+		requestsRepository.updateRequestStatus(requestId, status.status, status.rejectionReason)
 
 	private suspend fun checkRequestQuota(
 		user: UserEntity, isMovie: Boolean

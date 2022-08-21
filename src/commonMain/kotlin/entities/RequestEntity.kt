@@ -87,3 +87,9 @@ data class RequestFilters(
 	val searchTerm: String? = null,
 	val mediaType: RequestFilterMediaType = RequestFilterMediaType.ALL
 )
+
+@Serializable
+data class UpdateRequestStatus(
+	val status: RequestStatus,
+	val rejectionReason: String?
+)

@@ -2,6 +2,7 @@ package net.bmuller.application.routing.api
 
 import arrow.core.continuations.either
 import entities.SearchResultEntity
+import entities.UpdateRequestStatus
 import http.RequestResource
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,5 +29,14 @@ fun Route.requests(requestService: RequestService) {
 		val page = context.page ?: 0
 
 		requestService.getRequests(filters, page).respond()
+	}
+
+	post<RequestResource.Id.Status> { context ->
+		either {
+			val requestId = context.parent.id
+			val session = call.parseUserAuth().bind()
+			val status = receiveCatching<UpdateRequestStatus>().bind()
+			requestService.updateRequestStatus(requestId, status, session).bind()
+		}.respond()
 	}
 }
