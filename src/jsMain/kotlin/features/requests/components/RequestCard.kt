@@ -73,7 +73,9 @@ val RequestCard = FC<RequestCardProps>("RequestCard") { props ->
 				}
 				div {
 					className = ClassName("col-span-2 md:col-span-2 flex w-full items-center")
-					RequestActions()
+					RequestActions {
+						requestId = props.request.id
+					}
 				}
 			}
 		}
