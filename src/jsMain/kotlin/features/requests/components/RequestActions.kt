@@ -22,6 +22,7 @@ val RequestActions = FC<IRequestActionsProps>("RequestActions") { props ->
 
 	/// RENDER
 	ul {
+		className = ClassName("w-full")
 		allowedActions.map { action ->
 			li {
 				key = action.value.toString()
