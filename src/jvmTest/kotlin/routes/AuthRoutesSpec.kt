@@ -43,7 +43,7 @@ class AuthRoutesSpec : DescribeSpec({
 						"utf-8"
 					)
 					val forwardHostValue = URLEncoder.encode(
-						"$forwardHost/api/v1/auth/plex/callback",
+						"$forwardHost/api/auth/plex/callback",
 						"utf-8"
 					)
 

@@ -171,7 +171,7 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 
 
 			val count = query.count()
-			val rows = query.limit(pagination.limit, offset = pagination.offset)
+			val rows = query.orderBy(RequestTable.createdAt).limit(pagination.limit, offset = pagination.offset)
 
 			val requests = rows.mapNotNull { row ->
 				RequestListData(

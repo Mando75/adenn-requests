@@ -12,12 +12,14 @@ import kotlinx.coroutines.promise
 import kotlinx.js.jso
 import lib.apiClient.apiClient
 import lib.reactQuery.queryClient
+import org.w3c.dom.HTMLButtonElement
 import react.query.*
 
 data class UpdateRequestStatusMutationVariables(
 	val requestId: Int,
 	val status: RequestStatus,
-	val rejectionReason: String? = null
+	val rejectionReason: String? = null,
+	val target: HTMLButtonElement
 )
 
 private val updateRequestStatusMutation: MutationFunction<UpdateRequestStatusResponse, UpdateRequestStatusMutationVariables> =
@@ -33,8 +35,10 @@ private val updateRequestStatusMutation: MutationFunction<UpdateRequestStatusRes
 fun useUpdateRequestStatusMutation(): UseMutationResult<UpdateRequestStatusResponse, Error, UpdateRequestStatusMutationVariables, *> {
 	val options: UseMutationOptions<UpdateRequestStatusResponse, Error, UpdateRequestStatusMutationVariables, *> =
 		jso {
-			onSuccess = { _, _, _ ->
-				queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix))
+			onSuccess = { _, params, _ ->
+				queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix)).finally {
+					params.target.blur()
+				}
 			}
 		}
 

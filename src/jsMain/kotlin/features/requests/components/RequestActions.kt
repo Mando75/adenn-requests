@@ -20,7 +20,7 @@ external interface IRequestActionsProps : Props {
 val RequestActions = FC<IRequestActionsProps>("RequestActions") { props ->
 	/// HOOKS
 	val allowedActions = useAllowedActions()
-	val mutation = useUpdateRequestStatusMutation()
+	val updateStatusMutation = useUpdateRequestStatusMutation()
 	/// STATE
 
 	/// EFFECTS
@@ -34,15 +34,19 @@ val RequestActions = FC<IRequestActionsProps>("RequestActions") { props ->
 				className = ClassName("mt-2")
 
 				Button {
+					disabled = updateStatusMutation.isLoading
 					className = ClassName("w-full ${action.color().allClassName()}")
-					onClick = {
-						mutation.exec(
+					onClick = { e ->
+						updateStatusMutation.exec(
 							UpdateRequestStatusMutationVariables(
 								requestId = props.requestId,
-								status = action.value
+								status = action.value,
+								target = e.currentTarget
 							)
 						)
 					}
+					loading = updateStatusMutation.isLoading
+
 					+action.label
 				}
 			}
