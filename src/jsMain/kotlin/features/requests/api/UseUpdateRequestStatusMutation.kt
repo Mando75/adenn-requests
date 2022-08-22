@@ -3,6 +3,7 @@ package features.requests.api
 import entities.RequestStatus
 import entities.UpdateRequestStatus
 import entities.UpdateRequestStatusResponse
+import features.search.api.MultiSearchQueryKeyPrefix
 import http.RequestResource
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
@@ -36,6 +37,7 @@ fun useUpdateRequestStatusMutation(): UseMutationResult<UpdateRequestStatusRespo
 	val options: UseMutationOptions<UpdateRequestStatusResponse, Error, UpdateRequestStatusMutationVariables, *> =
 		jso {
 			onSuccess = { _, params, _ ->
+				queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(MultiSearchQueryKeyPrefix))
 				queryClient.invalidateQueries<Any>(QueryKey<QueryKey>(RequestsQueryKeyPrefix)).finally {
 					params.target.blur()
 				}

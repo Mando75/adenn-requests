@@ -1,11 +1,11 @@
 package features.search.components
 
 
+import components.button.Button
 import csstype.ClassName
 import entities.RequestStatus
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
 import utils.toColor
 
 external interface RequestStatusProps : Props {
@@ -31,14 +31,9 @@ val RequestInfoLink = FC<RequestStatusProps>("RequestStatus") { props ->
 
 	// RENDER
 	// TODO: make this a link
-	div {
-		className = ClassName(
-			"""
-			| ${color.allClassName()} flex justify-around align-center px-6 py-2 rounded
-			| font-medium leading-tight uppercase text-white text-uppercase
-			| transition duration-150 ease-in-out
-		""".trimMargin()
-		)
+	Button {
+		disabled = true
+		className = ClassName("w-full ${color.allClassName()}")
 		+text
 	}
 }
