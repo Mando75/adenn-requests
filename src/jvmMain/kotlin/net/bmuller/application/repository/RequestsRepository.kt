@@ -62,7 +62,9 @@ interface RequestsRepository {
 	suspend fun updateRequestStatus(
 		requestId: Int,
 		status: RequestStatus,
-		rejectionReason: String?
+		rejectionReason: String? = null,
+		dateFulfilled: Instant? = null,
+		dateRejected: Instant? = null,
 	): Either<DomainError, Int>
 }
 
@@ -197,12 +199,16 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 	override suspend fun updateRequestStatus(
 		requestId: Int,
 		status: RequestStatus,
-		rejectionReason: String?
+		rejectionReason: String?,
+		dateFulfilled: Instant?,
+		dateRejected: Instant?
 	): Either<DomainError, Int> = Either.catchUnknown {
 		newSuspendedTransaction(Dispatchers.IO, exposed) {
 			RequestTable.update({ RequestTable.id eq requestId }) { table ->
 				table[RequestTable.status] = status
 				table[RequestTable.rejectionReason] = rejectionReason
+				table[RequestTable.dateFulfilled] = dateFulfilled
+				table[RequestTable.dateRejected] = dateRejected
 			}
 		}
 	}

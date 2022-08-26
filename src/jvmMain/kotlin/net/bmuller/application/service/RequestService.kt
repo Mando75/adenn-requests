@@ -119,7 +119,17 @@ fun requestService(
 	override suspend fun updateRequestStatus(
 		requestId: Int, status: UpdateRequestStatus, session: UserSession
 	): Either<DomainError, UpdateRequestStatusResponse> = either {
-		requestsRepository.updateRequestStatus(requestId, status.status, status.rejectionReason).bind()
+		val dateFulfilled = if (status.status == RequestStatus.FULFILLED) Instant.now() else null
+		val dateRejected = if (status.status == RequestStatus.REJECTED) Instant.now() else null
+
+		requestsRepository.updateRequestStatus(
+			requestId,
+			status.status,
+			rejectionReason =
+			status.rejectionReason,
+			dateFulfilled = dateFulfilled,
+			dateRejected = dateRejected
+		).bind()
 			.let { count ->
 				if (count == 0) EntityNotFound(
 					requestId.toString(),
