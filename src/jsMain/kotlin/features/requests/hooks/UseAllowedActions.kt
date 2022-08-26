@@ -16,15 +16,19 @@ private val WAITING = RequestAction("Set as Waiting", RequestStatus.WAITING)
 private val IMPORTED = RequestAction("Set as Imported", RequestStatus.IMPORTED)
 private val DOWNLOADING = RequestAction("Set as Downloading", RequestStatus.DOWNLOADING)
 
-private val ADMIN_ACTIONS = listOf(REQUESTED, FULFILLED, REJECTED, WAITING, IMPORTED, DOWNLOADING)
+private val ADMIN_ACTIONS = listOf(REQUESTED, FULFILLED, WAITING, IMPORTED, DOWNLOADING, REJECTED)
 private val DEFAULT_ACTIONS = emptyList<RequestAction>()
 
-fun useAllowedActions(): List<RequestAction> {
+data class UseAllowedActions(val actions: List<RequestAction>, val showRejectionReason: Boolean)
+
+fun useAllowedActions(): UseAllowedActions {
 	val user = useSessionUser()
 
-	return when (user?.userType) {
+	val actions = when (user?.userType) {
 		UserType.ADMIN -> ADMIN_ACTIONS
 		UserType.DEFAULT -> DEFAULT_ACTIONS
 		null -> emptyList()
 	}
+
+	return UseAllowedActions(actions, user?.userType == UserType.ADMIN)
 }

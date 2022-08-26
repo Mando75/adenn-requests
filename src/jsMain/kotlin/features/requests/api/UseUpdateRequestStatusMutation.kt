@@ -26,8 +26,16 @@ data class UpdateRequestStatusMutationVariables(
 private val updateRequestStatusMutation: MutationFunction<UpdateRequestStatusResponse, UpdateRequestStatusMutationVariables> =
 	{ params ->
 		MainScope().promise {
+			val body = when (params.status) {
+				RequestStatus.REJECTED -> UpdateRequestStatus(
+					status = params.status,
+					rejectionReason = params.rejectionReason
+				)
+
+				else -> UpdateRequestStatus(status = params.status, rejectionReason = null)
+			}
 			val result = apiClient.post(RequestResource.Id.Status(parent = RequestResource.Id(id = params.requestId))) {
-				setBody(UpdateRequestStatus(status = params.status, rejectionReason = params.rejectionReason))
+				setBody(body)
 			}
 			return@promise result.body()
 		}
