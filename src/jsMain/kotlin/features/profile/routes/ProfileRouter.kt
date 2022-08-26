@@ -6,7 +6,7 @@ import react.create
 import react.router.Route
 import react.router.Routes
 
-val ProfileRoutes = FC<Props>("ProfileRoutes") {
+val ProfileRouter = FC<Props>("ProfileRoutes") {
 	Routes {
 		Route {
 			index

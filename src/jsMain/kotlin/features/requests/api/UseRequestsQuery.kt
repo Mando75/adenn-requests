@@ -1,8 +1,8 @@
 package features.requests.api
 
 import entities.PaginatedResponse
+import entities.RequestEntity
 import entities.RequestFilters
-import entities.RequestListItem
 import hooks.UsePagination
 import hooks.usePagination
 import http.RequestResource
@@ -18,7 +18,7 @@ import react.query.*
 import utils.IJsTriple
 
 private interface RequestsQueryKey : QueryKey, IJsTriple<String, Long, RequestFilters>
-private typealias RequestsQueryResponse = PaginatedResponse<RequestListItem>
+private typealias RequestsQueryResponse = PaginatedResponse<RequestEntity>
 
 private val requestsQuery: QueryFunction<RequestsQueryResponse, RequestsQueryKey> = { context ->
 	MainScope().promise {

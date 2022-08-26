@@ -1,21 +1,21 @@
 package features.requests.hooks
 
-import components.tag.*
+import components.tag.Tag
 import csstype.ClassName
-import entities.RequestListItem
-import entities.RequestStatus
+import entities.RequestEntity
 import react.ReactNode
 import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.span
 import utils.dateFormatter
+import utils.toColor
 
 data class RequestDetailLineItem(
 	val label: String, val child: ReactNode
 )
 
-fun useRequestDetailLineItems(request: RequestListItem): List<RequestDetailLineItem> {
+fun useRequestDetailLineItems(request: RequestEntity): List<RequestDetailLineItem> {
 	val status = createStatus(request)
 	val requested = requested(request)
 	val updated = updated(request)
@@ -23,23 +23,14 @@ fun useRequestDetailLineItems(request: RequestListItem): List<RequestDetailLineI
 	return listOf(status, requested, updated)
 }
 
-private fun createStatus(request: RequestListItem): RequestDetailLineItem {
-	val tagStyle = when (request.status) {
-		RequestStatus.REQUESTED -> BlueTag()
-		RequestStatus.FULFILLED -> GreenTag()
-		RequestStatus.REJECTED -> RedTag()
-		RequestStatus.WAITING -> PurpleTag()
-		RequestStatus.IMPORTED -> BlueTag()
-		RequestStatus.DOWNLOADING -> CyanTag()
-	}
-
+private fun createStatus(request: RequestEntity): RequestDetailLineItem {
 	return RequestDetailLineItem(label = "Status ", child = Tag.create {
-		style = tagStyle
+		className = request.status.toColor().bgClassName()
 		+request.status.name
 	})
 }
 
-private fun requested(request: RequestListItem): RequestDetailLineItem {
+private fun requested(request: RequestEntity): RequestDetailLineItem {
 	val date = dateFormatter(request.requestedAt)
 
 	return RequestDetailLineItem(label = "Requested", child = div.create {
@@ -64,6 +55,6 @@ private fun requested(request: RequestListItem): RequestDetailLineItem {
 	})
 }
 
-private fun updated(request: RequestListItem) = RequestDetailLineItem(
+private fun updated(request: RequestEntity) = RequestDetailLineItem(
 	label = "Last Updated", child = ReactNode("on ${dateFormatter(request.modifiedAt)}")
 )

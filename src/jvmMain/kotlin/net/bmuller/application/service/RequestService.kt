@@ -21,9 +21,12 @@ import kotlin.time.Duration.Companion.days
 interface RequestService {
 	suspend fun getRequests(
 		filters: RequestFilters, page: Long
-	): Either<DomainError, PaginatedResponse<RequestListItem>>
+	): Either<DomainError, PaginatedResponse<RequestEntity>>
 
 	suspend fun submitRequest(result: SearchResultEntity, session: UserSession): Either<DomainError, CreatedRequest>
+	suspend fun updateRequestStatus(
+		requestId: Int, status: UpdateRequestStatus, session: UserSession
+	): Either<DomainError, UpdateRequestStatusResponse>
 }
 
 fun requestService(
@@ -52,7 +55,7 @@ fun requestService(
 
 	private suspend fun constructMovieRequest(request: RequestListData) =
 		tmdbRepository.movieDetail(request.tmdbId).map { media ->
-			RequestListItem.MovieRequest(
+			RequestEntity.MovieRequest(
 				id = request.id,
 				tmdbId = request.tmdbId,
 				title = request.title,
@@ -78,7 +81,7 @@ fun requestService(
 
 	private suspend fun constructTVRequest(request: RequestListData) =
 		tmdbRepository.tvDetail(request.tmdbId).map { media ->
-			RequestListItem.TVShowRequest(
+			RequestEntity.TVShowRequest(
 				id = request.id,
 				tmdbId = request.tmdbId,
 				title = request.title,
@@ -110,7 +113,44 @@ fun requestService(
 		val mediaType = result.toMediaType()
 		val (id) = requestsRepository.createRequest(result.title, result.id, mediaType, user.id).bind()
 
-		CreatedRequest(id)
+		return@either CreatedRequest(id)
+	}
+
+	override suspend fun updateRequestStatus(
+		requestId: Int, status: UpdateRequestStatus, session: UserSession
+	): Either<DomainError, UpdateRequestStatusResponse> = either {
+		val dateFulfilled = if (status.status == RequestStatus.FULFILLED) Instant.now() else null
+		val dateRejected = if (status.status == RequestStatus.REJECTED) Instant.now() else null
+
+		requestsRepository.updateRequestStatus(
+			requestId,
+			status.status,
+			rejectionReason =
+			status.rejectionReason,
+			dateFulfilled = dateFulfilled,
+			dateRejected = dateRejected
+		).bind()
+			.let { count ->
+				if (count == 0) EntityNotFound(
+					requestId.toString(),
+					"Request not found"
+				).left() else Unit.right()
+			}.bind()
+
+		return@either requestsRepository.findById(requestId)
+			.map { request ->
+				UpdateRequestStatusResponse(
+					id = request.id,
+					tmdbId = request.tmdbId,
+					title = request.title,
+					status = request.status,
+					mediaType = request.mediaType,
+					createdAt = request.createdAt.toKotlinInstant(),
+					modifiedAt = request.modifiedAt.toKotlinInstant(),
+					requesterId = request.requesterId,
+					rejectionReason = request.rejectionReason
+				)
+			}.bind()
 	}
 
 	private suspend fun checkRequestQuota(
@@ -131,7 +171,7 @@ fun requestService(
 		userRepository.getUserById(userId).mapLeft { Forbidden("User $userId not found") }
 
 	@Suppress("unused")
-	private fun submitRequestToJobQueue(request: RequestListItem) {
+	private fun submitRequestToJobQueue(request: RequestEntity) {
 		// TODO: submit request to job queue
 		println("Submit request to job queue: ${request.id}")
 	}

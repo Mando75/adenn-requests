@@ -1,8 +1,6 @@
 package components.posterCard
 
 
-import components.tag.BlueTag
-import components.tag.PurpleTag
 import components.tag.Tag
 import csstype.ClassName
 import entities.RequestStatus
@@ -45,7 +43,7 @@ val PosterCardDetail = FC<PosterCardDetailProps>("PosterCardDetail") { props ->
 			className = ClassName("flex flex-row justify-between")
 
 			Tag {
-				style = if (props.isMovie) PurpleTag() else BlueTag()
+				className = if (props.isMovie) ClassName("bg-purple-500") else ClassName("bg-blue-500")
 
 				+mediaType
 			}

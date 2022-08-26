@@ -22,5 +22,18 @@ data class UserEntity(
 )
 
 enum class UserType {
-	ADMIN, DEFAULT,
+	ADMIN, DEFAULT;
+
+	companion object {
+		fun fromClaim(claim: String) = when (claim) {
+			"AD" -> ADMIN
+			"DEFAULT" -> DEFAULT
+			else -> throw IllegalArgumentException("Role claim '$claim' does not match allowed values")
+		}
+	}
+
+	fun toClaim() = when (this) {
+		ADMIN -> "AD"
+		DEFAULT -> "DEFAULT"
+	}
 }

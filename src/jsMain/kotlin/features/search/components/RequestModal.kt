@@ -102,14 +102,10 @@ val RequestModal = FC<IRequestModalProps>("RequestModal") { _ ->
 
 				Button {
 					onClick = submitRequest
+					disabled = submitRequestMutation.isLoading
+					loading = submitRequestMutation.isLoading
 
-					if (submitRequestMutation.isLoading) {
-						BarsScaleMiddle {
-							className = ClassName("fill-white")
-						}
-					} else {
-						+"Request"
-					}
+					+"Request"
 				}
 			}
 		}

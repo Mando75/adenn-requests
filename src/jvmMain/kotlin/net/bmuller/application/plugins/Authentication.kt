@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.rightIfNotNull
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import entities.UserType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -79,7 +80,8 @@ fun ApplicationCall.parseUserAuth(): Either<DomainError, UserSession> = Either.c
 		val id = jwt.getClaim("userId", Int::class)!!
 		val plexUsername = jwt.getClaim("plexUsername", String::class)!!
 		val version = jwt.getClaim("version", Int::class)!!
-		return@let UserSession(id, plexUsername, version)
+		val role = jwt.getClaim("role", String::class)?.let { role -> UserType.fromClaim(role) } ?: UserType.DEFAULT
+		return@let UserSession(id, plexUsername, version, role)
 	}
 
 	return principal.rightIfNotNull { Unauthorized }
