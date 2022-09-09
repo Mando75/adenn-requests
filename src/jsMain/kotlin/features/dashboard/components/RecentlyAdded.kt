@@ -19,7 +19,7 @@ val RecentlyAdded = FC<IRecentlyAddedProps>("RecentlyAdded") { props ->
 
 	/// RENDER
 	h2 {
-		className = ClassName("text-xl")
+		className = ClassName("text-4xl")
 		+"Recently Added"
 	}
 }
