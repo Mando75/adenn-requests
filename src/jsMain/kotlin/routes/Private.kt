@@ -1,6 +1,7 @@
 package routes
 
 import components.layouts.DefaultLayout
+import features.dashboard.routes.DashboardRouter
 import features.profile.routes.ProfileRouter
 import features.requests.routes.RequestsRouter
 import features.search.routes.SearchRouter
@@ -24,6 +25,10 @@ val PrivateRoutes: List<RouteObject> = listOf(jso {
 	path = "/"
 	element = PrivateApp.create()
 	children = arrayOf(
+		jso {
+			index = true
+			element = DashboardRouter.create()
+		},
 		jso {
 			path = "/search/*"
 			element = SearchRouter.create()

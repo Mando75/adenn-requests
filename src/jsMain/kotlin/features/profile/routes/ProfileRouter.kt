@@ -9,7 +9,7 @@ import react.router.Routes
 val ProfileRouter = FC<Props>("ProfileRoutes") {
 	Routes {
 		Route {
-			index
+			index = true
 			element = FC<Props> { +"User" }.create()
 		}
 
