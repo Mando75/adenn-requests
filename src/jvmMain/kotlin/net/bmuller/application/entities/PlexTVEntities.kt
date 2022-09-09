@@ -68,7 +68,7 @@ data class PlexUser(
 	data class Subscription(
 		val active: Boolean,
 		val status: String,
-		val plan: String,
+		val plan: String?,
 		val features: List<String>
 	)
 }
