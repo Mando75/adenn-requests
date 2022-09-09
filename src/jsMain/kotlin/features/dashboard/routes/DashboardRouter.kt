@@ -10,7 +10,7 @@ val DashboardRouter = FC<Props>("DashboardRouter") {
 	Routes {
 		Route {
 			index = true
-			element = FC<Props> { +"Dashboard" }.create()
+			element = DashboardPage.create()
 
 		}
 	}
