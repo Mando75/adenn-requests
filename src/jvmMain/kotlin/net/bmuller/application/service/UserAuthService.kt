@@ -16,6 +16,9 @@ import net.bmuller.application.repository.UserRepository
 import java.util.*
 
 interface UserAuthService {
+	suspend fun canInitialize(): Either<DomainError, Unit>
+
+	suspend fun initializeFlow(authToken: String): Either<DomainError, UserEntity>
 	suspend fun validateAuthToken(userId: Int, tokenVersion: Int?): Either<DomainError, Unit>
 
 	suspend fun signInFlow(authToken: String): Either<DomainError, UserEntity>
@@ -53,6 +56,19 @@ fun userAuthService(
 			.withExpiresAt(Date(System.currentTimeMillis() + env.auth.jwtTokenLifetime))
 			.sign(Algorithm.HMAC256(env.auth.jwtTokenSecret))
 		AuthTokenResponse(token)
+	}
+
+	override suspend fun canInitialize(): Either<DomainError, Unit> = either {
+		userRepository.getUserCount().bind().let { count ->
+			if (count > 0) Forbidden().left()
+			else Unit.right()
+		}.bind()
+	}
+
+	override suspend fun initializeFlow(authToken: String): Either<DomainError, UserEntity> = either {
+		val plexUser = getPlexUser(authToken).bind()
+
+		return@either registerNewUser(plexUser).bind()
 	}
 
 	/**

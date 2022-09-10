@@ -25,6 +25,8 @@ interface UserRepository {
 		plexProfilePicUrl: String?,
 	): Either<Unknown, UserEntity>
 
+	suspend fun getUserCount(limit: Int = 1): Either<DomainError, Long>
+
 	suspend fun getAdminUser(): Either<DomainError, AdminUser>
 	suspend fun getUserById(userId: Int): Either<DomainError, UserEntity>
 	suspend fun getUserByPlexId(plexUserId: Int): Either<DomainError, UserEntity>
@@ -71,7 +73,9 @@ fun userRepository(exposed: Database) = object : UserRepository {
 		Either.catchUnknown {
 			newSuspendedTransaction(Dispatchers.IO, exposed) {
 				val userType: UserType =
-					if (UserTable.selectAll().limit(1).count() <= 0) UserType.ADMIN else UserType.DEFAULT
+					if (UserTable.slice(UserTable.id).selectAll().limit(1)
+							.count() <= 0
+					) UserType.ADMIN else UserType.DEFAULT
 				val id = UserTable.insertAndGetId { user ->
 					user[this.plexUsername] = plexUsername
 					user[this.plexId] = plexId
@@ -147,6 +151,13 @@ fun userRepository(exposed: Database) = object : UserRepository {
 					.select { UserTable.plexId eq plexUserId }
 					.singleOrNull()
 					?.toUserEntity()
+			}
+		}
+
+	override suspend fun getUserCount(limit: Int): Either<DomainError, Long> =
+		Either.catchUnknown {
+			newSuspendedTransaction(Dispatchers.IO, exposed) {
+				UserTable.slice(UserTable.id).selectAll().limit(limit).count()
 			}
 		}
 }

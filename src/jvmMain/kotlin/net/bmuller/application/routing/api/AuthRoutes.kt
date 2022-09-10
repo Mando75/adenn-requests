@@ -46,6 +46,25 @@ fun Route.auth(plexOAuthService: PlexOAuthService, userAuthService: UserAuthServ
 		}.respondRedirect("/")
 	}
 
+	get<AuthResource.Initialize.LoginUrl> { context ->
+		either {
+			userAuthService.canInitialize().bind()
+			val clientDetails = PlexClientDetails(forwardUrl = "${context.forwardHost}/api/auth/init/callback")
+			plexOAuthService.requestHostedLoginURL(clientDetails).bind()
+		}.respond()
+	}
+
+	get<AuthResource.Initialize.Callback> { context ->
+		either {
+			userAuthService.canInitialize().bind()
+			val pinId = context.pinId.toLongOrNull()
+			val authToken = plexOAuthService.checkForAuthToken(pinId).bind()
+			val user = userAuthService.initializeFlow(authToken).bind()
+
+			call.sessions.set(UserSession(user.id, user.plexUsername, user.authVersion, user.userType))
+		}.respondRedirect("/")
+	}
+
 	authenticate("user_session") {
 		post<AuthResource.Token> {
 			either {
