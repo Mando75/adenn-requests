@@ -85,7 +85,8 @@ enum class RequestFilterMediaType {
 data class RequestFilters(
 	val status: List<RequestStatus>? = null,
 	val searchTerm: String? = null,
-	val mediaType: RequestFilterMediaType = RequestFilterMediaType.ALL
+	val mediaType: RequestFilterMediaType = RequestFilterMediaType.ALL,
+	val requesterIds: List<Int>? = null
 )
 
 @Serializable

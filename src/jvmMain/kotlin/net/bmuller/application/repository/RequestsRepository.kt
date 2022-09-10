@@ -170,7 +170,7 @@ fun requestsRepository(exposed: Database) = object : RequestsRepository {
 			mediaType?.let { type -> { RequestTable.mediaType eq type } }
 			filters.status?.let { status -> query.andWhere { RequestTable.status inList status } }
 			searchTerm?.let { term -> query.andWhere { RequestTable.title ilike "$term%" } }
-
+			filters.requesterIds?.let { requesterIds -> query.andWhere { RequestTable.requesterId inList requesterIds } }
 
 			val count = query.count()
 			val rows = query.orderBy(RequestTable.createdAt).limit(pagination.limit, offset = pagination.offset)
