@@ -1,9 +1,9 @@
 package features.search.api
 
+import api.RequestsQueryKeyPrefix
 import entities.CreatedRequest
 import entities.RequestEntity
 import entities.SearchResultEntity
-import features.requests.api.RequestsQueryKeyPrefix
 import http.RequestResource
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*

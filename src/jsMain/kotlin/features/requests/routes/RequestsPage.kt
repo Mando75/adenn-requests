@@ -1,8 +1,8 @@
 package features.requests.routes
 
 
+import api.useRequestsQuery
 import csstype.ClassName
-import features.requests.api.useRequestsQuery
 import features.requests.components.RequestList
 import features.requests.hooks.useRequestFilters
 import features.search.components.SearchInput

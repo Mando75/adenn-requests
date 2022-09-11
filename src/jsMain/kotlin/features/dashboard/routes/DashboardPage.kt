@@ -22,7 +22,7 @@ val DashboardPage = FC<IDashboardPageProps>("DashboardPage") { props ->
 
 	/// RENDER
 	section {
-		className = ClassName("grid grid-rows-3 gap-4")
+		className = ClassName("flex flex-col gap-4")
 
 		OpenRequests()
 		RecentlyAdded()

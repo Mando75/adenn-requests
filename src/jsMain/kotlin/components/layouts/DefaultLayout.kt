@@ -23,7 +23,7 @@ val DefaultLayout = FC<PropsWithChildren>("DefaultLayout") { props ->
 			}
 
 			main {
-				className = ClassName("col-span-10 mb-4 mr-4 mt-6")
+				className = ClassName("col-span-10 mb-4 mr-4 mt-6 px-4")
 
 				+props.children
 

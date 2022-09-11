@@ -1,5 +1,6 @@
 package features.requests.api
 
+import api.RequestsQueryKeyPrefix
 import entities.RequestStatus
 import entities.UpdateRequestStatus
 import entities.UpdateRequestStatusResponse

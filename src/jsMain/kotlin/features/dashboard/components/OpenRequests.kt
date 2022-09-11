@@ -1,15 +1,18 @@
 package features.dashboard.components
 
 
+import components.carousel.Carousel
+import components.spinners.BarsScaleMiddle
 import csstype.ClassName
+import features.dashboard.api.useMyRequestsQuery
 import lib.render
 import react.FC
 import react.Props
+import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h2
-import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.section
-import react.dom.html.ReactHTML.ul
+import react.key
 
 external interface IOpenRequestsProps : Props {
 
@@ -17,7 +20,9 @@ external interface IOpenRequestsProps : Props {
 
 val OpenRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
 	/// STATE
-	val openRequests = listOf("Foo", "Bar", "Baz")
+	val (openRequestsQuery) = useMyRequestsQuery()
+	val openRequests = openRequestsQuery.data?.items ?: emptyList()
+	val isEmpty = openRequests.isEmpty() && !openRequestsQuery.isLoading
 
 	/// HOOKS
 
@@ -29,18 +34,22 @@ val OpenRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
 			className = ClassName("text-4xl")
 			+"Your Open Requests"
 		}
+		openRequestsQuery.isLoading.render {
+			div {
+				BarsScaleMiddle()
+			}
+		}
 		openRequests.isNotEmpty().render {
-			ul {
-				className = ClassName("flex flex-row flex-wrap gap-4")
+			Carousel {
 				openRequests.map { request ->
-					li {
-						className = ClassName("p-12 rounded border-solid border border-sky-500")
-						+request
+					DashboardRequestCard {
+						key = request.id.toString()
+						this.request = request
 					}
 				}
 			}
 		}
-		openRequests.isEmpty().render {
+		isEmpty.render {
 			p {
 				className = ClassName("text-medium")
 				+"You have no open requests"

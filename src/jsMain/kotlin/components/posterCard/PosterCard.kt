@@ -19,6 +19,7 @@ external interface PosterCardProps : Props {
 	var posterUrl: String
 	var posterAlt: String
 	var detail: (showDetails: Boolean) -> FC<Props>
+	var className: ClassName?
 }
 
 val PosterCard = FC<PosterCardProps>("PosterCard") { props ->
@@ -35,7 +36,7 @@ val PosterCard = FC<PosterCardProps>("PosterCard") { props ->
 
 	// RENDER
 	li {
-		className = ClassName("w-full")
+		className = props.className
 		div {
 			className = ClassName(
 				"""overflow-hidden rounded 
