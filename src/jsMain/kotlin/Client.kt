@@ -27,6 +27,8 @@ private val App = FC<Props>("Root") {
 
 fun main() {
 	kotlinext.js.require("./app.css")
+	kotlinext.js.require("react-multi-carousel/lib/styles.css")
+
 	val container = document.createElement("div")
 	document.body!!.appendChild(container)
 

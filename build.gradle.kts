@@ -132,6 +132,7 @@ kotlin {
 
 				// NPM
 				implementation(npm("react-transition-state", "1.1.4"))
+				implementation(npm("react-multi-carousel", "2.8.2"))
 
 				// tailwind
 				implementation(npm("postcss", "8.4.13"))

@@ -7,6 +7,7 @@ import features.search.providers.RequestModalAction
 import features.search.providers.RequestModalContext
 import react.FC
 import react.Props
+import react.dom.html.ReactHTML.li
 import react.useContext
 
 external interface SearchResultCardProps : Props {
@@ -18,28 +19,30 @@ val SearchResultCard = FC<SearchResultCardProps>("SearchResultCard") { props ->
 	val (_, dispatchModal) = useContext(RequestModalContext)
 
 	/// RENDER
-	PosterCard {
-		posterUrl = props.searchResult.posterPath.value
-		posterAlt = "Poster for ${props.searchResult.title}"
-		detail = { showDetails ->
-			FC("PosterDetailWrapper") {
-				PosterCardDetail {
-					title = props.searchResult.title
-					overview = props.searchResult.overview
-					isMovie = props.searchResult is SearchResultEntity.MovieResult
-					releaseDate = props.searchResult.releaseDate
-					requestStatus = props.searchResult.request?.status
-					showDetail = showDetails
+	li {
+		PosterCard {
+			posterUrl = props.searchResult.posterPath.value
+			posterAlt = "Poster for ${props.searchResult.title}"
+			detail = { showDetails ->
+				FC("PosterDetailWrapper") {
+					PosterCardDetail {
+						title = props.searchResult.title
+						overview = props.searchResult.overview
+						isMovie = props.searchResult is SearchResultEntity.MovieResult
+						releaseDate = props.searchResult.releaseDate
+						requestStatus = props.searchResult.request?.status
+						showDetail = showDetails
 
-					props.searchResult.request?.let { request ->
-						RequestInfoLink {
-							status = request.status
-						}
-					} ?: SearchResultDetailButton {
-						onClick = {
-							dispatchModal(
-								RequestModalAction.OpenModalWithMedia(searchResult = props.searchResult)
-							)
+						props.searchResult.request?.let { request ->
+							RequestInfoLink {
+								status = request.status
+							}
+						} ?: SearchResultDetailButton {
+							onClick = {
+								dispatchModal(
+									RequestModalAction.OpenModalWithMedia(searchResult = props.searchResult)
+								)
+							}
 						}
 					}
 				}

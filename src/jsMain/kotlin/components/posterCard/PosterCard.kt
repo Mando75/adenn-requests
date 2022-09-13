@@ -11,7 +11,6 @@ import react.create
 import react.dom.aria.AriaRole
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
-import react.dom.html.ReactHTML.li
 import wrappers.useTransition
 
 
@@ -35,7 +34,7 @@ val PosterCard = FC<PosterCardProps>("PosterCard") { props ->
 	// EFFECTS
 
 	// RENDER
-	li {
+	div {
 		className = props.className
 		div {
 			className = ClassName(
