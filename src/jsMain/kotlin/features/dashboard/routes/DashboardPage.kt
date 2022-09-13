@@ -2,7 +2,7 @@ package features.dashboard.routes
 
 
 import csstype.ClassName
-import features.dashboard.components.OpenRequests
+import features.dashboard.components.MyRequests
 import features.dashboard.components.Popular
 import features.dashboard.components.RecentlyAdded
 import react.FC
@@ -24,7 +24,7 @@ val DashboardPage = FC<IDashboardPageProps>("DashboardPage") { props ->
 	section {
 		className = ClassName("flex flex-col gap-4")
 
-		OpenRequests()
+		MyRequests()
 		RecentlyAdded()
 		Popular()
 	}

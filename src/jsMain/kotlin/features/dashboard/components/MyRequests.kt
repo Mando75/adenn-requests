@@ -47,11 +47,11 @@ private val OpenRequestResponsive = object : Responsive {
 	}
 }
 
-val OpenRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
+val MyRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
 	/// STATE
-	val (openRequestsQuery) = useMyRequestsQuery()
-	val openRequests = openRequestsQuery.data?.items ?: emptyList()
-	val isEmpty = openRequests.isEmpty() && !openRequestsQuery.isLoading
+	val (myRequestsQuery) = useMyRequestsQuery()
+	val myRequests = myRequestsQuery.data?.items ?: emptyList()
+	val isEmpty = myRequests.isEmpty() && !myRequestsQuery.isLoading
 
 	/// HOOKS
 
@@ -61,14 +61,14 @@ val OpenRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
 	section {
 		h2 {
 			className = ClassName("text-4xl")
-			+"Your Open Requests"
+			+"Your Recent Requests"
 		}
-		openRequestsQuery.isLoading.render {
+		myRequestsQuery.isLoading.render {
 			div {
 				BarsScaleMiddle()
 			}
 		}
-		openRequests.isNotEmpty().render {
+		myRequests.isNotEmpty().render {
 			Carousel {
 				responsive = OpenRequestResponsive
 				partialVisible = true
@@ -77,7 +77,7 @@ val OpenRequests = FC<IOpenRequestsProps>("OpenRequests") { props ->
 				className = ClassName("py-6")
 				itemClass = ClassName("px-4")
 
-				openRequests.map { request ->
+				myRequests.map { request ->
 					DashboardRequestCard {
 						key = request.id.toString()
 						this.request = request
