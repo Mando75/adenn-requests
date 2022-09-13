@@ -18,8 +18,8 @@ val RequestInfoLink = FC<RequestStatusProps>("RequestStatus") { props ->
 
 	val text = when (props.status) {
 		RequestStatus.REQUESTED -> "Requested"
-		RequestStatus.FULFILLED -> "Already Added"
-		RequestStatus.REJECTED -> "Request Rejected"
+		RequestStatus.FULFILLED -> "On Plex"
+		RequestStatus.REJECTED -> "Rejected"
 		RequestStatus.WAITING -> "Waiting for release"
 		RequestStatus.IMPORTED -> "Searching for release"
 		RequestStatus.DOWNLOADING -> "Downloading"
