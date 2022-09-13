@@ -13,17 +13,17 @@ import wrappers.ReactQueryDevtools
 
 val DefaultLayout = FC<PropsWithChildren>("DefaultLayout") { props ->
 	div {
-		className = ClassName("grid grid-cols-12 gap-4 min-h-screen")
+		className = ClassName("grid grid-cols-12  gap-4 min-h-screen")
 
 		Fragment {
 			nav {
-				className = ClassName("col-span-2")
+				className = ClassName("col-span-1")
 
 				Sidebar()
 			}
 
 			main {
-				className = ClassName("col-span-10 mb-4 mr-4 mt-6 px-4")
+				className = ClassName("col-span-11 mb-4 mr-4 mt-6 px-4")
 
 				+props.children
 

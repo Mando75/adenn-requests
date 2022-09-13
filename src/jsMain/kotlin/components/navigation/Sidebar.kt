@@ -27,7 +27,7 @@ val Sidebar = FC<Props>("Sidebar") {
 	val items = auth.user?.let { protectedItems } ?: publicItems
 
 	div {
-		className = ClassName("bg-white rounded p-3 shadow-lg h-full flex flex-col justify-between")
+		className = ClassName("fixed h-screen bg-white rounded p-3 shadow-lg flex flex-col justify-between")
 		div {
 			div {
 				className = ClassName("flex items-center space-x-4 p-2 mb-5")
