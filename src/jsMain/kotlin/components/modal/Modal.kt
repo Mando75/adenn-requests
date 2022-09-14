@@ -10,7 +10,7 @@ import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h3
 import react.dom.html.ReactHTML.span
-import wrappers.XIcon
+import wrappers.XMarkIcon
 
 external interface IModalProps : PropsWithChildren {
 	var title: String
@@ -60,7 +60,7 @@ val Modal = FC<IModalProps>("Modal") { props ->
 							ClassName("text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center")
 						onClick = { props.close() }
 
-						XIcon {
+						XMarkIcon {
 							ariaHidden = props.show
 							className = ClassName("shrink h-5 w-5")
 						}

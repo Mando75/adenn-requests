@@ -14,7 +14,7 @@ import react.dom.html.ButtonType
 import react.dom.html.InputType
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.input
-import wrappers.XIcon
+import wrappers.XMarkIcon
 
 external interface SearchInputProps : PropsWithChildren {
 	var value: String
@@ -63,7 +63,7 @@ val SearchInput = FC<SearchInputProps>("SearchInput") { props ->
 							| peer-focus:border-y-blue-600""".trimMargin()
 						)
 
-					XIcon()
+					XMarkIcon()
 
 				}
 				Button {

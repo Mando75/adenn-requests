@@ -139,7 +139,7 @@ kotlin {
 				implementation(npm("autoprefixer", "10.4.7"))
 				implementation(npm("tailwindcss", "3.0.24"))
 				implementation(npm("@tailwindcss/line-clamp", "0.4.0"))
-				implementation(npm("@heroicons/react", "1.0.6"))
+				implementation(npm("@heroicons/react", "2.0.11"))
 			}
 		}
 	}

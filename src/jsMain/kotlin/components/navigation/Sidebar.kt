@@ -22,12 +22,16 @@ private val publicItems = listOf(
 	NavigationItem("Login", "/auth/login"),
 )
 
-val Sidebar = FC<Props>("Sidebar") {
+external interface ISidebarProps : Props {
+}
+
+val Sidebar = FC<ISidebarProps>("Sidebar") {
 	val (auth) = useSession()
 	val items = auth.user?.let { protectedItems } ?: publicItems
 
 	div {
-		className = ClassName("fixed h-screen bg-white rounded p-3 shadow-lg flex flex-col justify-between")
+		className =
+			ClassName("fixed h-screen bg-white rounded p-3 shadow-lg hidden md:flex flex-col justify-between")
 		div {
 			div {
 				className = ClassName("flex items-center space-x-4 p-2 mb-5")

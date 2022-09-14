@@ -1,4 +1,4 @@
-@file:JsModule("@heroicons/react/outline")
+@file:JsModule("@heroicons/react/24/outline")
 @file:JsNonModule
 @file:Suppress("unused")
 
@@ -9,11 +9,12 @@ import react.FC
 import react.dom.svg.SVGAttributes
 
 external val AcademicCapIcon: FC<SVGAttributes<SVGSVGElement>>
+external val Bars3Icon: FC<SVGAttributes<SVGSVGElement>>
 external val CheckCircleIcon: FC<SVGAttributes<SVGSVGElement>>
 external val ChevronLeftIcon: FC<SVGAttributes<SVGSVGElement>>
 external val ChevronRightIcon: FC<SVGAttributes<SVGSVGElement>>
 external val ClockIcon: FC<SVGAttributes<SVGSVGElement>>
-external val CloudDownloadIcon: FC<SVGAttributes<SVGSVGElement>>
-external val DownloadIcon: FC<SVGAttributes<SVGSVGElement>>
-external val ExclamationIcon: FC<SVGAttributes<SVGSVGElement>>
-external val XIcon: FC<SVGAttributes<SVGSVGElement>>
+external val CloudArrowDownloadIcon: FC<SVGAttributes<SVGSVGElement>>
+external val ArrowDownTrayIcon: FC<SVGAttributes<SVGSVGElement>>
+external val ExclamationTriangleIcon: FC<SVGAttributes<SVGSVGElement>>
+external val XMarkIcon: FC<SVGAttributes<SVGSVGElement>>
