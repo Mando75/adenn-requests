@@ -2,7 +2,6 @@
 
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.FileOutputStream
 
 plugins {
 	kotlin("multiplatform") version "1.7.10"
@@ -202,17 +201,4 @@ val copyPostCssConfig = tasks.register<Copy>("copyPostcssConfig") {
 tasks.named("processResources") {
 	dependsOn(copyTailwindConfig)
 	dependsOn(copyPostCssConfig)
-}
-
-task("buildDockerImage") {
-	dependsOn("installDist")
-	doLast {
-		exec {
-			commandLine("docker", "build", "-t", "adenn-requests-server", ".")
-		}
-		exec {
-			commandLine("docker", "save", "adenn-requests-server:latest")
-			standardOutput = FileOutputStream("./adenn-requests-server.latest.tar")
-		}
-	}
 }
